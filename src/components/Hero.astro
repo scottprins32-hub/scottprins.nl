@@ -34,14 +34,15 @@ import Logo from './Logo.astro';
   >
     <Logo class="shrink-0" />
 
-    {/* min-w-0 op de grid én op beide kolommen: anders weigeren grid-items
-        smaller te worden dan hun min-content en loopt de hero op mobiel uit
-        het scherm. */}
-    <div
-      class="grid min-h-0 min-w-0 items-center gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1fr)] lg:gap-12"
-    >
-      {/* ---------------- Links: de belofte ---------------- */}
-      <div class="relative z-10 min-w-0 max-w-xl">
+    {/*
+      Drie zones in een grid met named areas. Op de telefoon staan ze
+      onder elkaar — kop, dan de scène met de meeste ruimte, dan de
+      cijfers en knoppen. Op een breed scherm schuift de scène naast de
+      tekst. Zo hoeft er niets gedupliceerd te worden.
+    */}
+    <div class="hero-layout min-h-0 min-w-0">
+      {/* ---------------- De belofte ---------------- */}
+      <div class="area-head relative z-10 min-w-0 max-w-xl">
         <p class="kicker" data-hero-eyebrow>{hero.eyebrow}</p>
 
         <h1
@@ -55,26 +56,26 @@ import Logo from './Logo.astro';
           ))}
         </h1>
 
-        <p class="text-muted-dark mt-4 max-w-lg text-base sm:text-lg" data-hero-sub>{hero.sub}</p>
+        {/* Op de telefoon staat deze zin alleen voor schermlezers en
+            zoekmachines in de pagina: de hoogte gaat daar naar de scène,
+            en de kopregel plus de prijsteller vertellen hetzelfde. */}
+        <p
+          class="text-muted-dark sr-only sm:not-sr-only sm:mt-4 sm:max-w-lg sm:text-lg"
+          data-hero-sub
+        >
+          {hero.sub}
+        </p>
+      </div>
 
-        {/* Meteen iets te doen — niet pas na vijf schermen scrollen */}
-        <div class="mt-6 flex flex-wrap items-center gap-3" data-hero-actions>
-          <a
-            href={hero.actions.primary.href}
-            class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_var(--accent)] transition-transform hover:-translate-y-0.5 sm:px-6 sm:py-3.5 sm:text-base motion-reduce:hover:translate-y-0"
-          >
-            {hero.actions.primary.label}
-          </a>
-          <a
-            href={hero.actions.secondary.href}
-            class="rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold transition-colors hover:border-accent sm:px-6 sm:py-3.5 sm:text-base"
-          >
-            {hero.actions.secondary.label}
-          </a>
-        </div>
+      {/* ---------------- De site die zichzelf bouwt ---------------- */}
+      <div class="hero-scene-wrap area-scene relative min-w-0" data-hero-scene>
+        <HeroScene interactive />
+      </div>
 
+      {/* ---------------- Voortgang, teller en knoppen ---------------- */}
+      <div class="area-meta relative z-10 min-w-0 max-w-xl">
         {/* Voortgangsbalk van de vijf bouwdagen + de meelopende regel */}
-        <div class="mt-7" data-hero-rail>
+        <div data-hero-rail>
           {/* De vijf-balkjes zijn op een telefoon te fijnmazig; daar draagt
               alleen de meelopende dagregel het verhaal. */}
           <ol class="hidden items-center gap-2 sm:flex" aria-hidden="true">
@@ -92,11 +93,11 @@ import Logo from './Logo.astro';
             }
           </ol>
 
-          <div class="hero-beats relative mt-3.5 grid min-h-[2.75rem]">
+          <div class="hero-beats relative grid min-h-[2.5rem] sm:mt-3.5 sm:min-h-[2.75rem]">
             {
               hero.days.map((day, i) => (
                 <p
-                  class="col-start-1 row-start-1 self-start text-sm leading-relaxed text-cream/90"
+                  class="col-start-1 row-start-1 self-start text-[13px] leading-snug text-cream/90 sm:text-sm sm:leading-relaxed"
                   data-hero-beat={i}
                 >
                   {day.text}
@@ -110,10 +111,12 @@ import Logo from './Logo.astro';
             telt hier zichtbaar mee. Zo is de animatie zelf het verhaal
             "dit krijg je, dit kost het". */}
         <div
-          class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10"
+          class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-2xl bg-white/5 px-3.5 py-2.5 ring-1 ring-white/10 sm:mt-5 sm:gap-x-5 sm:px-4 sm:py-3"
           data-hero-ledger
         >
-          <span class="text-muted-dark text-xs tracking-wider uppercase">{hero.ledger.label}</span>
+          <span class="text-muted-dark w-full text-[10px] tracking-wider uppercase sm:w-auto sm:text-xs">
+            {hero.ledger.label}
+          </span>
           <span class="font-display text-lg font-semibold tabular-nums">
             <span data-ledger-upfront data-value="0">€ 0</span>
             <span class="text-muted-dark text-sm font-normal"> {hero.ledger.upfrontLabel}</span>
@@ -130,25 +133,33 @@ import Logo from './Logo.astro';
             {hero.ledger.cta}
           </button>
         </div>
-      </div>
 
-      {/* ---------------- Rechts: de site die zichzelf bouwt ---------------- */}
-      {/* Op kleine schermen begrenst de scène zich op de beschikbare hoogte
-          (4:3 → breedte × 0,75), zodat hij nooit onder de vouw wegvalt. */}
-      <div
-        class="hero-scene-wrap relative mx-auto w-full max-w-[min(100%,44svh)] min-w-0 lg:max-w-none"
-        data-hero-scene
-      >
-        <HeroScene interactive />
+        {/* Knoppen onderaan: op de telefoon precies waar je duim zit. */}
+        <div class="mt-4 flex flex-wrap items-center gap-3" data-hero-actions>
+          <a
+            href={hero.actions.primary.href}
+            class="flex-1 rounded-xl bg-accent px-5 py-3 text-center text-sm font-semibold text-white shadow-[0_10px_30px_-10px_var(--accent)] transition-transform hover:-translate-y-0.5 sm:flex-none sm:px-6 sm:py-3.5 sm:text-base motion-reduce:hover:translate-y-0"
+          >
+            {hero.actions.primary.label}
+          </a>
+          <a
+            href={hero.actions.secondary.href}
+            class="flex-1 rounded-xl border border-white/25 px-5 py-3 text-center text-sm font-semibold transition-colors hover:border-accent sm:flex-none sm:px-6 sm:py-3.5 sm:text-base"
+          >
+            {hero.actions.secondary.label}
+          </a>
+        </div>
       </div>
     </div>
 
-    {/* Voet: de caption die uitlegt hoe de site werkt + scroll-hint */}
+    {/* Voet: de caption die uitlegt hoe de site werkt + scroll-hint.
+        Op de telefoon een compacte tekstlink in plaats van een pil —
+        die scheelde twee regels hoogte die de scène beter kan gebruiken. */}
     <div class="relative z-10 flex min-w-0 shrink-0 flex-col items-center gap-2">
       {/* w-fit, niet w-max: max-content zou de hele grid-kolom oprekken tot
           de breedte van deze zin en de hero op mobiel uit beeld duwen. */}
       <a
-        class="w-fit max-w-full rounded-full bg-ink-soft/80 px-5 py-2.5 text-center text-sm font-medium text-cream ring-1 ring-white/15 backdrop-blur transition-colors hover:ring-accent"
+        class="w-fit max-w-full text-center text-[11px] font-medium text-muted-dark underline-offset-4 hover:text-cream sm:rounded-full sm:bg-ink-soft/80 sm:px-5 sm:py-2.5 sm:text-sm sm:text-cream sm:no-underline sm:ring-1 sm:ring-white/15 sm:backdrop-blur sm:hover:ring-accent"
         href={`#${hero.captionTargetId}`}
         data-hero-caption>{hero.caption}</a
       >
@@ -160,6 +171,73 @@ import Logo from './Logo.astro';
 </section>
 
 <style>
+  /* ---------------------------------------------------------------
+     Indeling. Mobiel: kop → scène → cijfers/knoppen, waarbij de scène
+     alle resterende hoogte pakt (minmax(0,1fr)) in plaats van als
+     laatste restje onderaan te eindigen. Vanaf lg staat de scène in
+     een eigen kolom naast de tekst.
+     --------------------------------------------------------------- */
+  .hero-layout {
+    display: grid;
+    grid-template-areas: 'head' 'scene' 'meta';
+    /* De scène krijgt een gegarandeerd aandeel van het scherm in plaats
+       van "wat er overblijft" — anders knijpt de tekst hem plat. */
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: 0.9rem;
+  }
+  .area-head {
+    grid-area: head;
+  }
+  .area-scene {
+    grid-area: scene;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+  }
+  .area-meta {
+    grid-area: meta;
+  }
+
+  /*
+    De scène wordt hier op HOOGTE gestuurd in plaats van op breedte: hij
+    vult de hele toegewezen rij en leidt zijn breedte daaruit af
+    (frame 4:3 binnen een scène van 94% → verhouding 1.418). Zo is hij op
+    een telefoon zo groot als er ruimte is, en valt hij nooit meer half
+    onder de vouw. Alles binnenin schaalt mee via cqw.
+  */
+  .area-scene > :global(.scene-stage) {
+    width: 100%;
+    max-height: 100%;
+  }
+  /* Op de telefoon loopt de scène tot de schermranden en gebruikt hij de
+     volle breedte van het frame: alles binnenin schaalt mee met cqw, dus
+     elke gewonnen pixel breedte maakt de opbouw letterlijk beter leesbaar. */
+  @media (max-width: 1023px) {
+    .area-scene {
+      margin-inline: -1.25rem;
+      /* Lucht boven en onder: de gekantelde scène steekt iets buiten zijn
+         eigen kader uit en raakte anders de kopregel. */
+      padding-block: 0.6rem;
+    }
+    /* Iets smaller dan het volle scherm: de 3D-kanteling duwt de linkerrand
+       naar buiten, en die marge vangt dat op. */
+    .area-scene :global(.scene) {
+      width: 92%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-layout {
+      grid-template-areas: 'head scene' 'meta scene';
+      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-content: center;
+      column-gap: 3rem;
+      row-gap: 1.75rem;
+    }
+  }
+
   /* Woord-voor-woord reveal van de kopregel (masker, geen layout shift). */
   .hero-word {
     display: inline-block;

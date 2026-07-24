@@ -77,7 +77,9 @@ const { interactive = false } = Astro.props;
 
     {/* Kopregel van de mini-site */}
     <div class="piece absolute top-[12.5%] left-[7.2%] w-[50%]" data-piece="headline" style="--z: 90px">
-      <p class="font-display font-semibold text-cream text-[5cqw] leading-[1.05]">Websites die werken.</p>
+      {/* Bewust NIET dezelfde zin als de H1 van de pagina: op een telefoon
+          staan die twee vlak onder elkaar en las je 'm anders dubbel. */}
+      <p class="font-display font-semibold text-cream text-[5cqw] leading-[1.05]">Jouw website.</p>
       <p class="mt-[1cqw] text-muted-dark text-[2cqw]">Kies je basis, kies je extra’s.</p>
     </div>
 

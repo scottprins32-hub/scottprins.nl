@@ -59,6 +59,23 @@ export const LEDGER_STEPS: Array<[progress: number, addon: string]> = [
   [0.57, 'reviews'],
 ];
 
+/**
+ * Op een telefoon is er geen ruimte naast het frame: vliegen de stukken
+ * daar even ver weg als op een laptop, dan schieten ze het scherm uit en
+ * botsen ze met de kopregel. Compact-modus houdt alles dicht bij het
+ * frame en kantelt de camera minder — de opbouw wordt er juist beter
+ * leesbaar van, en dat is op mobiel precies waar het om gaat.
+ */
+function sceneGeometry() {
+  const compact = window.matchMedia('(max-width: 1023px)').matches;
+  return {
+    scatter: compact ? 0.42 : 1,
+    tiltX: compact ? 9 : 14,
+    tiltY: compact ? -10 : -24,
+    depth: compact ? 0.55 : 1,
+  };
+}
+
 export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   const scene = root.querySelector<HTMLElement>('[data-scene]')!;
   const piece = (name: string) => scene.querySelector<HTMLElement>(`[data-piece="${name}"]`)!;
@@ -77,16 +94,17 @@ export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   // --- Begintoestand: alles los in de ruimte, camera gekanteld ---------
   // Frame en vloer staan er al (zie global.css): die animeren we niet weg,
   // anders opent de site alsnog met een leeg vlak.
-  gsap.set(scene, { rotationX: 14, rotationY: -24 });
-  gsap.set(floor, { z: -140, scale: 1.15 });
+  const geo = sceneGeometry();
+  gsap.set(scene, { rotationX: geo.tiltX, rotationY: geo.tiltY });
+  gsap.set(floor, { z: -140 * geo.depth, scale: 1.15 });
   gsap.set(glow, { autoAlpha: 0 });
   for (const [name, [fx, fy, rotY, z]] of Object.entries(SCATTER)) {
     gsap.set(piece(name), {
-      x: fx * W,
-      y: fy * H,
-      z,
-      rotationY: rotY,
-      rotationX: -8,
+      x: fx * W * geo.scatter,
+      y: fy * H * geo.scatter,
+      z: z * geo.depth,
+      rotationY: rotY * geo.scatter,
+      rotationX: -8 * geo.scatter,
       autoAlpha: 0,
     });
   }

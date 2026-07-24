@@ -59,19 +59,31 @@ import { nav, site } from '../data/site';
     met `.js` (op <html>) overleeft Astro's scoping niet. */}
 
 <script>
-  import { ScrollTrigger } from '../scripts/motion';
-
   const navEl = document.querySelector<HTMLElement>('[data-site-nav]');
   const hero = document.querySelector<HTMLElement>('[data-hero]');
 
   if (navEl && hero) {
-    // Zichtbaar zodra de hero (inclusief zijn pin-lengte) voorbij is.
-    ScrollTrigger.create({
-      trigger: hero,
-      start: 'bottom top+=80',
-      onEnter: () => navEl.setAttribute('data-visible', ''),
-      onLeaveBack: () => navEl.removeAttribute('data-visible'),
-    });
+    /*
+     * Bewust géén ScrollTrigger en geen IntersectionObserver: de hero
+     * wordt gepind, en beide zijn dan gevoelig voor het moment waarop ze
+     * meten (module-vololgorde, of een hero die nog geen hoogte heeft).
+     * Eén meting per frame op de échte positie is simpel en klopt altijd:
+     * zolang de onderkant van de hero nog in beeld is — ook tijdens de
+     * pin — blijft de balk weg.
+     */
+    let queued = false;
+    const update = () => {
+      queued = false;
+      navEl.toggleAttribute('data-visible', hero.getBoundingClientRect().bottom <= 60);
+    };
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
   } else {
     navEl?.setAttribute('data-visible', '');
   }
