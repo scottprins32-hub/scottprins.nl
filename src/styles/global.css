@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  Accentkleur — wil je een andere kleur? Verander ALLEEN deze regel. */
+/* ------------------------------------------------------------------ */
+:root {
+  --accent: #4f46e5;
+}
+
+/* ---------------------------- Fonts ------------------------------- */
+/* Zelf-gehost (public/fonts) — geen externe requests, geen tracking. */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------- Design tokens ------------------------ */
+@theme {
+  --color-ink: #0b0e11;        /* donkere secties */
+  --color-ink-soft: #161b22;   /* kaarten op donker */
+  --color-cream: #faf8f4;      /* lichte secties */
+  --color-cream-dim: #f0ece4;  /* kaarten/velden op licht */
+  --color-line: #e5e0d5;       /* randen op licht */
+  --color-muted: #5c6470;      /* gedempte tekst op cream (≥4.5:1) */
+  --color-muted-dark: #9aa3b0; /* gedempte tekst op ink (≥4.5:1) */
+
+  --font-display: 'Clash Display', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Vloeiende typografie-schaal */
+  --text-display: clamp(2.6rem, 9vw, 5.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+  --text-h2: clamp(1.9rem, 5.5vw, 3.4rem);
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: clamp(1.3rem, 3vw, 1.8rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.05rem, 2.2vw, 1.3rem);
+  --text-lead--line-height: 1.55;
+
+  --radius-2xl: 1.25rem;
+  --shadow-card: 0 6px 24px rgb(11 14 17 / 0.07), 0 1px 3px rgb(11 14 17 / 0.05);
+  --shadow-card-lg: 0 24px 60px rgb(11 14 17 / 0.14);
+}
+
+/* Accent als verwijzing zodat één :root-wijziging overal doorwerkt
+   (ook in bg-accent/text-accent-utilities en canvas-tekeningen). */
+@theme inline {
+  --color-accent: var(--accent);
+}
+
+/* --------------------------- Basis -------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background-color: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+/* Ankerdoelen niet onder de vaste cart-pill laten landen */
+section[id],
+[data-anchor] {
+  scroll-margin-top: 4.5rem;
+}
+
+/* ------------------------ Grain (donkere secties) ------------------ */
+/* SVG-ruis als data-URI: geen extra request, ~0,3 KB.                 */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------- Marquee ------------------------------- */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 45s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------------------- Reduced motion ----------------------------- */
+/* GSAP-animaties zitten achter gsap.matchMedia(); dit dekt de rest.   */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee-track {
+    animation: none;
+    width: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

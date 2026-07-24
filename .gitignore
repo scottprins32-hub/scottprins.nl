@@ -1,0 +1,15 @@
+# build output
+dist/
+.vercel/
+.astro/
+
+# dependencies
+node_modules/
+
+# environment — bevat RESEND_API_KEY, nooit committen
+.env
+.env.production
+
+# misc
+.DS_Store
+*.log
