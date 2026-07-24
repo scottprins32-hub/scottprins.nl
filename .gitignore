@@ -15,3 +15,6 @@ node_modules/
 *.log
 .vercel
 .env*
+
+# Lighthouse-rapporten (log.md blijft wel bewaard)
+perf/*.json
