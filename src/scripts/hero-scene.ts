@@ -1,9 +1,10 @@
 /**
- * De "scroll-video" van de hero: een website die zichzelf opbouwt uit
- * wireframe-blokken en eindigt als gloeiende, afgemaakte site.
+ * De "scroll-video" van de hero: déze website bouwt zichzelf op —
+ * van lege schets tot gloeiende, afgemaakte site — in vijf fases die
+ * de vijf bouwdagen spiegelen (schets → ontwerp → bouwen → content → live).
  *
  * Volledig programmatisch getekend — geen videobestand, geen frames op
- * disk (~4 kB code i.p.v. 300 kB video). `drawScene` is puur: geef 'm
+ * disk (~5 kB code i.p.v. 300 kB video). `drawScene` is puur: geef 'm
  * een context, afmetingen en een progress (0–1) en hij tekent dat frame.
  * Daardoor werkt hij zowel scroll-gestuurd (hero) als tijd-gestuurd
  * (demo-sectie "Optie 11").
@@ -25,26 +26,42 @@ export function getSceneColors(): SceneColors {
   };
 }
 
-/* Eén blok van de wireframe-site. Posities relatief aan het content-vlak
-   (0–1); scatter = startpositie/rotatie waarvandaan het blok invliegt.  */
+/* Eén blok van de site-in-aanbouw. Posities relatief aan het content-vlak
+   (0–1); scatter = startpositie/rotatie waarvandaan het blok invliegt.
+   De layout spiegelt de echte site: wordmark + nav, groot koptekstblok,
+   CTA, visual, drie kaarten ("zo werkt het") en twee menukaart-rijen.   */
 interface Block {
   x: number; y: number; w: number; h: number;
   scatter: [dx: number, dy: number, rot: number];
   t0: number; t1: number;          // venster binnen de assemble-fase
-  kind: 'bar' | 'card' | 'cta' | 'logo' | 'image';
+  kind: 'bar' | 'card' | 'cta' | 'logo' | 'image' | 'row';
 }
 
 const BLOCKS: Block[] = [
-  { x: 0.04, y: 0.05, w: 0.1,  h: 0.07, scatter: [-0.5, -0.4, -0.6], t0: 0.00, t1: 0.16, kind: 'logo' },
-  { x: 0.62, y: 0.06, w: 0.15, h: 0.045, scatter: [0.5, -0.35, 0.4], t0: 0.05, t1: 0.21, kind: 'bar' },
-  { x: 0.8,  y: 0.06, w: 0.15, h: 0.045, scatter: [0.65, -0.25, 0.7], t0: 0.09, t1: 0.25, kind: 'bar' },
-  { x: 0.04, y: 0.24, w: 0.52, h: 0.085, scatter: [-0.7, 0.15, -0.3], t0: 0.14, t1: 0.34, kind: 'bar' },
-  { x: 0.04, y: 0.37, w: 0.38, h: 0.05,  scatter: [-0.55, 0.35, 0.5], t0: 0.2, t1: 0.4, kind: 'bar' },
-  { x: 0.64, y: 0.2,  w: 0.32, h: 0.36,  scatter: [0.7, 0.3, 0.35],   t0: 0.24, t1: 0.46, kind: 'image' },
-  { x: 0.04, y: 0.47, w: 0.2,  h: 0.085, scatter: [-0.4, 0.55, -0.8], t0: 0.3, t1: 0.5, kind: 'cta' },
-  { x: 0.04, y: 0.68, w: 0.28, h: 0.27,  scatter: [-0.45, 0.6, 0.3],  t0: 0.42, t1: 0.66, kind: 'card' },
-  { x: 0.36, y: 0.68, w: 0.28, h: 0.27,  scatter: [0.0, 0.75, -0.25], t0: 0.5, t1: 0.74, kind: 'card' },
-  { x: 0.68, y: 0.68, w: 0.28, h: 0.27,  scatter: [0.5, 0.62, 0.45],  t0: 0.58, t1: 0.82, kind: 'card' },
+  // dag 2 — ontwerp: skelet van de pagina
+  { x: 0.03, y: 0.03, w: 0.13, h: 0.05,  scatter: [-0.5, -0.4, -0.6], t0: 0.0,  t1: 0.14, kind: 'logo' },
+  { x: 0.66, y: 0.035, w: 0.13, h: 0.035, scatter: [0.5, -0.35, 0.4], t0: 0.04, t1: 0.18, kind: 'bar' },
+  { x: 0.82, y: 0.035, w: 0.13, h: 0.035, scatter: [0.65, -0.25, 0.7], t0: 0.07, t1: 0.21, kind: 'bar' },
+  { x: 0.03, y: 0.15, w: 0.56, h: 0.075, scatter: [-0.7, 0.15, -0.3], t0: 0.11, t1: 0.28, kind: 'bar' },
+  { x: 0.03, y: 0.25, w: 0.42, h: 0.075, scatter: [-0.55, 0.3, 0.4],  t0: 0.16, t1: 0.33, kind: 'bar' },
+  { x: 0.03, y: 0.36, w: 0.3,  h: 0.032, scatter: [-0.4, 0.4, -0.5], t0: 0.21, t1: 0.38, kind: 'bar' },
+  // dag 3 — bouwen: CTA, visual, kaartenrij
+  { x: 0.03, y: 0.43, w: 0.16, h: 0.065, scatter: [-0.4, 0.55, -0.8], t0: 0.27, t1: 0.44, kind: 'cta' },
+  { x: 0.63, y: 0.13, w: 0.33, h: 0.37,  scatter: [0.7, 0.3, 0.35],   t0: 0.31, t1: 0.5,  kind: 'image' },
+  { x: 0.03, y: 0.57, w: 0.29, h: 0.2,   scatter: [-0.45, 0.6, 0.3],  t0: 0.38, t1: 0.56, kind: 'card' },
+  { x: 0.355, y: 0.57, w: 0.29, h: 0.2,  scatter: [0.0, 0.75, -0.25], t0: 0.44, t1: 0.62, kind: 'card' },
+  { x: 0.68, y: 0.57, w: 0.28, h: 0.2,   scatter: [0.5, 0.62, 0.45],  t0: 0.5,  t1: 0.68, kind: 'card' },
+  // dag 3/4 — de menukaart groeit eronder
+  { x: 0.03, y: 0.83, w: 0.93, h: 0.055, scatter: [-0.3, 0.5, 0.2],   t0: 0.58, t1: 0.76, kind: 'row' },
+  { x: 0.03, y: 0.91, w: 0.93, h: 0.055, scatter: [0.3, 0.55, -0.2],  t0: 0.66, t1: 0.84, kind: 'row' },
+];
+
+/* Regio's die in de schetsfase (dag 1) als stippellijn verschijnen. */
+const SKETCH_REGIONS: Array<[number, number, number, number]> = [
+  [0.03, 0.13, 0.56, 0.2],   // koptekst
+  [0.63, 0.13, 0.33, 0.37],  // visual
+  [0.03, 0.57, 0.93, 0.2],   // kaartenrij
+  [0.03, 0.83, 0.93, 0.135], // menukaart-rijen
 ];
 
 /* Sterretjes die in de slotfase oplichten (posities relatief aan frame). */
@@ -64,7 +81,7 @@ function roundRect(
   ctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2));
 }
 
-/** Tekent één frame van de scène op progress p (0 = los zand, 1 = af). */
+/** Tekent één frame van de scène op progress p (0 = niets, 1 = live). */
 export function drawScene(
   ctx: CanvasRenderingContext2D,
   w: number,
@@ -75,24 +92,24 @@ export function drawScene(
   ctx.clearRect(0, 0, w, h);
 
   // Framemaat: past altijd binnen het canvas, met ademruimte.
-  const fw = Math.min(w * 0.88, (h * 0.72) / 0.7, 640);
-  const fh = fw * 0.7;
+  const fw = Math.min(w * 0.9, (h * 0.78) / 0.72, 720);
+  const fh = fw * 0.72;
   const fx = (w - fw) / 2;
   const fy = (h - fh) / 2;
-  const chrome = fh * 0.09;
+  const chrome = fh * 0.075;
   const unit = fw / 100; // basiseenheid voor lijndiktes/radii
 
-  const framePhase = seg(p, 0, 0.14);
-  const assemble = seg(p, 0.1, 0.78);
-  const fill = seg(p, 0.7, 0.9);
-  const glow = seg(p, 0.86, 1);
+  // Fase-vensters (verdeeld over de "vijf dagen")
+  const framePhase = seg(p, 0, 0.1);     // dag 1: browserframe verschijnt
+  const sketch = seg(p, 0.04, 0.2);      // dag 1: stippellijn-schets
+  const sketchOut = seg(p, 0.24, 0.34);  // schets lost op zodra er gebouwd wordt
+  const assemble = seg(p, 0.16, 0.82);   // dag 2–3: blokken vliegen in
+  const fill = seg(p, 0.72, 0.92);       // dag 4: content & kleur
+  const glow = seg(p, 0.88, 1);          // dag 5: live + gloed
 
   // ---- Gloed achter het frame (slotfase) --------------------------------
   if (glow > 0) {
-    const grad = ctx.createRadialGradient(
-      w / 2, h / 2, fw * 0.1,
-      w / 2, h / 2, fw * 0.85,
-    );
+    const grad = ctx.createRadialGradient(w / 2, h / 2, fw * 0.1, w / 2, h / 2, fw * 0.85);
     grad.addColorStop(0, `rgba(79, 70, 229, ${0.22 * glow})`);
     grad.addColorStop(1, 'rgba(79, 70, 229, 0)');
     ctx.fillStyle = grad;
@@ -101,7 +118,7 @@ export function drawScene(
 
   // ---- Browserframe ------------------------------------------------------
   if (framePhase > 0) {
-    const scale = 0.94 + 0.06 * easeOutCubic(framePhase);
+    const scale = 0.95 + 0.05 * easeOutCubic(framePhase);
     ctx.save();
     ctx.translate(w / 2, h / 2);
     ctx.scale(scale, scale);
@@ -112,7 +129,7 @@ export function drawScene(
     if (glow > 0) {
       for (let i = 2; i >= 1; i--) {
         ctx.strokeStyle = colors.accent;
-        ctx.globalAlpha = 0.16 * glow / i;
+        ctx.globalAlpha = (0.16 * glow) / i;
         ctx.lineWidth = unit * (1 + i * 2.2);
         roundRect(ctx, fx, fy, fw, fh, unit * 3.5);
         ctx.stroke();
@@ -120,7 +137,7 @@ export function drawScene(
       ctx.globalAlpha = framePhase;
     }
 
-    ctx.strokeStyle = glow > 0 ? colors.accent : `rgba(250, 248, 244, 0.75)`;
+    ctx.strokeStyle = glow > 0 ? colors.accent : 'rgba(250, 248, 244, 0.75)';
     ctx.lineWidth = unit * 0.7;
     roundRect(ctx, fx, fy, fw, fh, unit * 3.5);
     ctx.stroke();
@@ -140,12 +157,27 @@ export function drawScene(
     ctx.restore();
   }
 
-  // ---- Content-blokken ---------------------------------------------------
+  // Content-vlak onder de chromebalk
   const cx = fx + fw * 0.03;
   const cy = fy + chrome + fh * 0.03;
   const cw = fw * 0.94;
   const ch = fh - chrome - fh * 0.06;
 
+  // ---- Dag 1: schets (stippellijnen die daarna oplossen) -----------------
+  const sketchAlpha = sketch * (1 - sketchOut);
+  if (sketchAlpha > 0.01) {
+    ctx.save();
+    ctx.setLineDash([unit * 1.6, unit * 1.6]);
+    ctx.strokeStyle = `rgba(250, 248, 244, ${0.3 * sketchAlpha})`;
+    ctx.lineWidth = unit * 0.45;
+    for (const [rx, ry, rw, rh] of SKETCH_REGIONS) {
+      roundRect(ctx, cx + rx * cw, cy + ry * ch, rw * cw, rh * ch, unit * 1.6);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ---- Dag 2–4: blokken --------------------------------------------------
   for (const block of BLOCKS) {
     const t = easeOutCubic(seg(assemble, block.t0, block.t1));
     if (t <= 0) continue;
@@ -180,30 +212,31 @@ export function drawScene(
       ctx.fill();
       ctx.globalAlpha = t;
     }
-    ctx.strokeStyle = isAccent
-      ? colors.accent
-      : `rgba(250, 248, 244, ${0.55 - 0.3 * fill})`;
+    ctx.strokeStyle = isAccent ? colors.accent : `rgba(250, 248, 244, ${0.55 - 0.3 * fill})`;
     ctx.lineWidth = unit * 0.55;
     roundRect(ctx, -bw / 2, -bh / 2, bw, bh, r);
     ctx.stroke();
 
-    // Detail-lijntjes in kaarten en het imageblok
+    // Detail-lijntjes per bloksoort
     if (block.kind === 'card') {
       ctx.strokeStyle = `rgba(250, 248, 244, ${0.35 + 0.25 * fill})`;
       ctx.lineWidth = unit * 0.45;
       const lineW = bw * 0.62;
       for (let i = 0; i < 2; i++) {
         ctx.beginPath();
-        ctx.moveTo(-bw / 2 + bw * 0.12, bh * 0.05 + i * bh * 0.18);
-        ctx.lineTo(-bw / 2 + bw * 0.12 + lineW * (i === 0 ? 1 : 0.7), bh * 0.05 + i * bh * 0.18);
+        ctx.moveTo(-bw / 2 + bw * 0.12, bh * 0.08 + i * bh * 0.2);
+        ctx.lineTo(-bw / 2 + bw * 0.12 + lineW * (i === 0 ? 1 : 0.7), bh * 0.08 + i * bh * 0.2);
         ctx.stroke();
       }
-      // "afbeelding" bovenin de kaart
-      ctx.fillStyle = `rgba(250, 248, 244, ${0.08 + 0.1 * fill})`;
-      roundRect(ctx, -bw / 2 + bw * 0.12, -bh / 2 + bh * 0.12, bw * 0.76, bh * 0.34, r * 0.6);
+      // accentnummer linksboven in de kaart (zoals "1 2 3" op de site)
+      ctx.fillStyle = colors.accent;
+      ctx.globalAlpha = t * (0.35 + 0.65 * fill);
+      ctx.beginPath();
+      ctx.arc(-bw / 2 + bw * 0.14, -bh / 2 + bh * 0.24, unit * 1.3, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = t;
     } else if (block.kind === 'image') {
-      ctx.strokeStyle = `rgba(250, 248, 244, ${0.4})`;
+      ctx.strokeStyle = 'rgba(250, 248, 244, 0.4)';
       ctx.lineWidth = unit * 0.45;
       ctx.beginPath();
       ctx.moveTo(-bw * 0.3, bh * 0.22);
@@ -214,12 +247,25 @@ export function drawScene(
       ctx.beginPath();
       ctx.arc(-bw * 0.22, -bh * 0.24, unit * 1.4, 0, Math.PI * 2);
       ctx.stroke();
+    } else if (block.kind === 'row') {
+      // menukaart-rij: tekstlijntje links, "prijsknopje" rechts
+      ctx.strokeStyle = `rgba(250, 248, 244, ${0.35 + 0.25 * fill})`;
+      ctx.lineWidth = unit * 0.45;
+      ctx.beginPath();
+      ctx.moveTo(-bw / 2 + bw * 0.03, 0);
+      ctx.lineTo(-bw / 2 + bw * 0.3, 0);
+      ctx.stroke();
+      ctx.fillStyle = colors.accent;
+      ctx.globalAlpha = t * (0.3 + 0.7 * fill);
+      roundRect(ctx, bw / 2 - bw * 0.09, -bh * 0.28, bw * 0.06, bh * 0.56, unit);
+      ctx.fill();
+      ctx.globalAlpha = t;
     }
 
     ctx.restore();
   }
 
-  // ---- Sterretjes in de slotfase ----------------------------------------
+  // ---- Dag 5: sterretjes -------------------------------------------------
   if (glow > 0.15) {
     ctx.save();
     ctx.strokeStyle = colors.accent;

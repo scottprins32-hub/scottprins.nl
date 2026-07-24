@@ -4,7 +4,7 @@
  * en het voorgevulde WhatsApp-bericht.
  */
 import { addons, basePackages, carePlans } from '../data/pricing';
-import { calcTotals, sanitizeSelection, type Selection } from './calc';
+import { addonCost, calcTotals, isIncluded, sanitizeSelection, type Selection } from './calc';
 import { eur } from './format';
 
 export function summarizeSelection(selection: Selection): string {
@@ -20,11 +20,22 @@ export function summarizeSelection(selection: Selection): string {
     `Basispakket: ${base.name} (${eur(base.upfront)} + ${eur(base.monthly)} p/m)`,
   ];
 
-  if (chosen.length > 0) {
+  // Add-ons die bij het pakket horen tellen als "inbegrepen" — ook als de
+  // bezoeker ze niet zelf aanvinkte staan ze in het overzicht.
+  const includedNames = addons
+    .filter((a) => isIncluded(sel.base, a.id))
+    .map((a) => a.name);
+  if (includedNames.length > 0) {
+    lines.push(`Inbegrepen bij ${base.name}: ${includedNames.join(', ')}`);
+  }
+
+  const paid = chosen.filter((a) => !isIncluded(sel.base, a.id));
+  if (paid.length > 0) {
     lines.push('Extra’s:');
-    for (const a of chosen) {
-      const monthly = a.monthly > 0 ? ` + ${eur(a.monthly)} p/m` : '';
-      lines.push(`- ${a.name} (${eur(a.upfront)}${monthly})`);
+    for (const a of paid) {
+      const cost = addonCost(sel.base, a);
+      const monthly = cost.monthly > 0 ? ` + ${eur(cost.monthly)} p/m` : '';
+      lines.push(`- ${a.name} (${eur(cost.upfront)}${monthly})`);
     }
   } else {
     lines.push('Extra’s: geen');

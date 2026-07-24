@@ -46,6 +46,12 @@ import LeadForm from './LeadForm.astro';
                       {line}
                     </li>
                   ))}
+                  {pkg.includedAddons.map((id) => (
+                    <li class="flex gap-1.5 font-medium text-cream/90">
+                      <span class="text-accent" aria-hidden="true">★</span>
+                      {addons.find((a) => a.id === id)!.name} <span class="text-accent-soft">gratis</span>
+                    </li>
+                  ))}
                 </ul>
               </label>
             ))
@@ -58,8 +64,9 @@ import LeadForm from './LeadForm.astro';
           {
             addons.map((addon) => (
               <label
-                class="config-card flex cursor-pointer items-start gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 transition-colors hover:border-white/40 has-checked:border-accent has-checked:bg-accent/10"
+                class="config-card flex cursor-pointer items-start gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 transition-colors hover:border-white/40 has-checked:border-accent has-checked:bg-accent/10 has-disabled:cursor-default has-disabled:border-accent/50 has-disabled:bg-accent/5"
                 data-addon-card
+                data-addon-id={addon.id}
               >
                 <input
                   type="checkbox"
@@ -71,9 +78,10 @@ import LeadForm from './LeadForm.astro';
                   <span class="flex flex-wrap items-center gap-2 font-semibold">
                     {addon.name}
                     {addon.popular && <span class="badge-populair">{configurator.popularBadge}</span>}
+                    <span class="badge-populair hidden" data-addon-included-badge>{configurator.includedBadge}</span>
                   </span>
                   <span class="text-muted-dark mt-0.5 block text-xs leading-snug">{addon.shortPitch}</span>
-                  <span class="mt-1.5 block text-sm font-medium">{priceLine(addon.upfront, addon.monthly)}</span>
+                  <span class="mt-1.5 block text-sm font-medium" data-addon-price>{priceLine(addon.upfront, addon.monthly)}</span>
                   {addon.demoSectionId ? (
                     <a
                       href={`#${addon.demoSectionId}`}
@@ -139,8 +147,8 @@ import LeadForm from './LeadForm.astro';
 
 <script>
   import { addons, basePackages, carePlans, type AddonId, type BasePackageId, type CarePlanId } from '../data/pricing';
-  import { calcTotals } from '../lib/calc';
-  import { eur } from '../lib/format';
+  import { addonCost, calcTotals, isIncluded } from '../lib/calc';
+  import { eur, priceLine } from '../lib/format';
   import { setBase, setCare, subscribe, toggleAddon } from '../scripts/store';
   import { tweenNumber } from '../scripts/tween';
 
@@ -167,21 +175,40 @@ import LeadForm from './LeadForm.astro';
       `<li class="flex justify-between gap-3"><span class="text-muted-dark min-w-0">${label}</span><span class="whitespace-nowrap tabular-nums">${amount}</span></li>`;
 
     subscribe((sel) => {
-      // Formulier-elementen spiegelen (ook bij pre-toggle vanaf de menukaart)
+      // Formulier-elementen spiegelen (ook bij pre-toggle vanaf de menukaart).
+      // Inbegrepen add-ons staan aangevinkt én op slot: ze horen bij het pakket.
       baseInputs.forEach((input) => (input.checked = input.value === sel.base));
       careInputs.forEach((input) => (input.checked = input.value === sel.care));
-      addonInputs.forEach((input) => (input.checked = sel.addons.includes(input.value as AddonId)));
+      addonInputs.forEach((input) => {
+        const id = input.value as AddonId;
+        const included = isIncluded(sel.base, id);
+        input.checked = included || sel.addons.includes(id);
+        input.disabled = included;
 
-      // Offerte-regels
+        const card = input.closest<HTMLElement>('[data-addon-card]')!;
+        card.querySelector('[data-addon-included-badge]')!.classList.toggle('hidden', !included);
+        const addon = addons.find((a) => a.id === id)!;
+        card.querySelector('[data-addon-price]')!.textContent = included
+          ? 'Gratis bij je pakket'
+          : priceLine(addon.upfront, addon.monthly);
+      });
+
+      // Offerte-regels: pakket → inbegrepen extra's → betaalde extra's → onderhoud
       const base = basePackages.find((p) => p.id === sel.base)!;
       const care = carePlans.find((c) => c.id === sel.care)!;
-      const chosen = addons.filter((a) => sel.addons.includes(a.id));
+      const included = addons.filter((a) => isIncluded(sel.base, a.id));
+      const paid = addons.filter((a) => sel.addons.includes(a.id) && !isIncluded(sel.base, a.id));
 
       quoteLines.innerHTML = [
         line(base.name, `${eur(base.upfront)} + ${eur(base.monthly)} p/m`),
-        ...chosen.map((a) =>
-          line(a.name, a.monthly > 0 ? `${eur(a.upfront)} + ${eur(a.monthly)} p/m` : eur(a.upfront)),
-        ),
+        ...included.map((a) => line(a.name, 'inbegrepen')),
+        ...paid.map((a) => {
+          const cost = addonCost(sel.base, a);
+          return line(
+            a.name,
+            cost.monthly > 0 ? `${eur(cost.upfront)} + ${eur(cost.monthly)} p/m` : eur(cost.upfront),
+          );
+        }),
         care.monthlyDelta > 0
           ? line(`Onderhoud ${care.name}`, `+${eur(care.monthlyDelta)} p/m`)
           : line(`Onderhoud ${care.name}`, 'inbegrepen'),

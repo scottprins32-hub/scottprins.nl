@@ -57,17 +57,33 @@ export function sanitizeSelection(input: unknown): Selection {
   return { base, addons: addonIds, care };
 }
 
+/** Is deze add-on gratis inbegrepen bij het gekozen basispakket? */
+export function isIncluded(base: BasePackageId, addonId: AddonId): boolean {
+  return baseById.get(base)?.includedAddons.includes(addonId) ?? false;
+}
+
+/**
+ * Wat kost deze add-on bij dit basispakket? € 0/€ 0 wanneer hij bij het
+ * pakket is inbegrepen — de hele UI én de e-mail rekenen hiermee.
+ */
+export function addonCost(base: BasePackageId, addon: Addon): Totals {
+  return isIncluded(base, addon.id)
+    ? { upfront: 0, monthly: 0 }
+    : { upfront: addon.upfront, monthly: addon.monthly };
+}
+
 /** Eenmalig + maandelijks totaal voor een selectie. Muteert de input niet. */
 export function calcTotals(selection: Selection): Totals {
   const sel = sanitizeSelection(selection);
   const base = baseById.get(sel.base)!;
   const care = careById.get(sel.care)!;
   const chosen = sel.addons.map((id) => addonById.get(id)!) as Addon[];
+  const costs = chosen.map((a) => addonCost(sel.base, a));
 
   return {
     upfront:
-      base.upfront + care.upfrontDelta + chosen.reduce((sum, a) => sum + a.upfront, 0),
+      base.upfront + care.upfrontDelta + costs.reduce((sum, c) => sum + c.upfront, 0),
     monthly:
-      base.monthly + care.monthlyDelta + chosen.reduce((sum, a) => sum + a.monthly, 0),
+      base.monthly + care.monthlyDelta + costs.reduce((sum, c) => sum + c.monthly, 0),
   };
 }

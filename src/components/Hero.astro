@@ -1,9 +1,13 @@
 ---
 /**
- * Scroll-video-hero: het eerste product-demo van de site zelf.
- * Zonder JavaScript (of met prefers-reduced-motion) staat hier een
- * statische versie met alle drie de tekstregels — het script "upgradet"
- * naar de gepinde scrub-versie via de klasse `hero--animated`.
+ * De intro: déze website bouwt zichzelf op terwijl je scrolt.
+ * Vijf "bouwdagen" lang (± vijf scrollbewegingen, gepind) is de
+ * canvas-animatie de show — met alleen een klein dag-label als tekst.
+ * Pas als de site "live" gaat verschijnt de kopregel + de caption die
+ * uitlegt dat dit effect zelf optie 11 van de menukaart is.
+ *
+ * Zonder JavaScript (of met prefers-reduced-motion) staat hier direct
+ * het statische eindbeeld: kopregel + caption + afgebouwde site.
  */
 import { hero } from '../data/site';
 import Logo from './Logo.astro';
@@ -12,15 +16,35 @@ import Logo from './Logo.astro';
 <section class="hero grain relative bg-ink text-cream" data-hero>
   <div class="relative flex h-svh flex-col items-center justify-center overflow-hidden px-5">
     <Logo class="absolute top-5 left-5 z-20 sm:top-7 sm:left-7" />
+
     <canvas
-      class="pointer-events-none absolute inset-0 h-full w-full opacity-70"
+      class="pointer-events-none absolute inset-0 h-full w-full opacity-40"
       data-hero-canvas
       aria-hidden="true"></canvas>
 
-    <div class="hero-beats relative z-10 mx-auto w-full max-w-4xl text-center">
-      <h1 class="font-display text-display font-semibold text-balance" data-beat>{hero.beats[0]}</h1>
-      <p class="beat-secondary font-display font-medium text-balance" data-beat>{hero.beats[1]}</p>
-      <p class="beat-secondary font-display font-medium text-balance" data-beat>{hero.beats[2]}</p>
+    <h1
+      class="font-display text-display relative z-10 mx-auto max-w-4xl text-center font-semibold text-balance"
+      data-hero-headline
+    >
+      {hero.headline}
+    </h1>
+
+    {/* Dag-labels: het enige tekstje tijdens de bouw-animatie. */}
+    <div class="hero-days absolute bottom-24 left-1/2 z-10 -translate-x-1/2" aria-hidden="true">
+      {
+        hero.days.map((day, i) => {
+          const [dag, stap] = day.split(' — ');
+          return (
+            <span
+              class="day-chip col-start-1 row-start-1 rounded-full bg-ink-soft/90 px-4 py-2 text-xs font-semibold tracking-widest whitespace-nowrap uppercase ring-1 ring-white/10"
+              data-day={i}
+            >
+              <span class="text-accent-soft">{dag}</span>
+              <span class="text-muted-dark"> — {stap}</span>
+            </span>
+          );
+        })
+      }
     </div>
 
     {/* Dit regeltje leert de bezoeker hoe de hele site werkt. */}
@@ -41,31 +65,17 @@ import Logo from './Logo.astro';
 </section>
 
 <style>
-  /* Statische variant (no-JS / reduced motion): drie regels onder elkaar. */
-  .beat-secondary {
-    font-size: var(--text-h3);
-    line-height: 1.25;
-    color: var(--color-muted-dark);
-    margin-top: 1rem;
-  }
-  [data-beat] {
+  [data-hero-headline] {
     text-shadow: 0 2px 28px rgb(11 14 17 / 0.85);
   }
+  /* Statische variant (no-JS / reduced motion): geen dag-labels, geen hint. */
+  .hero-days,
   .hero-hint {
     display: none;
   }
-
-  /* Geanimeerde variant: beats liggen gestapeld in het midden en worden
-     door de GSAP-timeline één voor één in- en uitgefade. */
-  .hero--animated .hero-beats [data-beat] {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    margin: 0;
-    font-size: var(--text-display);
-    line-height: var(--text-display--line-height);
-    color: var(--color-cream);
+  /* Geanimeerde variant: labels gestapeld in één grid-cel voor de crossfade. */
+  .hero--animated .hero-days {
+    display: grid;
   }
   .hero--animated .hero-hint {
     display: block;
@@ -79,48 +89,57 @@ import Logo from './Logo.astro';
   const section = document.querySelector<HTMLElement>('[data-hero]');
   if (section) {
     const canvas = section.querySelector<HTMLCanvasElement>('[data-hero-canvas]')!;
-    const beats = [...section.querySelectorAll<HTMLElement>('[data-beat]')];
+    const headline = section.querySelector<HTMLElement>('[data-hero-headline]')!;
+    const days = [...section.querySelectorAll<HTMLElement>('[data-day]')];
     const caption = section.querySelector<HTMLElement>('[data-hero-caption]')!;
     const hint = section.querySelector<HTMLElement>('[data-hero-hint]')!;
     const renderer = createSceneRenderer(canvas);
+
+    // De canvas-scène beslaat het eerste deel van de scrub; daarna maakt
+    // hij plaats voor de kopregel (het "live"-moment).
+    const SCENE_END = 0.88;
 
     const mm = gsap.matchMedia();
 
     mm.add(NO_PREFERENCE, () => {
       section.classList.add('hero--animated');
-      gsap.set(beats, { yPercent: -50 });
-      gsap.set([beats[1], beats[2], caption], { autoAlpha: 0 });
+      gsap.set([headline, caption, ...days], { autoAlpha: 0 });
+      gsap.set(canvas, { opacity: 0.85 });
       renderer.draw(0);
 
-      // Eén timeline, gescrubd over 2,5 schermhoogte. De canvas-scène volgt
-      // exact dezelfde progress → tekst en animatie lopen altijd in de maat.
+      // Gepind over ±4,5 schermhoogte (≈ vijf scrolls): de site bouwt
+      // zichzelf op, dag-labels schuiven voorbij, en op het eind komt de
+      // kopregel over het afgebouwde resultaat heen.
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=250%',
+          end: '+=450%',
           pin: true,
           scrub: 0.6,
           anticipatePin: 1,
-          onUpdate: (self) => renderer.draw(self.progress),
+          onUpdate: (self) => renderer.draw(Math.min(1, self.progress / SCENE_END)),
         },
       });
 
-      tl.to(hint, { autoAlpha: 0, duration: 0.04 }, 0.04)
-        // Beat 1 → 2
-        .to(beats[0], { autoAlpha: 0, y: -44, duration: 0.09 }, 0.24)
-        .fromTo(beats[1], { y: 44 }, { autoAlpha: 1, y: 0, duration: 0.08 }, 0.31)
-        // Beat 2 → 3
-        .to(beats[1], { autoAlpha: 0, y: -44, duration: 0.09 }, 0.54)
-        .fromTo(beats[2], { y: 44 }, { autoAlpha: 1, y: 0, duration: 0.08 }, 0.61)
-        // Beat 3 weg, caption erin
-        .to(beats[2], { autoAlpha: 0, y: -36, duration: 0.08 }, 0.85)
-        .fromTo(caption, { y: 18 }, { autoAlpha: 1, y: 0, duration: 0.07 }, 0.91);
+      tl.to(hint, { autoAlpha: 0, duration: 0.03 }, 0.03);
+
+      // Vijf dag-labels, netjes verdeeld over de bouw-fase.
+      days.forEach((chip, i) => {
+        const start = 0.02 + i * (SCENE_END / days.length);
+        tl.fromTo(chip, { y: 14 }, { autoAlpha: 1, y: 0, duration: 0.03 }, start);
+        tl.to(chip, { autoAlpha: 0, y: -14, duration: 0.03 }, start + SCENE_END / days.length - 0.035);
+      });
+
+      // "Live": canvas dimt tot achtergrond, kopregel + caption verschijnen.
+      tl.to(canvas, { opacity: 0.35, duration: 0.08 }, SCENE_END)
+        .fromTo(headline, { y: 28 }, { autoAlpha: 1, y: 0, duration: 0.08 }, SCENE_END + 0.02)
+        .fromTo(caption, { y: 16 }, { autoAlpha: 1, y: 0, duration: 0.06 }, SCENE_END + 0.06);
 
       return () => {
         section.classList.remove('hero--animated');
-        gsap.set([...beats, caption, hint], { clearProps: 'all' });
+        gsap.set([headline, caption, hint, canvas, ...days], { clearProps: 'all' });
       };
     });
 

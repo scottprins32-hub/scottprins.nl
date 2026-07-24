@@ -43,6 +43,7 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
 
 <script>
   import type { AddonId } from '../data/pricing';
+  import { isIncluded } from '../lib/calc';
   import { configurator } from '../data/site';
   import { subscribe, toggleAddon } from '../scripts/store';
 
@@ -56,11 +57,20 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
 
   subscribe((sel) => {
     for (const card of cards) {
-      const added = sel.addons.includes(card.dataset.addonId as AddonId);
+      const id = card.dataset.addonId as AddonId;
+      const included = isIncluded(sel.base, id);
+      const added = sel.addons.includes(id);
       const button = card.querySelector<HTMLButtonElement>('[data-addon-toggle]')!;
-      card.toggleAttribute('data-added', added);
-      button.setAttribute('aria-pressed', String(added));
-      button.textContent = added ? configurator.addedButton : configurator.addButton;
+      card.toggleAttribute('data-added', added || included);
+      button.setAttribute('aria-pressed', String(added || included));
+      // Zit de add-on gratis bij het gekozen pakket? Dan is er niets te
+      // kiezen — de knop vertelt het goede nieuws en gaat op slot.
+      button.disabled = included;
+      button.textContent = included
+        ? configurator.includedButton
+        : added
+          ? configurator.addedButton
+          : configurator.addButton;
     }
   });
 </script>

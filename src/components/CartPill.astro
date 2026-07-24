@@ -25,6 +25,7 @@
 
 <script>
   import { addons } from '../data/pricing';
+  import { addonCost, isIncluded } from '../lib/calc';
   import { eur } from '../lib/format';
   import { subscribe } from '../scripts/store';
 
@@ -34,9 +35,12 @@
   const total = pill.querySelector<HTMLElement>('[data-cart-total]')!;
 
   subscribe((sel) => {
-    const chosen = addons.filter((a) => sel.addons.includes(a.id));
-    const upfront = chosen.reduce((sum, a) => sum + a.upfront, 0);
-    const monthly = chosen.reduce((sum, a) => sum + a.monthly, 0);
+    // Inbegrepen add-ons horen bij het pakket en tellen hier niet mee.
+    const chosen = addons.filter(
+      (a) => sel.addons.includes(a.id) && !isIncluded(sel.base, a.id),
+    );
+    const upfront = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).upfront, 0);
+    const monthly = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).monthly, 0);
 
     count.textContent = String(chosen.length);
     label.textContent = chosen.length === 1 ? 'optie' : 'opties';

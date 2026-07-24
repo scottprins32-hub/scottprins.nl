@@ -25,11 +25,13 @@ export const site = {
 /* ------------------------------ Hero ------------------------------ */
 
 export const hero = {
-  beats: [
-    'Je website is je eerste indruk.',
-    'Ik bouw hem in dagen. Niet in maanden.',
-    'En je betaalt alleen voor wat je écht nodig hebt.',
-  ],
+  /** Eindbeeld van de intro — tegelijk de belangrijkste zin van de site. */
+  headline: 'Websites die werken. Gebouwd in dagen, niet maanden.',
+  /**
+   * De vijf bouwdagen die tijdens het scrollen voorbijkomen terwijl de
+   * site zichzelf opbouwt. Bewust bijna geen tekst — de animatie is de show.
+   */
+  days: ['Dag 1 — schets', 'Dag 2 — ontwerp', 'Dag 3 — bouwen', 'Dag 4 — content', 'Dag 5 — live'],
   caption: '↑ Dit effect? Ook gewoon te bestellen. Optie 11 op de menukaart.',
   captionTargetId: 'menu-scrollvideo',
   scrollHint: 'Scroll om te bouwen',
@@ -361,8 +363,10 @@ export const configurator = {
   monthlyLabel: 'Per maand',
   disclaimer: 'Richtprijs — definitieve offerte na kort gesprek, altijd vaste prijs.',
   popularBadge: 'Populair',
+  includedBadge: 'Inbegrepen',
   addButton: '+ In mijn website',
   addedButton: '✓ In je website',
+  includedButton: '✓ Gratis bij je pakket',
   form: {
     title: 'Vraag je offerte aan',
     name: 'Naam',
