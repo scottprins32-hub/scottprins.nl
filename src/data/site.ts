@@ -3,8 +3,7 @@
  * Tekst aanpassen? Alleen hier. Prijzen staan in pricing.ts.
  *
  * Placeholders die je vóór livegang moet vervangen (grep op '{'):
- *   {KVK}  {BTW}  — in `footer`
- *   whatsapp-nummer — in `site.whatsapp` (internationaal, zonder + of spaties)
+ *   {BTW}  — in `footer`
  *   proof.cases — echte casestudies
  */
 
@@ -13,9 +12,9 @@ export const site = {
   legalName: 'Scott Prins Webdesign',
   url: 'https://scottprins.nl',
   email: 'scottprins32@gmail.com',
-  /** Internationaal formaat zonder '+', voor wa.me-links. VERVANG DIT. */
-  whatsapp: '31600000000',
-  whatsappDisplay: '06 00 00 00 00',
+  /** Internationaal formaat zonder '+', voor wa.me-links. */
+  whatsapp: '31619900444',
+  whatsappDisplay: '06 19 90 04 44',
   meta: {
     title: 'Scott Prins — Websites die werken. Gebouwd in dagen, niet maanden.',
     description:
@@ -473,7 +472,7 @@ export const faq = {
 export const footer = {
   cta: 'Zin om te beginnen?',
   kvkLabel: 'KVK',
-  kvk: '{KVK}',
+  kvk: '89874994',
   btwLabel: 'BTW-id',
   btw: '{BTW}',
   privacyLink: 'Privacyverklaring',
