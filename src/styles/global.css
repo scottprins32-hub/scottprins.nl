@@ -5,6 +5,10 @@
 /* ------------------------------------------------------------------ */
 :root {
   --accent: #4f46e5;
+  /* Twee begeleidende kleuren voor de aurora, afgeleid van het accent:
+     zo blijft "verander alleen --accent" ook echt waar. */
+  --accent-warm-a: color-mix(in oklab, var(--accent) 70%, #ff00e5);
+  --accent-warm-b: color-mix(in oklab, var(--accent) 30%, #ffb020);
 }
 
 /* ---------------------------- Fonts ------------------------------- */
@@ -127,9 +131,10 @@ section[id],
   .js .hero-scene-wrap .scene {
     transform: rotateX(14deg) rotateY(-24deg);
   }
+  /* Het browserframe en de vloer blijven staan: de eerste paint is dus
+     een verlicht venster op scottprins.nl, niet een leeg zwart vlak.
+     Alleen de losse onderdelen komen straks aanvliegen. */
   .js .hero-scene-wrap .piece,
-  .js .hero-scene-wrap .scene-frame,
-  .js .hero-scene-wrap [data-floor],
   .js .hero-scene-wrap [data-glow] {
     opacity: 0;
   }
@@ -199,7 +204,7 @@ section[id],
   height: 65%;
   top: 20%;
   right: -10%;
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, #7c3aed 48%, transparent), transparent 68%);
+  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent-warm-a) 48%, transparent), transparent 68%);
   animation: aurora-drift-b 32s ease-in-out infinite alternate;
 }
 .aurora-3 {
@@ -207,7 +212,7 @@ section[id],
   height: 55%;
   bottom: -14%;
   left: 25%;
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, #f59e0b 30%, transparent), transparent 70%);
+  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent-warm-b) 30%, transparent), transparent 70%);
   animation: aurora-drift-c 38s ease-in-out infinite alternate;
 }
 @keyframes aurora-drift-a {

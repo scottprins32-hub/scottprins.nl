@@ -42,12 +42,19 @@ export const hero = {
     { label: 'Schets', text: 'Dag 1 — we beginnen bij jouw verhaal. Geen template.' },
     { label: 'Ontwerp', text: 'Dag 2 — jouw kleuren, jouw foto’s, jouw toon.' },
     { label: 'Bouwen', text: 'Dag 3 — alles wat je hier ziet werken, kun je bestellen.' },
-    { label: 'Content', text: 'Dag 4 — teksten, prijzen en openingstijden staan erin.' },
+    { label: 'Content', text: 'Dag 4 — teksten, prijzen en openingstijden staan erin. En dan gaat het licht aan.' },
     { label: 'Live', text: 'Dag 5 — vindbaar, snel, en van jou. Klaar voor klanten.' },
   ],
   caption: '↑ Dit effect? Ook gewoon te bestellen. Optie 11 op de menukaart.',
   captionTargetId: 'menu-scrollvideo',
   scrollHint: 'Scroll — dan bouwt hij zichzelf',
+  /** Meelopende prijsteller: laat zien wat er verschijnt én wat het kost. */
+  ledger: {
+    label: 'Jouw site tot nu toe',
+    upfrontLabel: 'eenmalig',
+    monthlyLabel: 'p/m',
+    cta: 'Zet ’m in mijn offerte →',
+  },
 } as const;
 
 /* ------------------------------ Navigatie --------------------------- */

@@ -240,9 +240,10 @@ const { interactive = false } = Astro.props;
       0 3cqw 7cqw -1.5cqw rgb(0 0 0 / 0.7);
   }
   /* Zachte "vloer": een gloed onder de scène, puur radiale gradient (geen
-     filter:blur — die is op mobiel duur). */
+     filter:blur — die is op mobiel duur).
+     De diepte staat bewust NIET hier maar in scene-timeline.ts: GSAP
+     schrijft de hele transform en zou een CSS-translateZ overschrijven. */
   .scene-floor {
-    transform: translateZ(-140px) scale(1.15);
     background: radial-gradient(
       ellipse 70% 60% at 50% 55%,
       color-mix(in oklab, var(--accent) 42%, transparent),

@@ -40,12 +40,24 @@ const ENTRANCES: Array<[piece: string, at: number]> = [
 ];
 
 /**
- * Tot hier speelt de intro zichzelf af, zónder scrollen. Bewust ver
- * genoeg: bij stilstand kijk je naar een hérkenbare website (frame,
- * kopregel, knop, chatbot, prijskaart) die in 3D staat te zweven —
- * geen half lege schets. Scrollen maakt het af.
+ * Tot hier speelt de intro zichzelf af, zónder scrollen: frame, kopregel,
+ * knop en chatvenster staan er dan al in 3D te zweven — een herkenbare
+ * website, geen halve schets. Bewust niet vérder: alles wat de bezoeker
+ * daarna ziet verschijnen (prijskaart, review, stat, agenda, cart-pill)
+ * is de beloning voor het scrollen, en telt zichtbaar mee in de teller.
  */
-export const INTRO_END = 0.5;
+export const INTRO_END = 0.345;
+
+/**
+ * Welke add-on er "bijkomt" op het moment dat een stuk landt. Hiermee
+ * loopt de prijsteller in de hero exact mee met wat de bezoeker ziet
+ * verschijnen — de bedragen komen uit pricing.ts, dus altijd kloppend.
+ */
+export const LEDGER_STEPS: Array<[progress: number, addon: string]> = [
+  [0.32, 'chatbot'],
+  [0.49, 'agenda'],
+  [0.57, 'reviews'],
+];
 
 export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   const scene = root.querySelector<HTMLElement>('[data-scene]')!;
@@ -63,8 +75,10 @@ export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
 
   // --- Begintoestand: alles los in de ruimte, camera gekanteld ---------
+  // Frame en vloer staan er al (zie global.css): die animeren we niet weg,
+  // anders opent de site alsnog met een leeg vlak.
   gsap.set(scene, { rotationX: 14, rotationY: -24 });
-  gsap.set([frame, floor], { autoAlpha: 0, scale: 0.92 });
+  gsap.set(floor, { z: -140, scale: 1.15 });
   gsap.set(glow, { autoAlpha: 0 });
   for (const [name, [fx, fy, rotY, z]] of Object.entries(SCATTER)) {
     gsap.set(piece(name), {
@@ -78,9 +92,8 @@ export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   }
   gsap.set([...pops], { scale: 0, transformOrigin: '50% 50%' });
 
-  // --- Dag 1: het frame verschijnt en de schets wordt getekend ---------
-  tl.to([frame, floor], { autoAlpha: 1, scale: 1, duration: 0.09, ease: 'power3.out' }, 0)
-    .fromTo(
+  // --- Dag 1: de schets wordt in het frame getekend --------------------
+  tl.fromTo(
       sketches,
       { autoAlpha: 0, scale: 0.9, transformOrigin: '50% 50%' },
       { autoAlpha: 1, scale: 1, duration: 0.05, stagger: 0.02 },
@@ -106,7 +119,7 @@ export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
   }
 
   // Schets lost op zodra er echt gebouwd wordt
-  tl.to(sketches, { autoAlpha: 0, duration: 0.06, stagger: 0.015 }, 0.34);
+  tl.to(sketches, { autoAlpha: 0, duration: 0.05, stagger: 0.012 }, 0.26);
 
   // Badges, sterren en accenten poppen tevoorschijn
   tl.to(pops, { scale: 1, duration: 0.05, stagger: 0.015, ease: 'back.out(2.4)' }, 0.66);

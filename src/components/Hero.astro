@@ -105,6 +105,31 @@ import Logo from './Logo.astro';
             }
           </div>
         </div>
+
+        {/* Meelopende prijsteller: elk onderdeel dat rechts verschijnt,
+            telt hier zichtbaar mee. Zo is de animatie zelf het verhaal
+            "dit krijg je, dit kost het". */}
+        <div
+          class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10"
+          data-hero-ledger
+        >
+          <span class="text-muted-dark text-xs tracking-wider uppercase">{hero.ledger.label}</span>
+          <span class="font-display text-lg font-semibold tabular-nums">
+            <span data-ledger-upfront data-value="0">€ 0</span>
+            <span class="text-muted-dark text-sm font-normal"> {hero.ledger.upfrontLabel}</span>
+          </span>
+          <span class="font-display text-lg font-semibold tabular-nums">
+            <span data-ledger-monthly data-value="0">€ 0</span>
+            <span class="text-muted-dark text-sm font-normal"> {hero.ledger.monthlyLabel}</span>
+          </span>
+          <button
+            type="button"
+            class="ml-auto hidden rounded-lg bg-accent px-3.5 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+            data-ledger-cta
+          >
+            {hero.ledger.cta}
+          </button>
+        </div>
       </div>
 
       {/* ---------------- Rechts: de site die zichzelf bouwt ---------------- */}
@@ -159,14 +184,19 @@ import Logo from './Logo.astro';
 </style>
 
 <script>
+  import type { AddonId } from '../data/pricing';
+  import { calcTotals } from '../lib/calc';
+  import { eur } from '../lib/format';
   import { gsap, NO_PREFERENCE } from '../scripts/motion';
   import {
     attachPointerTilt,
     buildSceneTimeline,
     INTRO_END,
+    LEDGER_STEPS,
     startIdleFloat,
   } from '../scripts/scene-timeline';
-  import { toggleAddon } from '../scripts/store';
+  import { applyPreset, toggleAddon } from '../scripts/store';
+  import { tweenNumber } from '../scripts/tween';
 
   const section = document.querySelector<HTMLElement>('[data-hero]');
   if (section) {
@@ -181,8 +211,36 @@ import Logo from './Logo.astro';
       section.querySelector('[data-hero-sub]'),
       section.querySelector('[data-hero-actions]'),
       section.querySelector('[data-hero-rail]'),
+      section.querySelector('[data-hero-ledger]'),
       section.querySelector('[data-hero-caption]'),
     ].filter(Boolean) as HTMLElement[];
+
+    // ---- Prijsteller: telt mee met wat er in de scène verschijnt ----
+    const ledgerUpfront = section.querySelector<HTMLElement>('[data-ledger-upfront]')!;
+    const ledgerMonthly = section.querySelector<HTMLElement>('[data-ledger-monthly]')!;
+    const ledgerCta = section.querySelector<HTMLElement>('[data-ledger-cta]')!;
+    /** De samenstelling die de hero-demo laat zien — ook wat de knop bestelt. */
+    const DEMO_BASE = 'compleet' as const;
+    let shownAddons: AddonId[] = [];
+
+    function renderLedger(progress: number): void {
+      const addons = LEDGER_STEPS.filter(([at]) => progress >= at).map(([, id]) => id as AddonId);
+      if (addons.length === shownAddons.length) return;
+      shownAddons = addons;
+      const totals = calcTotals({ base: DEMO_BASE, addons, care: 'basis' });
+      tweenNumber(ledgerUpfront, totals.upfront, eur);
+      tweenNumber(ledgerMonthly, totals.monthly, eur);
+      // Zodra alles staat, kan de bezoeker deze samenstelling overnemen.
+      ledgerCta.classList.toggle('hidden', addons.length < LEDGER_STEPS.length);
+    }
+
+    ledgerCta.addEventListener('click', () => {
+      applyPreset(DEMO_BASE, shownAddons);
+      document.querySelector('#configurator')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Beginstand: het kale basispakket staat er al.
+    renderLedger(0);
 
     // De mini "+ In mijn website" doet écht iets: de agenda belandt in de
     // configurator. Klein grapje, groot effect — de hero ís de site.
@@ -202,7 +260,11 @@ import Logo from './Logo.astro';
       const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
       intro
         .to(chrome, { autoAlpha: 1, duration: 0.5, stagger: 0.08 }, 0.25)
-        .to(sceneTl, { progress: INTRO_END, duration: 1.9, ease: 'power2.out' }, 0.1);
+        .to(
+          sceneTl,
+          { progress: INTRO_END, duration: 1.9, ease: 'power2.out', onUpdate: () => renderLedger(sceneTl.progress()) },
+          0.1,
+        );
 
       // Zweven + muis-parallax zodra de intro geland is: het beeld leeft,
       // ook als de bezoeker niets doet.
@@ -219,15 +281,20 @@ import Logo from './Logo.astro';
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=380%',
+          end: '+=300%',
+          // Kort scrub-getal: de scène moet ónder je vinger meebewegen,
+          // niet als een video naijlen. Dat is precies het verschil tussen
+          // "dit reageert op mij" en "dit speelt gewoon af".
           pin: true,
-          scrub: 0.5,
+          scrub: 0.18,
           anticipatePin: 1,
           onUpdate: (self) => {
             // Scrollt iemand meteen? Dan de intro doorspoelen, niet dubbel animeren.
             if (self.progress > 0.004 && intro.progress() < 1) intro.progress(1);
             // De scrub neemt de bouw over vanaf waar de intro ophield.
-            sceneTl.progress(INTRO_END + self.progress * (1 - INTRO_END));
+            const built = INTRO_END + self.progress * (1 - INTRO_END);
+            sceneTl.progress(built);
+            renderLedger(built);
 
             // Voortgangsbalk + dagregel volgen dezelfde bouw.
             const stage = gsap.utils.clamp(0, 4.999, self.progress * 5);
