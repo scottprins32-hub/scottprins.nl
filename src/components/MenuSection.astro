@@ -22,17 +22,26 @@ const { id, index, kicker, title, lead, addonIds, pacing = 'none' } = Astro.prop
 const number = String(index).padStart(2, '0');
 ---
 
+<style>
+  .menu-number::before {
+    content: attr(data-number);
+  }
+</style>
+
 <section
   {id}
   class="menu-section relative overflow-hidden bg-cream py-16 text-ink sm:py-24"
   data-menu-section
   data-pacing={pacing}
 >
-  {/* Decoratief sectienummer; krijgt parallax in de 'parallax'-secties. */}
+  {/* Decoratief sectienummer; krijgt parallax in de 'parallax'-secties.
+      De cijfers staan in CSS-content (::before) zodat ze buiten de
+      toegankelijkheidsboom blijven — het is puur decoratie. */}
   <span
     class="menu-number pointer-events-none absolute -top-6 right-2 font-display text-[clamp(6rem,20vw,14rem)] leading-none font-semibold text-ink/[0.05] select-none"
     data-menu-number
-    aria-hidden="true">{number}</span
+    data-number={number}
+    aria-hidden="true"></span
   >
 
   <div class="relative mx-auto w-full max-w-6xl px-5">
