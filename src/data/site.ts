@@ -50,6 +50,19 @@ export const hero = {
   scrollHint: 'Scroll — dan bouwt hij zichzelf',
 } as const;
 
+/* ------------------------------ Navigatie --------------------------- */
+
+export const nav = {
+  links: [
+    { label: 'Menukaart', href: '#menukaart' },
+    { label: 'Prijzen', href: '#configurator' },
+    { label: 'Resultaat', href: '#resultaat' },
+    { label: 'Over Scott', href: '#over-scott' },
+    { label: 'FAQ', href: '#faq' },
+  ],
+  cta: 'Offerte',
+} as const;
+
 /* --------------------------- Zo werkt het -------------------------- */
 
 export const howItWorks = {
@@ -367,6 +380,8 @@ export const configurator = {
   kicker: 'Stel je website samen',
   title: 'Jouw website, jouw prijs.',
   lead: 'Kies een basis, zet je extra’s aan (wat je onderweg toevoegde staat al klaar) en zie meteen wat het kost.',
+  presetTitle: 'Snel starten — wat voor zaak heb je?',
+  presetLead: 'Eén tik en er staat een voorstel klaar dat past bij jouw vak. Daarna pas je alles gewoon aan.',
   baseTitle: 'Kies je basis',
   addonsTitle: 'Kies je extra’s',
   addonsNoDemoNote: 'Geen demo op deze pagina — vraag ernaar, dan laat ik ’m live zien.',

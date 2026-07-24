@@ -45,6 +45,11 @@ export function setCare(id: CarePlanId): void {
   commit(sanitizeSelection({ ...selection, care: id }));
 }
 
+/** Zet basis én extra's in één keer (gebruikt door de snelstart-presets). */
+export function applyPreset(base: BasePackageId, addons: AddonId[]): void {
+  commit(sanitizeSelection({ ...selection, base, addons }));
+}
+
 export function toggleAddon(id: AddonId): void {
   const addons = selection.addons.includes(id)
     ? selection.addons.filter((a) => a !== id)

@@ -5,7 +5,7 @@
  * vooraf aangevinkt wat de bezoeker op de menukaart toevoegde) en het
  * onderhoudsplan. Rechts (sticky): live meerekenende offerte + leadformulier.
  */
-import { addons, basePackages, carePlans } from '../data/pricing';
+import { addons, basePackages, carePlans, presets } from '../data/pricing';
 import { configurator } from '../data/site';
 import { eur, priceLine } from '../lib/format';
 import LeadForm from './LeadForm.astro';
@@ -21,8 +21,27 @@ import LeadForm from './LeadForm.astro';
 
     <div class="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_400px]">
       <div class="min-w-0">
+        {/* ---- Snelstart per vak ---- */}
+        <h3 class="font-display text-xl font-semibold">{configurator.presetTitle}</h3>
+        <p class="text-muted-dark mt-1.5 text-sm">{configurator.presetLead}</p>
+        <div class="mt-4 flex flex-wrap gap-2.5">
+          {
+            presets.map((preset) => (
+              <button
+                type="button"
+                class="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2.5 text-sm font-medium transition-colors hover:border-accent aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-white"
+                data-preset={preset.id}
+                aria-pressed="false"
+              >
+                <span aria-hidden="true">{preset.icon}</span>
+                {preset.label}
+              </button>
+            ))
+          }
+        </div>
+
         {/* ---- Basispakketten ---- */}
-        <h3 class="font-display text-xl font-semibold">{configurator.baseTitle}</h3>
+        <h3 class="font-display mt-10 text-xl font-semibold">{configurator.baseTitle}</h3>
         <div class="mt-4 grid gap-4 sm:grid-cols-3" role="radiogroup" aria-label={configurator.baseTitle}>
           {
             basePackages.map((pkg) => (
@@ -146,10 +165,18 @@ import LeadForm from './LeadForm.astro';
 </section>
 
 <script>
-  import { addons, basePackages, carePlans, type AddonId, type BasePackageId, type CarePlanId } from '../data/pricing';
+  import {
+    addons,
+    basePackages,
+    carePlans,
+    presets,
+    type AddonId,
+    type BasePackageId,
+    type CarePlanId,
+  } from '../data/pricing';
   import { addonCost, calcTotals, isIncluded } from '../lib/calc';
   import { eur, priceLine } from '../lib/format';
-  import { setBase, setCare, subscribe, toggleAddon } from '../scripts/store';
+  import { applyPreset, setBase, setCare, subscribe, toggleAddon } from '../scripts/store';
   import { tweenNumber } from '../scripts/tween';
 
   const root = document.querySelector<HTMLElement>('[data-configurator]');
@@ -160,6 +187,14 @@ import LeadForm from './LeadForm.astro';
     const quoteLines = root.querySelector<HTMLElement>('[data-quote-lines]')!;
     const quoteUpfront = root.querySelector<HTMLElement>('[data-quote-upfront]')!;
     const quoteMonthly = root.querySelector<HTMLElement>('[data-quote-monthly]')!;
+
+    const presetButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-preset]')];
+    presetButtons.forEach((button) =>
+      button.addEventListener('click', () => {
+        const preset = presets.find((p) => p.id === button.dataset.preset)!;
+        applyPreset(preset.base, [...preset.addons]);
+      }),
+    );
 
     baseInputs.forEach((input) =>
       input.addEventListener('change', () => setBase(input.value as BasePackageId)),
@@ -191,6 +226,16 @@ import LeadForm from './LeadForm.astro';
         card.querySelector('[data-addon-price]')!.textContent = included
           ? 'Gratis bij je pakket'
           : priceLine(addon.upfront, addon.monthly);
+      });
+
+      // Een preset is "actief" zolang de selectie er exact aan voldoet.
+      presetButtons.forEach((button) => {
+        const preset = presets.find((p) => p.id === button.dataset.preset)!;
+        const same =
+          preset.base === sel.base &&
+          preset.addons.length === sel.addons.length &&
+          preset.addons.every((id) => sel.addons.includes(id));
+        button.setAttribute('aria-pressed', String(same));
       });
 
       // Offerte-regels: pakket → inbegrepen extra's → betaalde extra's → onderhoud

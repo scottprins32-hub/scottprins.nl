@@ -240,6 +240,59 @@ export const addons: Addon[] = [
   },
 ];
 
+/**
+ * Snelstart per vak. Eén tik zet een compleet, verdedigbaar voorstel klaar
+ * in de configurator — de bezoeker hoeft niet zelf 15 opties af te wegen.
+ * Pas gerust aan: hier staat alleen wélke opties, de prijzen komen
+ * automatisch uit `addons` hierboven.
+ */
+export interface Preset {
+  id: string;
+  /** Hoe de bezoeker zichzelf noemt: "Ik heb een kapsalon". */
+  label: string;
+  icon: string;
+  base: BasePackageId;
+  addons: AddonId[];
+}
+
+export const presets: Preset[] = [
+  {
+    id: 'salon',
+    label: 'Kapsalon of schoonheidssalon',
+    icon: '💇',
+    base: 'compleet',
+    addons: ['agenda', 'reviews', 'sms', 'cadeaubonnen'],
+  },
+  {
+    id: 'horeca',
+    label: 'Restaurant, café of bezorging',
+    icon: '🍕',
+    base: 'interactief',
+    addons: ['bestellen', 'kaart', 'reviews', 'meertalig'],
+  },
+  {
+    id: 'klus',
+    label: 'Klus-, bouw- of hoveniersbedrijf',
+    icon: '🔧',
+    base: 'compleet',
+    addons: ['calculator', 'beforeafter', 'intake'],
+  },
+  {
+    id: 'praktijk',
+    label: 'Praktijk of behandelaar',
+    icon: '🩺',
+    base: 'interactief',
+    addons: ['agenda', 'intake', 'portaal', 'sms'],
+  },
+  {
+    id: 'winkel',
+    label: 'Winkel of showroom',
+    icon: '🛍️',
+    base: 'compleet',
+    addons: ['kaart', 'reviews', 'cadeaubonnen', 'nieuwsbrief'],
+  },
+];
+
 export const carePlans: CarePlan[] = [
   {
     id: 'basis',

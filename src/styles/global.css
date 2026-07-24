@@ -87,7 +87,8 @@ body {
 /* Ankerdoelen niet onder de vaste cart-pill laten landen */
 section[id],
 [data-anchor] {
-  scroll-margin-top: 4.5rem;
+  /* Ruimte voor de zwevende navigatiebalk bovenin. */
+  scroll-margin-top: 5.5rem;
 }
 
 /* -------------------- Terugkerende componentstijlen ----------------- */
@@ -159,6 +160,15 @@ section[id],
   .js [data-hero-caption] {
     opacity: 0;
   }
+}
+
+/* Navigatiebalk: met JS begint hij buiten beeld en schuift hij pas
+   binnen voorbij de hero; zonder JS staat hij er gewoon meteen. */
+.js .site-nav {
+  transform: translateY(-130%);
+}
+.js .site-nav[data-visible] {
+  transform: translateY(0);
 }
 
 /* --------------------------- Aurora -------------------------------- */

@@ -1,0 +1,78 @@
+---
+/**
+ * Zwevende navigatie. Verschijnt pas zodra de bezoeker de hero voorbij is
+ * (daar staan de knoppen al) en verdwijnt weer bovenaan. Zonder deze balk
+ * is een one-pager van deze lengte een eenrichtingsstraat.
+ *
+ * Ook zonder JavaScript bruikbaar: dan staat hij gewoon altijd in beeld.
+ */
+import { nav, site } from '../data/site';
+---
+
+<header
+  class="site-nav fixed inset-x-0 top-0 z-40 transition-transform duration-300 motion-reduce:transition-none"
+  data-site-nav
+>
+  <nav
+    class="mx-auto mt-3 flex w-[min(100%-1.5rem,72rem)] items-center gap-4 rounded-2xl bg-ink/80 px-4 py-2.5 ring-1 ring-white/12 backdrop-blur-md"
+    aria-label="Hoofdmenu"
+  >
+    <a href="#main" class="font-display text-sm font-semibold tracking-[0.18em] whitespace-nowrap text-cream uppercase">
+      Scott<span class="text-accent">Prins</span>
+    </a>
+
+    <ul class="ml-auto hidden items-center gap-1 md:flex">
+      {
+        nav.links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="rounded-lg px-3 py-2 text-sm font-medium text-muted-dark transition-colors hover:bg-white/8 hover:text-cream"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a
+      href={`https://wa.me/${site.whatsapp}`}
+      target="_blank"
+      rel="noopener"
+      class="ml-auto rounded-lg px-3 py-2 text-sm font-medium text-muted-dark transition-colors hover:text-cream md:ml-0"
+    >
+      <span aria-hidden="true">💬</span>
+      {/* sr-only i.p.v. hidden: op mobiel blijft de naam voor schermlezers bestaan. */}
+      <span class="sr-only sm:not-sr-only">WhatsApp</span>
+    </a>
+    <a
+      href="#configurator"
+      class="rounded-lg bg-accent px-4 py-2 text-sm font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90"
+    >
+      {nav.cta}
+    </a>
+  </nav>
+</header>
+
+{/* De toon/verberg-regels staan in global.css: een selector die begint
+    met `.js` (op <html>) overleeft Astro's scoping niet. */}
+
+<script>
+  import { ScrollTrigger } from '../scripts/motion';
+
+  const navEl = document.querySelector<HTMLElement>('[data-site-nav]');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+
+  if (navEl && hero) {
+    // Zichtbaar zodra de hero (inclusief zijn pin-lengte) voorbij is.
+    ScrollTrigger.create({
+      trigger: hero,
+      start: 'bottom top+=80',
+      onEnter: () => navEl.setAttribute('data-visible', ''),
+      onLeaveBack: () => navEl.removeAttribute('data-visible'),
+    });
+  } else {
+    navEl?.setAttribute('data-visible', '');
+  }
+</script>
