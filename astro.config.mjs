@@ -11,6 +11,15 @@ export default defineConfig({
   output: 'static',
   adapter: vercel(),
   integrations: [sitemap()],
+  build: {
+    /*
+     * De stylesheets zijn samen ~12 kB, maar kostten wél twee losse
+     * render-blokkerende requests vóór de eerste paint (Lighthouse:
+     * ~700 ms op mobiel). Inline zetten scheelt die hele round-trip;
+     * bij twee pagina's weegt caching daar niet tegenop.
+     */
+    inlineStylesheets: 'always',
+  },
   vite: {
     plugins: [tailwindcss()],
   },
