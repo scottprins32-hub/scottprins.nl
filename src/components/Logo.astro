@@ -6,11 +6,12 @@
  */
 interface Props {
   class?: string;
+  [key: string]: unknown;
 }
-const { class: className = '' } = Astro.props;
+const { class: className = '', ...rest } = Astro.props;
 ---
 
-<span class:list={['inline-flex items-center gap-2.5', className]}>
+<span class:list={['inline-flex items-center gap-2.5', className]} {...rest}>
   <svg
     viewBox="0 0 44 28"
     class="h-5 w-auto"

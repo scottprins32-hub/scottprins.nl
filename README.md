@@ -19,9 +19,9 @@ npm run build      # productie-build (statisch + Vercel-functie)
 
 ## Prijzen aanpassen — één bestand
 
-Alle prijzen staan in **`src/data/pricing.ts`**: de drie basispakketten, alle 16 add-ons en de onderhoudsplannen. Pas daar een getal aan en de menukaart, de configurator, de offertemail én de tests rekenen automatisch mee.
+Alle prijzen staan in **`src/data/pricing.ts`**: de drie basispakketten, alle add-ons (met per pakket gratis inbegrepen extra’s via `includedAddons`) en de onderhoudsplannen. Pas daar een getal aan en de menukaart, de configurator, de offertemail én de tests rekenen automatisch mee.
 
-Alle zichtbare tekst staat in **`src/data/site.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de placeholders — grep op `{KVK}`, `{BTW}`, `{Bedrijf}` en zet je echte WhatsApp-nummer in `site.whatsapp` (internationaal formaat zonder `+`, bijv. `31612345678`).
+Alle zichtbare tekst staat in **`src/data/site.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de laatste placeholders — grep op `{BTW}` en `{Bedrijf}` (de casestudies).
 
 ## Accentkleur wisselen — één CSS-variabele
 
@@ -33,7 +33,7 @@ In **`src/styles/global.css`** staat bovenaan:
 }
 ```
 
-Verander alléén deze waarde. Alle knoppen, badges, de canvas-animatie van de hero en zelfs de confetti rekenen erop mee.
+Verander alléén deze waarde. Alle knoppen, badges, de intro-animatie en zelfs de confetti rekenen erop mee.
 
 ## `RESEND_API_KEY` instellen
 
@@ -67,7 +67,7 @@ src/
   lib/quote.ts           ← samenstelling → tekst (e-mail, mailto, WhatsApp)
   scripts/store.ts       ← selectie-store (localStorage + CustomEvent)
   scripts/motion.ts      ← GSAP/ScrollTrigger-setup + reduced-motion-guard
-  scripts/hero-scene.ts  ← canvas-scène van de hero (pure drawScene)
+  scripts/scene-timeline.ts ← bouw-timeline van de intro (gedeeld met demo 11)
   pages/index.astro      ← de one-pager
   pages/privacy.astro    ← AVG-privacyverklaring
   pages/api/lead.ts      ← de enige serverless route
@@ -77,7 +77,7 @@ src/
 Ontwerpbeslissingen die het weten waard zijn:
 
 - **De totalen worden server-side herrekend.** `/api/lead` vertrouwt nooit bedragen van de client; dezelfde `calcTotals` draait aan beide kanten.
-- **De hero is code, geen video.** `hero-scene.ts` tekent elk frame uit een progress-waarde (0–1); ScrollTrigger scrubt hem in de hero, en demo-sectie "Optie 11" speelt exact dezelfde scène tijd-gestuurd af. Kosten: ~4 kB in plaats van een videobestand.
+- **De intro is code, geen video.** `HeroScene.astro` is een mini-scottprins.nl uit échte site-onderdelen (prijskaart, chatbot, review, cart-pill — met live prijzen uit `pricing.ts`); `scene-timeline.ts` bouwt hem op. ScrollTrigger scrubt de opbouw in de hero (na een logo-splash bij het laden), en demo-sectie "Optie 11" speelt exact dezelfde timeline tijd-gestuurd af. Kosten: een paar kB HTML/CSS in plaats van een videobestand — en de "screenshots" lopen nooit achter op de echte site.
 - **`prefers-reduced-motion` wordt overal gerespecteerd.** GSAP-animaties bestaan alleen binnen `gsap.matchMedia()`; CSS-animaties (marquee, flip, confetti) hebben eigen `@media`-fallbacks. De hero is zonder JavaScript of met reduced motion een statische versie met alle tekst zichtbaar.
 - **Google Maps laadt lui.** De kaart-demo gebruikt de keyless iframe-embed en wordt pas geïnjecteerd als de sectie bijna in beeld is. Wil je ooit échte custom pins: dat vraagt de Maps JavaScript API (met key + billing); de wisselknoppen zijn daarop voorbereid.
 - **Geen view transitions (`<ClientRouter />`).** Voeg je die later toe, dan moeten alle ScrollTriggers worden opgeruimd bij `astro:before-swap` — nu niet nodig omdat elke navigatie een echte page load is.

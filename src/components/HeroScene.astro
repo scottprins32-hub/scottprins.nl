@@ -1,0 +1,209 @@
+---
+/**
+ * De "site-in-aanbouw"-scène: een mini-scottprins.nl in een browserframe,
+ * opgebouwd uit HERKENBARE stukjes van de echte site (kopregel, prijskaart,
+ * chatbot, review, stat-tegel, cart-pill) — met echte teksten en echte
+ * prijzen uit pricing.ts, dus altijd in sync.
+ *
+ * Alle maten in cqw (container query units): de scène schaalt verliesvrij,
+ * van de grote hero tot het kleine demo-11-kaartje.
+ *
+ * De DEFAULT-toestand is "afgebouwd" (alles zichtbaar, inclusief gloed):
+ * dat is wat bezoekers zonder JavaScript of met reduced motion zien.
+ * scene-timeline.ts haalt de boel uit elkaar en bouwt hem weer op.
+ */
+import { addons } from '../data/pricing';
+import { demoReviews, hero } from '../data/site';
+import { priceLine } from '../lib/format';
+
+const agenda = addons.find((a) => a.id === 'agenda')!;
+const review = demoReviews.reviews[1];
+---
+
+<div class="scene relative w-full" data-scene-root>
+  {/* Sterretjes rondom het frame (Dag 5) */}
+  {
+    [
+      ['left-[2%]', 'top-[6%]'],
+      ['right-[1%]', 'top-[18%]'],
+      ['left-[4%]', 'bottom-[12%]'],
+      ['right-[3%]', 'bottom-[4%]'],
+    ].map(([x, y]) => (
+      <span
+        class:list={['absolute z-10 font-semibold text-accent text-[3cqw] leading-none select-none', x, y]}
+        data-spark
+        aria-hidden="true"
+      >
+        +
+      </span>
+    ))
+  }
+
+  <div
+    class="scene-frame relative mx-auto aspect-[4/3] w-[92%] overflow-hidden rounded-[2cqw] border border-cream/50 bg-ink"
+    data-piece="frame"
+  >
+    {/* Browserchrome met echte wordmark + adresbalk */}
+    <div class="relative z-10 flex items-center gap-[1.6cqw] border-b border-cream/15 px-[2cqw] py-[1.1cqw]">
+      <span class="flex gap-[0.7cqw]" aria-hidden="true">
+        <span class="h-[1cqw] w-[1cqw] rounded-full bg-cream/50"></span>
+        <span class="h-[1cqw] w-[1cqw] rounded-full bg-cream/50"></span>
+        <span class="h-[1cqw] w-[1cqw] rounded-full bg-accent" data-pop></span>
+      </span>
+      <span
+        class="rounded-full bg-white/10 px-[2cqw] py-[0.5cqw] font-medium text-cream/80 text-[1.5cqw]"
+      >
+        scottprins.nl
+      </span>
+    </div>
+
+    {/* Lichte zone onderin: de "menukaart" van de mini-site */}
+    <div class="absolute inset-x-0 top-[49%] bottom-0 bg-cream">
+      <p class="kicker absolute top-[3%] left-[4.5%] text-[1.4cqw]!">De menukaart</p>
+    </div>
+
+    {/* --- Schets-fase (Dag 1): stippellijn-plekken voor de stukken --- */}
+    {
+      [
+        'top-[13.5%] left-[4.5%] h-[19%] w-[52%]',
+        'top-[12%] right-[4%] h-[26%] w-[35%]',
+        'top-[56%] left-[4.5%] h-[30%] w-[91.5%]',
+        'bottom-[4%] left-[32%] h-[7%] w-[36%]',
+      ].map((pos) => (
+        <span
+          class:list={['absolute rounded-[1.4cqw] border-[0.3cqw] border-dashed border-cream/35', pos]}
+          data-sketch
+          aria-hidden="true"
+        />
+      ))
+    }
+
+    {/* --- De stukken van de echte site --- */}
+
+    {/* Kopregel (de echte hero) */}
+    <div class="absolute top-[12.5%] left-[4.5%] w-[54%]" data-piece="headline">
+      <p class="font-display font-semibold text-cream text-[5cqw] leading-[1.05]">
+        Websites die werken.
+      </p>
+      <p class="mt-[1cqw] text-muted-dark text-[2cqw]">Gebouwd in dagen, niet maanden.</p>
+    </div>
+
+    {/* CTA-knop */}
+    <span
+      class="absolute top-[34.5%] left-[4.5%] inline-block rounded-full bg-accent px-[2.6cqw] py-[1.1cqw] font-semibold text-white text-[1.9cqw]"
+      data-piece="cta"
+    >
+      Stel je website samen
+    </span>
+
+    {/* AI-chatbot (optie 2) */}
+    <div
+      class="absolute top-[12%] right-[4%] w-[35%] overflow-hidden rounded-[1.6cqw] bg-white shadow-card"
+      data-piece="chat"
+    >
+      <div class="flex items-center gap-[1cqw] border-b border-line px-[1.6cqw] py-[1cqw]">
+        <span class="relative flex h-[3cqw] w-[3cqw] items-center justify-center rounded-full bg-accent text-[1.6cqw]">💬</span>
+        <span class="font-semibold text-ink text-[1.7cqw]">Salon Demo</span>
+        <span class="ml-auto h-[1.2cqw] w-[1.2cqw] rounded-full bg-green-500" data-pop></span>
+      </div>
+      <div class="grid gap-[1cqw] p-[1.4cqw]">
+        <p class="w-fit max-w-[88%] rounded-[1.2cqw] rounded-bl-[0.3cqw] bg-cream-dim p-[1.2cqw] text-ink text-[1.55cqw] leading-snug">
+          Hoi! Vraag me iets over openingstijden of prijzen 💇
+        </p>
+        <p class="ml-auto w-fit max-w-[88%] rounded-[1.2cqw] rounded-br-[0.3cqw] bg-accent p-[1.2cqw] text-white text-[1.55cqw] leading-snug">
+          Kan ik vandaag nog terecht?
+        </p>
+      </div>
+    </div>
+
+    {/* Prijskaart (echte prijs uit pricing.ts) */}
+    <div
+      class="absolute top-[56%] left-[4.5%] w-[28.5%] rounded-[1.4cqw] bg-white p-[1.7cqw] shadow-card"
+      data-piece="pricecard"
+    >
+      <span class="flex flex-wrap items-center gap-[0.8cqw]">
+        <span class="font-display font-semibold text-ink text-[1.9cqw]">{agenda.name}</span>
+        <span class="badge-populair px-[1cqw]! py-[0.3cqw]! text-[1.2cqw]!" data-pop>Populair</span>
+      </span>
+      <p class="mt-[0.8cqw] font-semibold text-ink text-[1.7cqw]">{priceLine(agenda.upfront, agenda.monthly)}</p>
+      <span
+        class="mt-[1.2cqw] block rounded-[1cqw] border-[0.25cqw] border-accent py-[0.7cqw] text-center font-semibold text-accent text-[1.5cqw]"
+      >
+        + In mijn website
+      </span>
+    </div>
+
+    {/* Google-review (optie 6) */}
+    <div
+      class="absolute top-[56%] left-[35.8%] w-[28.5%] rounded-[1.4cqw] bg-white p-[1.7cqw] shadow-card"
+      data-piece="review"
+    >
+      <span class="flex items-center gap-[1cqw]">
+        <span class="flex h-[2.8cqw] w-[2.8cqw] items-center justify-center rounded-full bg-accent/10 font-semibold text-accent text-[1.5cqw]">
+          {review.name[0]}
+        </span>
+        <span class="font-semibold text-ink text-[1.5cqw]">{review.name}</span>
+        <span class="ml-auto font-bold text-[#4285F4] text-[1.8cqw]">G</span>
+      </span>
+      <p class="mt-[0.7cqw] tracking-tight text-amber-500 text-[1.7cqw]" data-pop>★★★★★</p>
+      <p class="mt-[0.6cqw] text-muted text-[1.4cqw] leading-snug">
+        {review.text.slice(0, 76)}…
+      </p>
+    </div>
+
+    {/* Stat-tegel (uit de proof-sectie) */}
+    <div
+      class="absolute top-[56%] right-[4%] w-[26.5%] rounded-[1.4cqw] bg-ink p-[1.7cqw] text-center"
+      data-piece="stat"
+    >
+      <p class="font-display font-semibold text-cream text-[3.4cqw]"><span class="text-accent-soft" data-pop>5</span> dagen</p>
+      <p class="mt-[0.5cqw] text-muted-dark text-[1.4cqw]">gem. oplevertijd</p>
+    </div>
+
+    {/* Agenda-tijdsloten (optie 1) */}
+    <div class="absolute bottom-[4.5%] left-[4.5%] flex gap-[1cqw]" data-piece="chips">
+      {
+        ['09:00', '10:30', '14:00', '15:30'].map((slot, i) => (
+          <span
+            class:list={[
+              'rounded-full border-[0.2cqw] px-[1.6cqw] py-[0.6cqw] font-medium tabular-nums text-[1.5cqw]',
+              i === 1 ? 'border-accent bg-accent text-white' : 'border-line bg-white text-ink',
+            ]}
+            data-pop={i === 1 ? true : undefined}
+          >
+            {slot}
+          </span>
+        ))
+      }
+    </div>
+
+    {/* Cart-pill: het bekendste element van de site */}
+    <span
+      class="absolute bottom-[4.5%] left-[62%] z-10 flex w-max items-center gap-[1cqw] rounded-full bg-ink py-[1cqw] pr-[2cqw] pl-[1.2cqw] font-semibold text-cream text-[1.6cqw] ring-[0.2cqw] ring-white/20"
+      data-piece="pill"
+    >
+      <span class="flex h-[2.4cqw] w-[2.4cqw] items-center justify-center rounded-full bg-accent text-white text-[1.4cqw]">1</span>
+      optie · {priceLine(agenda.upfront, agenda.monthly)}
+    </span>
+
+    {/* Gloed (Dag 5 — live) */}
+    <span class="scene-glow pointer-events-none absolute inset-0 rounded-[2cqw]" data-glow aria-hidden="true"
+    ></span>
+  </div>
+</div>
+
+<style>
+  .scene {
+    container-type: inline-size;
+  }
+  .scene-glow {
+    box-shadow:
+      inset 0 0 0 0.3cqw color-mix(in oklab, var(--accent) 80%, transparent),
+      0 0 6cqw 0.5cqw color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+  /* Schetslijnen en spark-plussen horen niet bij het afgebouwde eindbeeld. */
+  [data-sketch],
+  [data-spark] {
+    opacity: 0;
+  }
+</style>

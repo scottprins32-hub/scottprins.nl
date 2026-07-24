@@ -1,29 +1,45 @@
 ---
 /**
- * De intro: déze website bouwt zichzelf op terwijl je scrolt.
- * Vijf "bouwdagen" lang (± vijf scrollbewegingen, gepind) is de
- * canvas-animatie de show — met alleen een klein dag-label als tekst.
- * Pas als de site "live" gaat verschijnt de kopregel + de caption die
- * uitlegt dat dit effect zelf optie 11 van de menukaart is.
+ * De intro in drie bedrijven:
+ * 1. Bij het laden: geen zwart gat maar een logo-splash die vanzelf
+ *    wegvloeit, waarna het lege browserframe "de site" opent.
+ * 2. Tijdens het scrollen (gepind, ±5 scrolls): de site bouwt zichzelf
+ *    op uit herkenbare stukken van déze site (HeroScene), met alleen
+ *    een klein dag-label als tekst (Dag 1 — schets … Dag 5 — live).
+ * 3. Op het eind: de scène dimt, de kopregel + optie-11-caption komen erover.
  *
- * Zonder JavaScript (of met prefers-reduced-motion) staat hier direct
- * het statische eindbeeld: kopregel + caption + afgebouwde site.
+ * Wie scrolt terwijl de splash nog speelt, krijgt geen wachttijd: de
+ * intro spoelt dan direct door naar het einde en de scrub neemt over.
+ * Zonder JavaScript of met reduced motion staat hier het statische
+ * eindbeeld: kopregel + caption + afgebouwde mini-site.
  */
 import { hero } from '../data/site';
+import HeroScene from './HeroScene.astro';
 import Logo from './Logo.astro';
 ---
 
 <section class="hero grain relative bg-ink text-cream" data-hero>
   <div class="relative flex h-svh flex-col items-center justify-center overflow-hidden px-5">
-    <Logo class="absolute top-5 left-5 z-20 sm:top-7 sm:left-7" />
+    <Logo class="absolute top-5 left-5 z-20 sm:top-7 sm:left-7" data-hero-corner-logo />
 
-    <canvas
-      class="pointer-events-none absolute inset-0 h-full w-full opacity-40"
-      data-hero-canvas
-      aria-hidden="true"></canvas>
+    {/* Splash bij binnenkomst — alleen in de geanimeerde variant */}
+    <div
+      class="hero-splash pointer-events-none absolute inset-0 z-30 flex-col items-center justify-center gap-4"
+      data-hero-splash
+      aria-hidden="true"
+    >
+      <Logo class="scale-[1.8] sm:scale-[2.2]" />
+      <p class="mt-4 text-xs tracking-[0.3em] text-muted-dark uppercase">Webdesign · Nederland</p>
+    </div>
 
+    {/* De mini-site die zichzelf opbouwt */}
+    <div class="hero-scene-wrap w-full max-w-2xl opacity-40" data-hero-scene>
+      <HeroScene />
+    </div>
+
+    {/* Eindbeeld: kopregel over de gedimde scène */}
     <h1
-      class="font-display text-display relative z-10 mx-auto max-w-4xl text-center font-semibold text-balance"
+      class="font-display text-display absolute inset-x-0 top-1/2 z-10 mx-auto max-w-4xl px-5 text-center font-semibold text-balance"
       data-hero-headline
     >
       {hero.headline}
@@ -67,11 +83,18 @@ import Logo from './Logo.astro';
 <style>
   [data-hero-headline] {
     text-shadow: 0 2px 28px rgb(11 14 17 / 0.85);
+    /* Verticaal centreren; in de geanimeerde variant neemt GSAP dit over
+       via yPercent zodat de y-tween ermee kan combineren. */
+    transform: translateY(-50%);
   }
-  /* Statische variant (no-JS / reduced motion): geen dag-labels, geen hint. */
+  /* Statische variant (no-JS / reduced motion): geen splash/dag-labels/hint. */
+  .hero-splash,
   .hero-days,
   .hero-hint {
     display: none;
+  }
+  .hero--animated .hero-splash {
+    display: flex;
   }
   /* Geanimeerde variant: labels gestapeld in één grid-cel voor de crossfade. */
   .hero--animated .hero-days {
@@ -83,19 +106,21 @@ import Logo from './Logo.astro';
 </style>
 
 <script>
-  import { gsap, NO_PREFERENCE, REDUCED } from '../scripts/motion';
-  import { createSceneRenderer } from '../scripts/hero-scene';
+  import { gsap, NO_PREFERENCE, ScrollTrigger } from '../scripts/motion';
+  import { buildSceneTimeline } from '../scripts/scene-timeline';
 
   const section = document.querySelector<HTMLElement>('[data-hero]');
   if (section) {
-    const canvas = section.querySelector<HTMLCanvasElement>('[data-hero-canvas]')!;
+    const splash = section.querySelector<HTMLElement>('[data-hero-splash]')!;
+    const sceneWrap = section.querySelector<HTMLElement>('[data-hero-scene]')!;
+    const sceneRoot = sceneWrap.querySelector<HTMLElement>('[data-scene-root]')!;
+    const cornerLogo = section.querySelector<HTMLElement>('[data-hero-corner-logo]')!;
     const headline = section.querySelector<HTMLElement>('[data-hero-headline]')!;
     const days = [...section.querySelectorAll<HTMLElement>('[data-day]')];
     const caption = section.querySelector<HTMLElement>('[data-hero-caption]')!;
     const hint = section.querySelector<HTMLElement>('[data-hero-hint]')!;
-    const renderer = createSceneRenderer(canvas);
 
-    // De canvas-scène beslaat het eerste deel van de scrub; daarna maakt
+    // De scène-opbouw beslaat het eerste deel van de scrub; daarna maakt
     // hij plaats voor de kopregel (het "live"-moment).
     const SCENE_END = 0.88;
 
@@ -103,13 +128,31 @@ import Logo from './Logo.astro';
 
     mm.add(NO_PREFERENCE, () => {
       section.classList.add('hero--animated');
-      gsap.set([headline, caption, ...days], { autoAlpha: 0 });
-      gsap.set(canvas, { opacity: 0.85 });
-      renderer.draw(0);
 
-      // Gepind over ±4,5 schermhoogte (≈ vijf scrolls): de site bouwt
-      // zichzelf op, dag-labels schuiven voorbij, en op het eind komt de
-      // kopregel over het afgebouwde resultaat heen.
+      const sceneTl = buildSceneTimeline(sceneRoot);
+      gsap.set(headline, { yPercent: -50 });
+      gsap.set([headline, caption, ...days], { autoAlpha: 0 });
+      gsap.set([sceneWrap, cornerLogo, hint], { autoAlpha: 0 });
+
+      // --- Bedrijf 1: splash bij het laden (tijd-gestuurd, niet scroll) ---
+      const intro = gsap.timeline();
+      intro
+        .fromTo(
+          splash,
+          { autoAlpha: 0, scale: 0.92 },
+          { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'power2.out' },
+        )
+        .to(splash, { autoAlpha: 0, y: -28, duration: 0.45, ease: 'power2.in' }, '+=0.75')
+        .fromTo(
+          sceneWrap,
+          { scale: 0.94 },
+          { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'power2.out' },
+          '-=0.12',
+        )
+        .to([cornerLogo, hint], { autoAlpha: 1, duration: 0.35 }, '<+=0.2');
+
+      // --- Bedrijf 2+3: de scroll-scrub ---
+      sceneTl.duration(SCENE_END);
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
@@ -119,10 +162,15 @@ import Logo from './Logo.astro';
           pin: true,
           scrub: 0.6,
           anticipatePin: 1,
-          onUpdate: (self) => renderer.draw(Math.min(1, self.progress / SCENE_END)),
+          // Scrolt iemand tijdens de splash? Spoel de intro dan door,
+          // zodat de scrub nooit tegen de intro in zit te vechten.
+          onUpdate: (self) => {
+            if (self.progress > 0.005 && intro.progress() < 1) intro.progress(1);
+          },
         },
       });
 
+      tl.add(sceneTl.play(), 0);
       tl.to(hint, { autoAlpha: 0, duration: 0.03 }, 0.03);
 
       // Vijf dag-labels, netjes verdeeld over de bouw-fase.
@@ -132,20 +180,22 @@ import Logo from './Logo.astro';
         tl.to(chip, { autoAlpha: 0, y: -14, duration: 0.03 }, start + SCENE_END / days.length - 0.035);
       });
 
-      // "Live": canvas dimt tot achtergrond, kopregel + caption verschijnen.
-      tl.to(canvas, { opacity: 0.35, duration: 0.08 }, SCENE_END)
+      // "Live": scène dimt tot achtergrond, kopregel + caption verschijnen.
+      tl.to(sceneWrap, { opacity: 0.3, scale: 0.96, duration: 0.08 }, SCENE_END)
         .fromTo(headline, { y: 28 }, { autoAlpha: 1, y: 0, duration: 0.08 }, SCENE_END + 0.02)
         .fromTo(caption, { y: 16 }, { autoAlpha: 1, y: 0, duration: 0.06 }, SCENE_END + 0.06);
 
       return () => {
         section.classList.remove('hero--animated');
-        gsap.set([headline, caption, hint, canvas, ...days], { clearProps: 'all' });
+        intro.kill();
+        sceneTl.kill();
+        gsap.set([headline, caption, hint, cornerLogo, sceneWrap, splash, ...days], {
+          clearProps: 'all',
+        });
       };
     });
 
-    // Reduced motion: geen pin, geen scrub — alleen het afgebouwde eindbeeld.
-    mm.add(REDUCED, () => {
-      renderer.draw(1);
-    });
+    // Reduced motion: geen splash, geen pin — het afgebouwde eindbeeld
+    // staat er al (de statische HTML-toestand), dus niets te doen.
   }
 </script>

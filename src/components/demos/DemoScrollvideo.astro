@@ -1,14 +1,16 @@
 ---
 /**
- * Demo 11 — Scroll-video / animaties. Wijst terug naar de hero: dit is
- * exact dezelfde canvas-scène (hero-scene.ts), maar nu tijd-gestuurd
- * met een replay-knop. Zo ziet de bezoeker: dat effect van net = optie 11.
+ * Demo 11 — Scroll-video / animaties. Wijst terug naar de intro: dit is
+ * exact dezelfde scène (HeroScene + scene-timeline), maar nu op tijd
+ * afgespeeld met een replay-knop. Zo ziet de bezoeker: dat effect van
+ * net = optie 11.
  */
 import { demoScrollvideo } from '../../data/site';
+import HeroScene from '../HeroScene.astro';
 ---
 
-<div class="grain relative overflow-hidden rounded-2xl bg-ink p-4 shadow-card" data-scrollvideo>
-  <canvas class="block aspect-[16/10] w-full" data-scrollvideo-canvas aria-hidden="true"></canvas>
+<div class="grain relative overflow-hidden rounded-2xl bg-ink p-6 pb-16 shadow-card sm:p-8 sm:pb-18" data-scrollvideo>
+  <HeroScene />
   <button
     type="button"
     class="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-cream px-5 py-2.5 text-sm font-semibold text-ink shadow-card-lg transition-transform hover:scale-105 motion-reduce:hover:scale-100"
@@ -20,41 +22,29 @@ import { demoScrollvideo } from '../../data/site';
 
 <script>
   import { gsap, prefersReducedMotion, ScrollTrigger } from '../../scripts/motion';
-  import { createSceneRenderer } from '../../scripts/hero-scene';
+  import { buildSceneTimeline } from '../../scripts/scene-timeline';
 
   const root = document.querySelector<HTMLElement>('[data-scrollvideo]');
   if (root) {
-    const canvas = root.querySelector<HTMLCanvasElement>('[data-scrollvideo-canvas]')!;
-    const renderer = createSceneRenderer(canvas);
-    const progress = { value: 1 };
-    renderer.draw(1); // standaard: het eindbeeld
+    const sceneRoot = root.querySelector<HTMLElement>('[data-scene-root]')!;
+    const replay = root.querySelector<HTMLButtonElement>('[data-scrollvideo-replay]')!;
 
-    const play = () => {
-      if (prefersReducedMotion()) {
-        // Geen animatie gewenst → laat gewoon het eindbeeld staan.
-        renderer.draw(1);
-        return;
-      }
-      gsap.killTweensOf(progress);
-      progress.value = 0;
-      gsap.to(progress, {
-        value: 1,
-        duration: 4.5,
-        ease: 'power1.inOut',
-        onUpdate: () => renderer.draw(progress.value),
-      });
-    };
+    if (prefersReducedMotion()) {
+      // Geen animatie gewenst: de scène staat al afgebouwd in de HTML.
+      replay.classList.add('hidden');
+    } else {
+      // Zelfde timeline als de hero, maar op tijd (±6 s) i.p.v. scroll.
+      const tl = buildSceneTimeline(sceneRoot).duration(6).timeScale(1);
+      tl.eventCallback('onComplete', () => gsap.to(replay, { scale: 1, duration: 0.2 }));
 
-    root.querySelector('[data-scrollvideo-replay]')!.addEventListener('click', play);
-
-    // Speel één keer automatisch af zodra de demo in beeld komt.
-    if (!prefersReducedMotion()) {
       ScrollTrigger.create({
         trigger: root,
         start: 'top 70%',
         once: true,
-        onEnter: play,
+        onEnter: () => tl.play(),
       });
+
+      replay.addEventListener('click', () => tl.restart());
     }
   }
 </script>
