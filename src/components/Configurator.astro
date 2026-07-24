@@ -111,7 +111,7 @@ import LeadForm from './LeadForm.astro';
                 <span class="font-semibold">
                   {plan.name}
                   <span class="text-muted-dark font-normal">
-                    {plan.monthlyDelta > 0 ? ` · +${eur(plan.monthlyDelta)} p/m` : ' · inbegrepen'}
+                    {plan.monthlyDelta > 0 ? ` · + ${eur(plan.monthlyDelta)} p/m` : ' · inbegrepen'}
                   </span>
                 </span>
                 <span class="text-muted-dark mt-1 text-xs leading-snug">{plan.description}</span>
@@ -210,7 +210,7 @@ import LeadForm from './LeadForm.astro';
           );
         }),
         care.monthlyDelta > 0
-          ? line(`Onderhoud ${care.name}`, `+${eur(care.monthlyDelta)} p/m`)
+          ? line(`Onderhoud ${care.name}`, `+ ${eur(care.monthlyDelta)} p/m`)
           : line(`Onderhoud ${care.name}`, 'inbegrepen'),
       ].join('');
 

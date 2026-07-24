@@ -73,6 +73,10 @@ export const basePackages: BasePackage[] = [
     description: 'Eén sterke pagina die je zaak verkoopt.',
     upfront: 395,
     monthly: 19,
+    // Bewuste afwijking van de design-system-kaart: "WhatsApp-knop" en de
+    // hosting-regel staan hier extra, omdat de configurator (anders dan het
+    // geprinte prijsoverzicht met z'n FAQ) zelf moet uitleggen wat het
+    // maandbedrag dekt.
     includes: [
       'One-pager, perfect op mobiel',
       'Contactformulier + WhatsApp-knop',
@@ -103,7 +107,6 @@ export const basePackages: BasePackage[] = [
     upfront: 1195,
     monthly: 49,
     includes: [
-      'Tot 10 pagina’s',
       'Alles uit Compleet',
       'Prioriteit bij wijzigingen',
     ],
@@ -141,7 +144,7 @@ export const addons: Addon[] = [
   {
     id: 'bestellen',
     name: 'Eigen online bestellen',
-    shortPitch: 'Bestellen via je eigen site — zonder platform-commissie.',
+    shortPitch: 'Zonder platform-commissie.',
     upfront: 345,
     monthly: 29,
     demoSectionId: 'menu-bestellen',
@@ -157,7 +160,7 @@ export const addons: Addon[] = [
   {
     id: 'scrollvideo',
     name: 'Scroll-video / animaties',
-    shortPitch: 'Die opening van deze site — voor jouw merk.',
+    shortPitch: 'Die opening van deze site.',
     upfront: 195,
     monthly: 0,
     demoSectionId: 'menu-scrollvideo',
@@ -229,7 +232,7 @@ export const addons: Addon[] = [
   },
   {
     id: 'nieuwsbrief',
-    name: 'Nieuwsbrief-koppeling',
+    name: 'Nieuwsbrief',
     shortPitch: 'Blijf in beeld bij je klanten.',
     upfront: 95,
     monthly: 10,

@@ -42,7 +42,7 @@ export function summarizeSelection(selection: Selection): string {
   }
 
   lines.push(
-    `Onderhoud: ${care.name}${care.monthlyDelta > 0 ? ` (+${eur(care.monthlyDelta)} p/m)` : ' (inbegrepen)'}`,
+    `Onderhoud: ${care.name}${care.monthlyDelta > 0 ? ` (+ ${eur(care.monthlyDelta)} p/m)` : ' (inbegrepen)'}`,
     '',
     `Totaal eenmalig: ${eur(totals.upfront)}`,
     `Totaal per maand: ${eur(totals.monthly)}`,
