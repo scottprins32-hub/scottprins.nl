@@ -1,0 +1,41 @@
+---
+/**
+ * Demo 6 — Reviews-wall: auto-scrollende marquee van Google-review-kaarten.
+ * Puur CSS (keyframes in global.css); de track staat er twee keer in voor
+ * een naadloze loop. Bij reduced motion wordt het een gewone scrollbare rij.
+ */
+import { demoReviews } from '../../data/site';
+
+// Kaart 2× renderen voor de naadloze loop
+const doubled = [demoReviews.reviews, demoReviews.reviews];
+---
+
+<div class="marquee overflow-hidden py-2" data-reviews aria-label="Voorbeelden van Google-reviews">
+  {/* Elke helft draagt zijn eigen eind-gap (pr-4): -50% = exact één helft. */}
+  <div class="marquee-track">
+    {
+      doubled.map((group, g) => (
+        <div class="flex shrink-0 gap-4 pr-4" aria-hidden={g === 1 ? 'true' : undefined}>
+          {group.map((review) => (
+            <figure class="w-72 shrink-0 rounded-2xl border border-line bg-white p-5 shadow-card">
+              <div class="flex items-center gap-2.5">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent">
+                  {review.name[0]}
+                </span>
+                <div>
+                  <figcaption class="text-sm font-semibold">{review.name}</figcaption>
+                  <p class="text-xs tracking-tight text-amber-500" aria-label={`${review.stars} van 5 sterren`}>
+                    {'★'.repeat(review.stars)}
+                    <span class="text-line">{'★'.repeat(5 - review.stars)}</span>
+                  </p>
+                </div>
+                <span class="ml-auto text-lg font-bold text-[#4285F4]" aria-hidden="true">G</span>
+              </div>
+              <blockquote class="text-muted mt-3 text-sm leading-relaxed">{review.text}</blockquote>
+            </figure>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>

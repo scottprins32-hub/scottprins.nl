@@ -1,0 +1,35 @@
+---
+/**
+ * FAQ als native <details name="faq">: exclusief openklappen zonder JS,
+ * toegankelijk out-of-the-box.
+ */
+import { faq } from '../data/site';
+---
+
+<section class="bg-cream py-16 text-ink sm:py-24" id="faq" data-reveal-section>
+  <div class="mx-auto max-w-3xl px-5">
+    <header data-reveal>
+      <p class="kicker">{faq.kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{faq.title}</h2>
+    </header>
+
+    <div class="mt-10 grid gap-3" data-reveal>
+      {
+        faq.items.map((item) => (
+          <details class="faq-item group rounded-2xl border border-line bg-white shadow-card" name="faq">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-4 font-medium select-none [&::-webkit-details-marker]:hidden">
+              {item.q}
+              <span
+                class="text-accent transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                aria-hidden="true"
+              >
+                +
+              </span>
+            </summary>
+            <p class="text-muted px-6 pb-5 text-sm leading-relaxed">{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

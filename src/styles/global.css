@@ -65,6 +65,8 @@
    (ook in bg-accent/text-accent-utilities en canvas-tekeningen). */
 @theme inline {
   --color-accent: var(--accent);
+  /* Lichte accentvariant voor links op donkere vlakken; rekent mee met een accent-swap. */
+  --color-accent-soft: color-mix(in oklab, var(--accent) 45%, white);
 }
 
 /* --------------------------- Basis -------------------------------- */
@@ -86,6 +88,16 @@ body {
 section[id],
 [data-anchor] {
   scroll-margin-top: 4.5rem;
+}
+
+/* -------------------- Terugkerende componentstijlen ----------------- */
+.kicker {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 /* ------------------------ Grain (donkere secties) ------------------ */

@@ -1,0 +1,153 @@
+---
+/**
+ * Demo 5 — Eigen online bestellen: mini-menukaart met winkelmand,
+ * nep-iDEAL-checkout en een besparingsteller t.o.v. bezorgplatforms.
+ */
+import { demoBestellen } from '../../data/site';
+
+const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
+---
+
+<div class="rounded-2xl border border-line bg-white shadow-card" data-bestellen>
+  {/* Scherm 1: menukaart + mandje */}
+  <div data-order-screen="menu">
+    <p class="border-b border-line px-5 py-3.5 font-semibold">{demoBestellen.restaurantName}</p>
+    <ul class="divide-y divide-line">
+      {
+        demoBestellen.items.map((item) => (
+          <li class="flex items-center justify-between gap-3 px-5 py-3">
+            <div>
+              <p class="font-medium">{item.name}</p>
+              <p class="text-muted text-sm">{money(item.price)}</p>
+            </div>
+            <button
+              type="button"
+              class="h-9 w-9 rounded-full border-2 border-accent font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+              data-order-add={item.id}
+              data-price={item.price}
+              aria-label={`${item.name} toevoegen`}
+            >
+              +
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="border-t border-line px-5 py-4">
+      <div class="flex items-center justify-between text-sm">
+        <span data-order-count>Nog niets besteld</span>
+        <span class="font-semibold tabular-nums" data-order-total></span>
+      </div>
+      <button
+        type="button"
+        class="mt-3 w-full rounded-xl bg-accent py-3 font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        data-order-checkout
+        disabled>{demoBestellen.checkoutTitle}</button
+      >
+    </div>
+  </div>
+
+  {/* Scherm 2: nep-iDEAL */}
+  <div class="hidden p-5" data-order-screen="ideal">
+    <div class="flex items-center gap-3">
+      <span class="ideal-logo flex h-10 w-10 items-center justify-center rounded-lg bg-[#cc0066] text-xs font-bold text-white" aria-hidden="true">
+        iD
+      </span>
+      <div>
+        <p class="font-semibold">{demoBestellen.payButton}</p>
+        <p class="text-muted text-xs">{demoBestellen.checkoutNote}</p>
+      </div>
+    </div>
+    <div class="mt-4 grid gap-2">
+      {
+        demoBestellen.banks.map((bank, i) => (
+          <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-line px-4 py-3 text-sm font-medium transition-colors has-checked:border-accent has-checked:bg-accent/5">
+            <input type="radio" name="demo-bank" class="accent-[var(--accent)]" checked={i === 0} />
+            {bank}
+          </label>
+        ))
+      }
+    </div>
+    <button
+      type="button"
+      class="mt-4 w-full rounded-xl bg-accent py-3 font-semibold text-white transition-opacity hover:opacity-90"
+      data-order-pay
+    >
+      Betaal <span data-order-pay-total></span>
+    </button>
+  </div>
+
+  {/* Scherm 3: gelukt */}
+  <div class="hidden p-8 text-center" data-order-screen="done" aria-live="polite">
+    <p class="text-4xl" aria-hidden="true">🍕</p>
+    <h3 class="font-display mt-3 text-xl font-semibold">{demoBestellen.paidTitle}</h3>
+    <p class="text-muted mt-2 text-sm">{demoBestellen.paidText}</p>
+    <button
+      type="button"
+      class="mt-4 rounded-xl border border-line px-4 py-2 text-sm font-medium transition-colors hover:border-accent"
+      data-order-restart
+    >
+      Nog een bestelling
+    </button>
+  </div>
+
+  {/* Besparingsteller */}
+  <div class="rounded-b-2xl border-t border-line bg-cream px-5 py-4">
+    <p class="text-sm">
+      <span class="font-display text-xl font-semibold text-accent tabular-nums" data-order-saved data-value="0">€ 0</span>
+      <span class="text-muted"> {demoBestellen.savedLabel}</span>
+    </p>
+    <p class="text-muted mt-1.5 text-xs">{demoBestellen.savingsLine}</p>
+  </div>
+</div>
+
+<script>
+  import { demoBestellen } from '../../data/site';
+  import { tweenNumber } from '../../scripts/tween';
+
+  const root = document.querySelector<HTMLElement>('[data-bestellen]');
+  if (root) {
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-order-screen]')];
+    const count = root.querySelector<HTMLElement>('[data-order-count]')!;
+    const total = root.querySelector<HTMLElement>('[data-order-total]')!;
+    const payTotal = root.querySelector<HTMLElement>('[data-order-pay-total]')!;
+    const checkout = root.querySelector<HTMLButtonElement>('[data-order-checkout]')!;
+    const saved = root.querySelector<HTMLElement>('[data-order-saved]')!;
+
+    let orderTotal = 0;
+    let items = 0;
+    let savedTotal = 0;
+
+    const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
+    const show = (name: string) =>
+      screens.forEach((s) => s.classList.toggle('hidden', s.dataset.orderScreen !== name));
+
+    for (const btn of root.querySelectorAll<HTMLButtonElement>('[data-order-add]')) {
+      btn.addEventListener('click', () => {
+        items += 1;
+        orderTotal += Number(btn.dataset.price);
+        // Besparingsteller: platform-commissie die je bij eigen bestellen
+        // NIET betaalt (percentage staat in site.ts).
+        savedTotal += Number(btn.dataset.price) * demoBestellen.commissionRate;
+        count.textContent = `${items} ${items === 1 ? 'item' : 'items'}`;
+        total.textContent = money(orderTotal);
+        checkout.disabled = false;
+        tweenNumber(saved, savedTotal, (n) => money(n));
+      });
+    }
+
+    checkout.addEventListener('click', () => {
+      payTotal.textContent = money(orderTotal);
+      show('ideal');
+    });
+    root.querySelector('[data-order-pay]')!.addEventListener('click', () => show('done'));
+    root.querySelector('[data-order-restart]')!.addEventListener('click', () => {
+      items = 0;
+      orderTotal = 0;
+      count.textContent = 'Nog niets besteld';
+      total.textContent = '';
+      checkout.disabled = true;
+      show('menu');
+    });
+  }
+</script>

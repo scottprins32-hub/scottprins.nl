@@ -1,0 +1,260 @@
+---
+/**
+ * Leadformulier in de configurator.
+ * Verstuurt naar POST /api/lead; faalt dat (geen Resend-key, netwerk,
+ * server), dan verschijnt automatisch de mailto:-fallback. De
+ * WhatsApp-knop staat er altijd naast als alternatief.
+ */
+import { configurator, site } from '../data/site';
+
+const f = configurator.form;
+---
+
+<form
+  class="mt-6 grid gap-3"
+  data-lead-form
+  data-msg-validation={f.errorValidation}
+  data-msg-sending={f.sending}
+  novalidate
+>
+  <p class="font-display text-lg font-semibold">{f.title}</p>
+
+  <div>
+    <label class="text-sm font-medium" for="lead-name">{f.name} *</label>
+    <input
+      id="lead-name"
+      name="name"
+      type="text"
+      required
+      autocomplete="name"
+      class="lead-input mt-1 w-full"
+    />
+  </div>
+  <div>
+    <label class="text-sm font-medium" for="lead-company">{f.company}</label>
+    <input
+      id="lead-company"
+      name="company"
+      type="text"
+      autocomplete="organization"
+      class="lead-input mt-1 w-full"
+    />
+  </div>
+  <div class="grid gap-3 sm:grid-cols-2">
+    <div>
+      <label class="text-sm font-medium" for="lead-phone">{f.phone}</label>
+      <input
+        id="lead-phone"
+        name="phone"
+        type="tel"
+        autocomplete="tel"
+        class="lead-input mt-1 w-full"
+      />
+    </div>
+    <div>
+      <label class="text-sm font-medium" for="lead-email">{f.email} *</label>
+      <input
+        id="lead-email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        class="lead-input mt-1 w-full"
+      />
+    </div>
+  </div>
+  <div>
+    <label class="text-sm font-medium" for="lead-message">{f.message}</label>
+    <textarea id="lead-message" name="message" rows="3" class="lead-input mt-1 w-full"></textarea>
+  </div>
+
+  {/* Honeypot: visueel én voor hulptechnologie verborgen, maar bots vullen 'm in. */}
+  <div class="hp-field" aria-hidden="true">
+    <label for="lead-website">Website</label>
+    <input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <p class="hidden text-sm font-medium text-red-300" data-lead-error aria-live="assertive"></p>
+
+  <button
+    type="submit"
+    class="rounded-xl bg-accent px-5 py-3.5 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+    data-lead-submit
+  >
+    {f.submit}
+  </button>
+
+  <a
+    class="rounded-xl border border-white/25 px-5 py-3.5 text-center text-sm font-semibold transition-colors hover:border-accent"
+    data-lead-whatsapp
+    href={`https://wa.me/${site.whatsapp}`}
+    target="_blank"
+    rel="noopener"
+  >
+    💬 {f.whatsappButton}
+  </a>
+
+  {/* Fallback-paneel: verschijnt alleen als de API niet thuis geeft. */}
+  <div class="hidden rounded-xl border border-amber-300/40 bg-amber-300/10 p-4 text-sm" data-lead-fallback>
+    <p>{f.errorSend}</p>
+    <a
+      class="mt-3 inline-block rounded-xl bg-cream px-4 py-2.5 font-semibold text-ink"
+      data-lead-mailto
+      href={`mailto:${site.email}`}
+    >
+      ✉️ {f.mailtoButton}
+    </a>
+  </div>
+
+  <p class="text-muted-dark text-xs">
+    {f.privacyNote.replace('de privacyverklaring.', '')}
+    <a href="/privacy" class="underline underline-offset-2 hover:text-cream">privacyverklaring</a>.
+  </p>
+</form>
+
+{/* Succes-paneel vervangt het formulier na verzending */}
+<div class="mt-6 hidden rounded-xl border border-green-300/40 bg-green-300/10 p-5" data-lead-success aria-live="polite">
+  <p class="text-2xl" aria-hidden="true">🎉</p>
+  <p class="mt-2 font-medium">{f.success}</p>
+</div>
+
+<style>
+  .lead-input {
+    border-radius: 0.75rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    background: rgb(255 255 255 / 0.06);
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    color: var(--color-cream);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .lead-input:focus {
+    border-color: var(--accent);
+  }
+  .lead-input[data-invalid] {
+    border-color: rgb(252 165 165);
+  }
+  /* Honeypot: van het scherm af, niet display:none (simpele bots checken dat) */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  import { site } from '../data/site';
+  import { validateLead } from '../lib/lead';
+  import { summarizeSelection } from '../lib/quote';
+  import { getSelection, subscribe } from '../scripts/store';
+
+  const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
+  if (form) {
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-lead-submit]')!;
+    const errorEl = form.querySelector<HTMLElement>('[data-lead-error]')!;
+    const fallback = form.querySelector<HTMLElement>('[data-lead-fallback]')!;
+    const mailtoLink = form.querySelector<HTMLAnchorElement>('[data-lead-mailto]')!;
+    const whatsappLink = form.querySelector<HTMLAnchorElement>('[data-lead-whatsapp]')!;
+    const successEl = document.querySelector<HTMLElement>('[data-lead-success]')!;
+    const submitLabel = submitBtn.textContent;
+
+    const fieldValue = (name: string) =>
+      (form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? '';
+
+    // WhatsApp-deeplink altijd actueel houden met de huidige samenstelling.
+    subscribe((sel) => {
+      const text = `Hoi Scott! ${summarizeSelection(sel)}`;
+      whatsappLink.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+    });
+
+    const markInvalid = (names: string[]) => {
+      for (const el of form.querySelectorAll('.lead-input')) el.removeAttribute('data-invalid');
+      for (const name of names) {
+        (form.elements.namedItem(name) as HTMLElement | null)?.setAttribute('data-invalid', '');
+      }
+    };
+
+    function showFallback(): void {
+      const summary = [
+        summarizeSelection(getSelection()),
+        '',
+        `Naam: ${fieldValue('name')}`,
+        `Bedrijf: ${fieldValue('company')}`,
+        `Telefoon: ${fieldValue('phone')}`,
+        fieldValue('message') ? `Opmerking: ${fieldValue('message')}` : '',
+      ]
+        .join('\n')
+        .slice(0, 1400); // mailto-body's hebben een praktische lengtegrens
+
+      mailtoLink.href = `mailto:${site.email}?subject=${encodeURIComponent(
+        'Offerte-aanvraag via scottprins.nl',
+      )}&body=${encodeURIComponent(summary)}`;
+      fallback.classList.remove('hidden');
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorEl.classList.add('hidden');
+
+      const payload = {
+        name: fieldValue('name'),
+        company: fieldValue('company'),
+        phone: fieldValue('phone'),
+        email: fieldValue('email'),
+        message: fieldValue('message'),
+        website: fieldValue('website'),
+        selection: getSelection(),
+      };
+
+      // Zelfde validatie als de server → directe feedback zonder roundtrip.
+      const check = validateLead(payload);
+      if (!check.ok) {
+        markInvalid(check.fields);
+        errorEl.textContent = form.dataset.msgValidation ?? '';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      markInvalid([]);
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = form.dataset.msgSending ?? '…';
+
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10_000);
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+
+        if (res.ok) {
+          form.classList.add('hidden');
+          successEl.classList.remove('hidden');
+          return;
+        }
+        if (res.status === 400) {
+          const body = await res.json().catch(() => null);
+          markInvalid(Array.isArray(body?.fields) ? body.fields : []);
+          errorEl.textContent = form.dataset.msgValidation ?? '';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        // 502/503/5xx → nette fallback
+        showFallback();
+      } catch {
+        // Netwerkfout of timeout
+        showFallback();
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitLabel;
+      }
+    });
+  }
+</script>

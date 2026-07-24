@@ -1,0 +1,54 @@
+---
+/**
+ * Wrapper voor één optie op de menukaart: links/boven de live demo
+ * (slot), rechts/onder de prijskaart(en). `addonIds` is een array —
+ * sectie 12 (cadeaubonnen + stempelkaart) heeft er twee.
+ */
+import type { AddonId } from '../data/pricing';
+import PriceCard from './PriceCard.astro';
+
+interface Props {
+  id: string;
+  index: number;
+  kicker: string;
+  title: string;
+  lead: string;
+  addonIds: AddonId[];
+  /** Entrance-animatie voor motion.ts: zie de pacing-map daar. */
+  pacing?: 'fade' | 'parallax' | 'none';
+}
+
+const { id, index, kicker, title, lead, addonIds, pacing = 'none' } = Astro.props;
+const number = String(index).padStart(2, '0');
+---
+
+<section
+  {id}
+  class="menu-section relative overflow-hidden bg-cream py-16 text-ink sm:py-24"
+  data-menu-section
+  data-pacing={pacing}
+>
+  {/* Decoratief sectienummer; krijgt parallax in de 'parallax'-secties. */}
+  <span
+    class="menu-number pointer-events-none absolute -top-6 right-2 font-display text-[clamp(6rem,20vw,14rem)] leading-none font-semibold text-ink/[0.05] select-none"
+    data-menu-number
+    aria-hidden="true">{number}</span
+  >
+
+  <div class="relative mx-auto w-full max-w-6xl px-5">
+    <header class="max-w-2xl" data-reveal>
+      <p class="kicker">{kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{title}</h2>
+      <p class="text-muted text-lead mt-3">{lead}</p>
+    </header>
+
+    <div class="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_330px]">
+      <div class="demo-stage min-w-0" data-reveal>
+        <slot />
+      </div>
+      <aside class="grid gap-6 lg:sticky lg:top-24" data-reveal>
+        {addonIds.map((addonId) => <PriceCard {addonId} />)}
+      </aside>
+    </div>
+  </div>
+</section>

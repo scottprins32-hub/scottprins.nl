@@ -1,0 +1,103 @@
+---
+/**
+ * Demo 9 — Klantenportaal: nep-login (alles werkt) → dashboard-reveal
+ * met tegels voor documenten, afspraken, facturen en berichten.
+ */
+import { demoPortaal } from '../../data/site';
+---
+
+<div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-portaal>
+  {/* Login-scherm */}
+  <form class="p-6 sm:p-8" data-portal-login>
+    <p class="font-display text-lg font-semibold">{demoPortaal.loginTitle}</p>
+    <p class="text-muted mt-1 text-xs">{demoPortaal.loginHint}</p>
+    <div class="mt-5 grid gap-3">
+      <label class="text-sm font-medium" for="portal-email">{demoPortaal.emailLabel}</label>
+      <input
+        id="portal-email"
+        type="text"
+        inputmode="email"
+        class="rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+        placeholder="anna@voorbeeld.nl"
+        autocomplete="off"
+      />
+      <label class="mt-1 text-sm font-medium" for="portal-pass">{demoPortaal.passwordLabel}</label>
+      <input
+        id="portal-pass"
+        type="password"
+        class="rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+        placeholder="••••••••"
+        autocomplete="off"
+      />
+    </div>
+    <button
+      type="submit"
+      class="mt-5 w-full rounded-xl bg-accent py-3 font-semibold text-white transition-opacity hover:opacity-90"
+    >
+      {demoPortaal.loginButton}
+    </button>
+  </form>
+
+  {/* Dashboard */}
+  <div class="hidden p-6 sm:p-8" data-portal-dash aria-live="polite">
+    <div class="flex items-center justify-between gap-3">
+      <p class="font-display text-lg font-semibold">{demoPortaal.welcome}</p>
+      <button
+        type="button"
+        class="text-muted text-sm font-medium underline-offset-2 hover:text-accent hover:underline"
+        data-portal-logout>{demoPortaal.logout}</button
+      >
+    </div>
+    <div class="mt-5 grid grid-cols-2 gap-3">
+      {
+        demoPortaal.tiles.map((tile) => (
+          <div class="portal-tile rounded-xl border border-line bg-cream p-4" data-portal-tile>
+            <p class="text-2xl" aria-hidden="true">{tile.icon}</p>
+            <p class="mt-2 text-sm font-semibold">{tile.title}</p>
+            <p class="text-muted text-xs">{tile.detail}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    [data-portaal] :global(.tile-in) {
+      animation: tile-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--i) * 80ms);
+    }
+    @keyframes tile-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-portaal]');
+  if (root) {
+    const login = root.querySelector<HTMLFormElement>('[data-portal-login]')!;
+    const dash = root.querySelector<HTMLElement>('[data-portal-dash]')!;
+    const tiles = [...root.querySelectorAll<HTMLElement>('[data-portal-tile]')];
+
+    login.addEventListener('submit', (event) => {
+      event.preventDefault();
+      login.classList.add('hidden');
+      dash.classList.remove('hidden');
+      tiles.forEach((tile, i) => {
+        tile.style.setProperty('--i', String(i));
+        tile.classList.add('tile-in');
+      });
+    });
+
+    root.querySelector('[data-portal-logout]')!.addEventListener('click', () => {
+      dash.classList.add('hidden');
+      login.classList.remove('hidden');
+      tiles.forEach((tile) => tile.classList.remove('tile-in'));
+    });
+  }
+</script>

@@ -1,0 +1,197 @@
+---
+/**
+ * "Stel je website samen" — de configurator.
+ * Links: basispakketten (radio), alle 16 add-ons (toggle-kaarten,
+ * vooraf aangevinkt wat de bezoeker op de menukaart toevoegde) en het
+ * onderhoudsplan. Rechts (sticky): live meerekenende offerte + leadformulier.
+ */
+import { addons, basePackages, carePlans } from '../data/pricing';
+import { configurator } from '../data/site';
+import { eur, priceLine } from '../lib/format';
+import LeadForm from './LeadForm.astro';
+---
+
+<section id="configurator" class="grain bg-ink py-16 text-cream sm:py-24" data-configurator>
+  <div class="mx-auto max-w-6xl px-5">
+    <header class="max-w-2xl" data-reveal>
+      <p class="kicker">{configurator.kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{configurator.title}</h2>
+      <p class="text-muted-dark text-lead mt-3">{configurator.lead}</p>
+    </header>
+
+    <div class="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_400px]">
+      <div class="min-w-0">
+        {/* ---- Basispakketten ---- */}
+        <h3 class="font-display text-xl font-semibold">{configurator.baseTitle}</h3>
+        <div class="mt-4 grid gap-4 sm:grid-cols-3" role="radiogroup" aria-label={configurator.baseTitle}>
+          {
+            basePackages.map((pkg) => (
+              <label
+                class="config-card flex cursor-pointer flex-col rounded-2xl border border-white/15 bg-white/5 p-5 transition-colors hover:border-white/40 has-checked:border-accent has-checked:bg-accent/10"
+                data-base-card
+              >
+                <input type="radio" name="config-base" value={pkg.id} class="sr-only" data-base-input />
+                <span class="font-display text-lg font-semibold">{pkg.name}</span>
+                <span class="text-muted-dark mt-1 text-sm leading-snug">{pkg.description}</span>
+                <span class="mt-3 font-semibold">
+                  {eur(pkg.upfront)} <span class="text-muted-dark font-normal">+ {eur(pkg.monthly)}/mnd</span>
+                </span>
+                <ul class="text-muted-dark mt-3 grid gap-1.5 text-xs">
+                  {pkg.includes.map((line) => (
+                    <li class="flex gap-1.5">
+                      <span class="text-accent" aria-hidden="true">✓</span>
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </label>
+            ))
+          }
+        </div>
+
+        {/* ---- Add-ons ---- */}
+        <h3 class="font-display mt-10 text-xl font-semibold">{configurator.addonsTitle}</h3>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          {
+            addons.map((addon) => (
+              <label
+                class="config-card flex cursor-pointer items-start gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 transition-colors hover:border-white/40 has-checked:border-accent has-checked:bg-accent/10"
+                data-addon-card
+              >
+                <input
+                  type="checkbox"
+                  value={addon.id}
+                  class="mt-1 size-4 shrink-0 accent-[var(--accent)]"
+                  data-addon-input
+                />
+                <span class="min-w-0">
+                  <span class="flex flex-wrap items-center gap-2 font-semibold">
+                    {addon.name}
+                    {addon.popular && (
+                      <span class="rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold text-white uppercase">
+                        {configurator.popularBadge}
+                      </span>
+                    )}
+                  </span>
+                  <span class="text-muted-dark mt-0.5 block text-xs leading-snug">{addon.shortPitch}</span>
+                  <span class="mt-1.5 block text-sm font-medium">{priceLine(addon.upfront, addon.monthly)}</span>
+                  {addon.demoSectionId ? (
+                    <a
+                      href={`#${addon.demoSectionId}`}
+                      class="mt-1 inline-block text-xs text-accent-soft underline-offset-2 hover:underline"
+                    >
+                      Bekijk de demo ↑
+                    </a>
+                  ) : (
+                    <span class="text-muted-dark mt-1 block text-xs italic">{configurator.addonsNoDemoNote}</span>
+                  )}
+                </span>
+              </label>
+            ))
+          }
+        </div>
+
+        {/* ---- Onderhoud ---- */}
+        <h3 class="font-display mt-10 text-xl font-semibold">{configurator.careTitle}</h3>
+        <div class="mt-4 grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label={configurator.careTitle}>
+          {
+            carePlans.map((plan) => (
+              <label
+                class="config-card flex cursor-pointer flex-col rounded-2xl border border-white/15 bg-white/5 p-4 transition-colors hover:border-white/40 has-checked:border-accent has-checked:bg-accent/10"
+                data-care-card
+              >
+                <input type="radio" name="config-care" value={plan.id} class="sr-only" data-care-input />
+                <span class="font-semibold">
+                  {plan.name}
+                  <span class="text-muted-dark font-normal">
+                    {plan.monthlyDelta > 0 ? ` · +${eur(plan.monthlyDelta)}/mnd` : ' · inbegrepen'}
+                  </span>
+                </span>
+                <span class="text-muted-dark mt-1 text-xs leading-snug">{plan.description}</span>
+              </label>
+            ))
+          }
+        </div>
+      </div>
+
+      {/* ---- Sticky offerte ---- */}
+      <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur lg:sticky lg:top-6" data-quote>
+        <h3 class="font-display text-xl font-semibold">{configurator.quoteTitle}</h3>
+
+        <ul class="mt-4 grid gap-2 text-sm" data-quote-lines></ul>
+
+        <div class="mt-5 grid grid-cols-2 gap-4 border-t border-white/15 pt-5">
+          <div>
+            <p class="text-muted-dark text-xs tracking-wider uppercase">{configurator.upfrontLabel}</p>
+            <p class="font-display mt-1 text-3xl font-semibold tabular-nums" data-quote-upfront data-value="0">€ 0</p>
+          </div>
+          <div>
+            <p class="text-muted-dark text-xs tracking-wider uppercase">{configurator.monthlyLabel}</p>
+            <p class="font-display mt-1 text-3xl font-semibold tabular-nums" data-quote-monthly data-value="0">€ 0</p>
+          </div>
+        </div>
+        <p class="text-muted-dark mt-3 text-xs">{configurator.disclaimer}</p>
+
+        <LeadForm />
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { addons, basePackages, carePlans, type AddonId, type BasePackageId, type CarePlanId } from '../data/pricing';
+  import { calcTotals } from '../lib/calc';
+  import { eur } from '../lib/format';
+  import { setBase, setCare, subscribe, toggleAddon } from '../scripts/store';
+  import { tweenNumber } from '../scripts/tween';
+
+  const root = document.querySelector<HTMLElement>('[data-configurator]');
+  if (root) {
+    const baseInputs = [...root.querySelectorAll<HTMLInputElement>('[data-base-input]')];
+    const addonInputs = [...root.querySelectorAll<HTMLInputElement>('[data-addon-input]')];
+    const careInputs = [...root.querySelectorAll<HTMLInputElement>('[data-care-input]')];
+    const quoteLines = root.querySelector<HTMLElement>('[data-quote-lines]')!;
+    const quoteUpfront = root.querySelector<HTMLElement>('[data-quote-upfront]')!;
+    const quoteMonthly = root.querySelector<HTMLElement>('[data-quote-monthly]')!;
+
+    baseInputs.forEach((input) =>
+      input.addEventListener('change', () => setBase(input.value as BasePackageId)),
+    );
+    careInputs.forEach((input) =>
+      input.addEventListener('change', () => setCare(input.value as CarePlanId)),
+    );
+    addonInputs.forEach((input) =>
+      input.addEventListener('change', () => toggleAddon(input.value as AddonId)),
+    );
+
+    const line = (label: string, amount: string) =>
+      `<li class="flex justify-between gap-3"><span class="text-muted-dark min-w-0">${label}</span><span class="whitespace-nowrap tabular-nums">${amount}</span></li>`;
+
+    subscribe((sel) => {
+      // Formulier-elementen spiegelen (ook bij pre-toggle vanaf de menukaart)
+      baseInputs.forEach((input) => (input.checked = input.value === sel.base));
+      careInputs.forEach((input) => (input.checked = input.value === sel.care));
+      addonInputs.forEach((input) => (input.checked = sel.addons.includes(input.value as AddonId)));
+
+      // Offerte-regels
+      const base = basePackages.find((p) => p.id === sel.base)!;
+      const care = carePlans.find((c) => c.id === sel.care)!;
+      const chosen = addons.filter((a) => sel.addons.includes(a.id));
+
+      quoteLines.innerHTML = [
+        line(base.name, `${eur(base.upfront)} + ${eur(base.monthly)}/mnd`),
+        ...chosen.map((a) =>
+          line(a.name, a.monthly > 0 ? `${eur(a.upfront)} + ${eur(a.monthly)}/mnd` : eur(a.upfront)),
+        ),
+        care.monthlyDelta > 0
+          ? line(`Onderhoud ${care.name}`, `+${eur(care.monthlyDelta)}/mnd`)
+          : line(`Onderhoud ${care.name}`, 'inbegrepen'),
+      ].join('');
+
+      // Totalen met soepele tween
+      const totals = calcTotals(sel);
+      tweenNumber(quoteUpfront, totals.upfront, eur);
+      tweenNumber(quoteMonthly, totals.monthly, (n) => `${eur(n)}/mnd`);
+    });
+  }
+</script>

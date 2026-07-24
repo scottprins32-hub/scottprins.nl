@@ -1,0 +1,130 @@
+---
+/**
+ * Scroll-video-hero: het eerste product-demo van de site zelf.
+ * Zonder JavaScript (of met prefers-reduced-motion) staat hier een
+ * statische versie met alle drie de tekstregels — het script "upgradet"
+ * naar de gepinde scrub-versie via de klasse `hero--animated`.
+ */
+import { hero } from '../data/site';
+---
+
+<section class="hero grain relative bg-ink text-cream" data-hero>
+  <div class="relative flex h-svh flex-col items-center justify-center overflow-hidden px-5">
+    <canvas
+      class="pointer-events-none absolute inset-0 h-full w-full opacity-70"
+      data-hero-canvas
+      aria-hidden="true"></canvas>
+
+    <div class="hero-beats relative z-10 mx-auto w-full max-w-4xl text-center">
+      <h1 class="font-display text-display font-semibold text-balance" data-beat>{hero.beats[0]}</h1>
+      <p class="beat-secondary font-display font-medium text-balance" data-beat>{hero.beats[1]}</p>
+      <p class="beat-secondary font-display font-medium text-balance" data-beat>{hero.beats[2]}</p>
+    </div>
+
+    {/* Dit regeltje leert de bezoeker hoe de hele site werkt. */}
+    <a
+      class="absolute bottom-12 left-1/2 z-10 w-max max-w-[92vw] -translate-x-1/2 rounded-full bg-ink-soft/90 px-5 py-2.5 text-center text-sm font-medium text-cream ring-1 ring-white/15 transition-colors hover:ring-accent"
+      href={`#${hero.captionTargetId}`}
+      data-hero-caption>{hero.caption}</a
+    >
+
+    <p
+      class="hero-hint absolute bottom-4 left-1/2 z-10 -translate-x-1/2 text-xs tracking-widest text-muted-dark uppercase"
+      data-hero-hint
+      aria-hidden="true"
+    >
+      {hero.scrollHint} ↓
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Statische variant (no-JS / reduced motion): drie regels onder elkaar. */
+  .beat-secondary {
+    font-size: var(--text-h3);
+    line-height: 1.25;
+    color: var(--color-muted-dark);
+    margin-top: 1rem;
+  }
+  [data-beat] {
+    text-shadow: 0 2px 28px rgb(11 14 17 / 0.85);
+  }
+  .hero-hint {
+    display: none;
+  }
+
+  /* Geanimeerde variant: beats liggen gestapeld in het midden en worden
+     door de GSAP-timeline één voor één in- en uitgefade. */
+  .hero--animated .hero-beats [data-beat] {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    color: var(--color-cream);
+  }
+  .hero--animated .hero-hint {
+    display: block;
+  }
+</style>
+
+<script>
+  import { gsap, NO_PREFERENCE, REDUCED } from '../scripts/motion';
+  import { createSceneRenderer } from '../scripts/hero-scene';
+
+  const section = document.querySelector<HTMLElement>('[data-hero]');
+  if (section) {
+    const canvas = section.querySelector<HTMLCanvasElement>('[data-hero-canvas]')!;
+    const beats = [...section.querySelectorAll<HTMLElement>('[data-beat]')];
+    const caption = section.querySelector<HTMLElement>('[data-hero-caption]')!;
+    const hint = section.querySelector<HTMLElement>('[data-hero-hint]')!;
+    const renderer = createSceneRenderer(canvas);
+
+    const mm = gsap.matchMedia();
+
+    mm.add(NO_PREFERENCE, () => {
+      section.classList.add('hero--animated');
+      gsap.set(beats, { yPercent: -50 });
+      gsap.set([beats[1], beats[2], caption], { autoAlpha: 0 });
+      renderer.draw(0);
+
+      // Eén timeline, gescrubd over 2,5 schermhoogte. De canvas-scène volgt
+      // exact dezelfde progress → tekst en animatie lopen altijd in de maat.
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: '+=250%',
+          pin: true,
+          scrub: 0.6,
+          anticipatePin: 1,
+          onUpdate: (self) => renderer.draw(self.progress),
+        },
+      });
+
+      tl.to(hint, { autoAlpha: 0, duration: 0.04 }, 0.04)
+        // Beat 1 → 2
+        .to(beats[0], { autoAlpha: 0, y: -44, duration: 0.09 }, 0.24)
+        .fromTo(beats[1], { y: 44 }, { autoAlpha: 1, y: 0, duration: 0.08 }, 0.31)
+        // Beat 2 → 3
+        .to(beats[1], { autoAlpha: 0, y: -44, duration: 0.09 }, 0.54)
+        .fromTo(beats[2], { y: 44 }, { autoAlpha: 1, y: 0, duration: 0.08 }, 0.61)
+        // Beat 3 weg, caption erin
+        .to(beats[2], { autoAlpha: 0, y: -36, duration: 0.08 }, 0.85)
+        .fromTo(caption, { y: 18 }, { autoAlpha: 1, y: 0, duration: 0.07 }, 0.91);
+
+      return () => {
+        section.classList.remove('hero--animated');
+        gsap.set([...beats, caption, hint], { clearProps: 'all' });
+      };
+    });
+
+    // Reduced motion: geen pin, geen scrub — alleen het afgebouwde eindbeeld.
+    mm.add(REDUCED, () => {
+      renderer.draw(1);
+    });
+  }
+</script>

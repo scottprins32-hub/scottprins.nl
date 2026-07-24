@@ -1,0 +1,164 @@
+---
+/**
+ * Demo 2 — AI-chatbot. Geen echte API: een gescript demo-botje dat
+ * 10 veelgestelde vragen herkent op sleutelwoorden en antwoorden
+ * "uittypt" (streaming-effect, met reduced-motion-fallback).
+ */
+import { demoChatbot } from '../../data/site';
+---
+
+<div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-chatbot>
+  <div class="flex items-center gap-3 border-b border-line bg-cream px-4 py-3">
+    <span class="relative flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white" aria-hidden="true">
+      💬
+      <span class="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
+    </span>
+    <div>
+      <p class="text-sm leading-tight font-semibold">{demoChatbot.botName}</p>
+      <p class="text-muted text-xs">reageert direct</p>
+    </div>
+  </div>
+
+  <div class="flex h-80 flex-col gap-3 overflow-y-auto p-4" data-chat-log aria-live="polite">
+    <p class="chat-bubble-bot">{demoChatbot.greeting}</p>
+  </div>
+
+  <div class="flex flex-wrap gap-2 px-4 pb-3" data-chat-suggestions>
+    {
+      demoChatbot.suggestions.map((s) => (
+        <button
+          type="button"
+          class="rounded-full border border-line px-3 py-1.5 text-xs font-medium transition-colors hover:border-accent hover:text-accent"
+          data-chat-suggestion
+        >
+          {s}
+        </button>
+      ))
+    }
+  </div>
+
+  <form class="flex gap-2 border-t border-line p-3" data-chat-form>
+    <label class="sr-only" for="chat-input">{demoChatbot.placeholder}</label>
+    <input
+      id="chat-input"
+      class="min-w-0 flex-1 rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+      placeholder={demoChatbot.placeholder}
+      autocomplete="off"
+      maxlength="200"
+    />
+    <button
+      type="submit"
+      class="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+    >
+      Stuur
+    </button>
+  </form>
+</div>
+
+<style>
+  [data-chatbot] :global(.chat-bubble-bot),
+  [data-chatbot] :global(.chat-bubble-user) {
+    max-width: 85%;
+    border-radius: 1rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    width: fit-content;
+  }
+  [data-chatbot] :global(.chat-bubble-bot) {
+    background: var(--color-cream-dim);
+    border-bottom-left-radius: 0.25rem;
+  }
+  [data-chatbot] :global(.chat-bubble-user) {
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 0.25rem;
+    align-self: flex-end;
+  }
+  [data-chatbot] :global(.chat-typing) {
+    letter-spacing: 0.2em;
+    animation: chat-typing 1s steps(4, end) infinite;
+  }
+  @keyframes chat-typing {
+    0% { opacity: 0.35; }
+    50% { opacity: 1; }
+    100% { opacity: 0.35; }
+  }
+</style>
+
+<script>
+  import { demoChatbot } from '../../data/site';
+
+  const root = document.querySelector<HTMLElement>('[data-chatbot]');
+  if (root) {
+    const log = root.querySelector<HTMLElement>('[data-chat-log]')!;
+    const form = root.querySelector<HTMLFormElement>('[data-chat-form]')!;
+    const input = root.querySelector<HTMLInputElement>('#chat-input')!;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let busy = false;
+
+    const scrollDown = () => log.scrollTo({ top: log.scrollHeight });
+
+    function findReply(question: string): string {
+      const q = question.toLowerCase();
+      for (const item of demoChatbot.answers) {
+        if (item.keywords.some((kw) => q.includes(kw))) return item.reply;
+      }
+      return demoChatbot.fallback;
+    }
+
+    function addBubble(className: string, text = ''): HTMLElement {
+      const el = document.createElement('p');
+      el.className = className;
+      el.textContent = text;
+      log.appendChild(el);
+      scrollDown();
+      return el;
+    }
+
+    function streamReply(text: string): void {
+      const typing = addBubble('chat-bubble-bot chat-typing', '•••');
+
+      const startTyping = () => {
+        typing.remove();
+        const bubble = addBubble('chat-bubble-bot');
+        if (reduced.matches) {
+          // Reduced motion: antwoord direct, zonder typemachine.
+          bubble.textContent = text;
+          scrollDown();
+          busy = false;
+          return;
+        }
+        let i = 0;
+        const tick = () => {
+          // 2 tekens per tick ≈ vlot maar leesbaar "streaming"-tempo.
+          i = Math.min(text.length, i + 2);
+          bubble.textContent = text.slice(0, i);
+          scrollDown();
+          if (i < text.length) setTimeout(tick, 24);
+          else busy = false;
+        };
+        tick();
+      };
+
+      setTimeout(startTyping, reduced.matches ? 150 : 700);
+    }
+
+    function ask(question: string): void {
+      if (busy || question.trim() === '') return;
+      busy = true;
+      addBubble('chat-bubble-user', question.trim());
+      streamReply(findReply(question));
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      ask(input.value);
+      input.value = '';
+    });
+
+    for (const btn of root.querySelectorAll<HTMLButtonElement>('[data-chat-suggestion]')) {
+      btn.addEventListener('click', () => ask(btn.textContent ?? ''));
+    }
+  }
+</script>

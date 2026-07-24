@@ -1,0 +1,40 @@
+---
+/** Over Scott — kort, menselijk, één (placeholder-)foto. */
+import { about, site } from '../data/site';
+---
+
+<section class="bg-cream py-16 text-ink sm:py-24" id="over-scott" data-reveal-section>
+  <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 md:grid-cols-[300px_minmax(0,1fr)]">
+    {/* Fotoplaceholder — vervang door <img> met echte foto */}
+    <div
+      class="mx-auto flex aspect-[3/4] w-56 items-end justify-center overflow-hidden rounded-2xl bg-ink text-cream shadow-card-lg md:w-full"
+      data-reveal
+      role="img"
+      aria-label={about.photoAlt}
+    >
+      <span class="mb-6 text-7xl" aria-hidden="true">👨‍💻</span>
+    </div>
+
+    <div data-reveal>
+      <p class="kicker">{about.kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{about.title}</h2>
+      {about.paragraphs.map((p) => <p class="text-muted mt-4 leading-relaxed">{p}</p>)}
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a
+          href={`https://wa.me/${site.whatsapp}`}
+          target="_blank"
+          rel="noopener"
+          class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+        >
+          💬 App me direct
+        </a>
+        <a
+          href={`mailto:${site.email}`}
+          class="rounded-xl border border-line px-5 py-3 text-sm font-semibold transition-colors hover:border-accent"
+        >
+          ✉️ {site.email}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

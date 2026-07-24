@@ -1,0 +1,51 @@
+---
+/**
+ * Zwevende "winkelmand"-pill: verschijnt zodra de bezoeker op de
+ * menukaart iets toevoegt en toont het lopende subtotaal van de
+ * gekozen extra's. Klik = naar de configurator.
+ */
+---
+
+<a
+  href="#configurator"
+  class="cart-pill fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 translate-y-20 items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream opacity-0 shadow-card-lg ring-1 ring-white/15 transition-all duration-300 hover:ring-accent motion-reduce:transition-none"
+  data-cart-pill
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <span
+    class="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-white"
+    data-cart-count>0</span
+  >
+  <span data-cart-label>opties</span>
+  <span class="text-muted-dark">·</span>
+  <span data-cart-total></span>
+  <span aria-hidden="true">→</span>
+</a>
+
+<script>
+  import { addons } from '../data/pricing';
+  import { eur } from '../lib/format';
+  import { subscribe } from '../scripts/store';
+
+  const pill = document.querySelector<HTMLAnchorElement>('[data-cart-pill]')!;
+  const count = pill.querySelector<HTMLElement>('[data-cart-count]')!;
+  const label = pill.querySelector<HTMLElement>('[data-cart-label]')!;
+  const total = pill.querySelector<HTMLElement>('[data-cart-total]')!;
+
+  subscribe((sel) => {
+    const chosen = addons.filter((a) => sel.addons.includes(a.id));
+    const upfront = chosen.reduce((sum, a) => sum + a.upfront, 0);
+    const monthly = chosen.reduce((sum, a) => sum + a.monthly, 0);
+
+    count.textContent = String(chosen.length);
+    label.textContent = chosen.length === 1 ? 'optie' : 'opties';
+    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}/mnd` : eur(upfront);
+
+    const visible = chosen.length > 0;
+    pill.classList.toggle('translate-y-20', !visible);
+    pill.classList.toggle('opacity-0', !visible);
+    pill.setAttribute('aria-hidden', String(!visible));
+    pill.tabIndex = visible ? 0 : -1;
+  });
+</script>

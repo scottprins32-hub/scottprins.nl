@@ -1,0 +1,66 @@
+---
+/**
+ * Prijskaart op de menukaart. Rendert 13× op de pagina; het script
+ * hieronder draait één keer en bedient álle kaarten tegelijk
+ * (Astro dedupliceert component-scripts).
+ */
+import { addons, type AddonId } from '../data/pricing';
+import { configurator } from '../data/site';
+import { priceLine } from '../lib/format';
+
+interface Props {
+  addonId: AddonId;
+}
+
+const addon = addons.find((a) => a.id === Astro.props.addonId);
+if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
+---
+
+<article
+  class="price-card relative rounded-2xl border border-line bg-white p-6 shadow-card transition-shadow data-[added]:border-accent data-[added]:shadow-card-lg"
+  data-price-card
+  data-addon-id={addon.id}
+>
+  {
+    addon.popular && (
+      <span class="absolute -top-3 right-5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
+        {configurator.popularBadge}
+      </span>
+    )
+  }
+  <h3 class="font-display text-xl font-semibold">{addon.name}</h3>
+  <p class="text-muted mt-1.5 text-sm leading-relaxed">{addon.shortPitch}</p>
+  <p class="mt-4 text-lg font-semibold">{priceLine(addon.upfront, addon.monthly)}</p>
+  <button
+    type="button"
+    class="add-btn mt-4 w-full rounded-xl border-2 border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent/10 aria-pressed:bg-accent aria-pressed:text-white"
+    data-addon-toggle
+    aria-pressed="false"
+  >
+    {configurator.addButton}
+  </button>
+</article>
+
+<script>
+  import type { AddonId } from '../data/pricing';
+  import { configurator } from '../data/site';
+  import { subscribe, toggleAddon } from '../scripts/store';
+
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-price-card]')];
+
+  for (const card of cards) {
+    card
+      .querySelector('[data-addon-toggle]')!
+      .addEventListener('click', () => toggleAddon(card.dataset.addonId as AddonId));
+  }
+
+  subscribe((sel) => {
+    for (const card of cards) {
+      const added = sel.addons.includes(card.dataset.addonId as AddonId);
+      const button = card.querySelector<HTMLButtonElement>('[data-addon-toggle]')!;
+      card.toggleAttribute('data-added', added);
+      button.setAttribute('aria-pressed', String(added));
+      button.textContent = added ? configurator.addedButton : configurator.addButton;
+    }
+  });
+</script>

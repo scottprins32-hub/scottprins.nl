@@ -1,0 +1,49 @@
+---
+/**
+ * Proof-sectie: drie casestudy-kaarten (placeholder-content, vervang in
+ * site.ts) + statistiekenrij met count-up (zie initCountups in motion.ts).
+ */
+import { proof } from '../data/site';
+---
+
+<section class="bg-cream py-16 text-ink sm:py-24" id="resultaat" data-reveal-section>
+  <div class="mx-auto max-w-6xl px-5">
+    <header class="max-w-2xl" data-reveal>
+      <p class="kicker">{proof.kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{proof.title}</h2>
+    </header>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-3">
+      {
+        proof.cases.map((item) => (
+          <article class="flex flex-col rounded-2xl border border-line bg-white p-7 shadow-card" data-reveal>
+            <p class="kicker">{item.sector}</p>
+            <h3 class="font-display mt-2 text-xl font-semibold">{item.company}</h3>
+            <p class="mt-3 font-medium text-accent">{item.result}</p>
+            <blockquote class="text-muted mt-4 border-l-2 border-line pl-4 text-sm leading-relaxed italic">
+              “{item.quote}”
+            </blockquote>
+          </article>
+        ))
+      }
+    </div>
+
+    <dl class="mt-14 grid gap-8 rounded-2xl bg-ink px-8 py-10 text-cream sm:grid-cols-3">
+      {
+        proof.stats.map((stat) => (
+          <div class="text-center">
+            <dd
+              class="font-display text-4xl font-semibold tabular-nums sm:text-5xl"
+              data-countup={stat.value}
+              data-prefix={'prefix' in stat ? stat.prefix : ''}
+              data-suffix={'suffix' in stat ? stat.suffix : ''}
+            >
+              {'prefix' in stat ? stat.prefix : ''}{stat.value}{'suffix' in stat ? stat.suffix : ''}
+            </dd>
+            <dt class="text-muted-dark mt-2 text-sm">{stat.label}</dt>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

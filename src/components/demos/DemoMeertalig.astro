@@ -1,0 +1,99 @@
+---
+/**
+ * Demo 10 — Meertalig: de NL/EN-schakelaar wisselt écht de teksten van
+ * dit demopaneel. Beide taalversies staan in de markup; CSS + een
+ * class-toggle regelen de wissel (soepel, en hoogte-stabiel doordat
+ * beide versies in dezelfde grid-cel gestapeld staan).
+ */
+import { demoMeertalig } from '../../data/site';
+
+const languages = [
+  { code: 'nl', label: 'NL', flag: '🇳🇱', copy: demoMeertalig.nl },
+  { code: 'en', label: 'EN', flag: '🇬🇧', copy: demoMeertalig.en },
+];
+---
+
+<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang="nl">
+  <div class="flex justify-end">
+    <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label="Kies taal / choose language">
+      {
+        languages.map((lang) => (
+          <button
+            type="button"
+            class="rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors aria-pressed:bg-accent aria-pressed:text-white"
+            data-lang-btn={lang.code}
+            aria-pressed={lang.code === 'nl' ? 'true' : 'false'}
+          >
+            <span aria-hidden="true">{lang.flag}</span> {lang.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  {/* Beide talen gestapeld in dezelfde grid-cel → geen hoogtesprong */}
+  <div class="lang-stack mt-4 grid">
+    {
+      languages.map((lang) => (
+        <div
+          class="lang-panel col-start-1 row-start-1"
+          data-lang-panel={lang.code}
+          lang={lang.code}
+          aria-hidden={lang.code === 'nl' ? undefined : 'true'}
+        >
+          <h3 class="font-display text-2xl font-semibold">{lang.copy.title}</h3>
+          <p class="text-muted mt-2 leading-relaxed">{lang.copy.lead}</p>
+          <ul class="mt-4 grid gap-2">
+            {lang.copy.bullets.map((bullet) => (
+              <li class="flex items-start gap-2.5 text-sm">
+                <span class="mt-0.5 text-accent" aria-hidden="true">
+                  ✓
+                </span>
+                {bullet}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .lang-panel {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  [data-lang='nl'] [data-lang-panel='en'],
+  [data-lang='en'] [data-lang-panel='nl'] {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lang-panel {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-meertalig]');
+  if (root) {
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-lang-btn]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-lang-panel]')];
+
+    for (const btn of buttons) {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.langBtn!;
+        root.dataset.lang = code;
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        panels.forEach((p) =>
+          p.dataset.langPanel === code
+            ? p.removeAttribute('aria-hidden')
+            : p.setAttribute('aria-hidden', 'true'),
+        );
+      });
+    }
+  }
+</script>

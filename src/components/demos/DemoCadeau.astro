@@ -1,0 +1,121 @@
+---
+/**
+ * Demo 12 — Cadeaubonnen & stempelkaart. Een omdraaibare cadeaubon
+ * (CSS 3D-flip) met confetti bij het verzilveren, plus een digitale
+ * stempelkaart die je vol kunt tikken.
+ */
+import { demoCadeau } from '../../data/site';
+---
+
+<div class="grid gap-6 sm:grid-cols-2" data-cadeau>
+  {/* Cadeaubon met flip */}
+  <div class="perspective-[1200px]">
+    <button
+      type="button"
+      class="giftcard relative block aspect-[8/5] w-full text-left transition-transform duration-500 transform-3d motion-reduce:transition-none"
+      data-gift-flip
+      aria-label={`Cadeaubon ${demoCadeau.cardValue} — ${demoCadeau.flipHint}`}
+    >
+      {/* Voorkant */}
+      <span class="absolute inset-0 flex flex-col justify-between rounded-2xl bg-ink p-5 text-cream shadow-card backface-hidden">
+        <span class="flex items-start justify-between">
+          <span class="font-display font-semibold">{demoCadeau.cardBrand}</span>
+          <span class="h-3 w-3 rounded-full bg-accent"></span>
+        </span>
+        <span>
+          <span class="font-display text-4xl font-semibold">{demoCadeau.cardValue}</span>
+          <span class="text-muted-dark mt-1 block text-xs tracking-widest uppercase">Cadeaubon · {demoCadeau.flipHint}</span>
+        </span>
+      </span>
+      {/* Achterkant */}
+      <span class="absolute inset-0 flex rotate-y-180 flex-col justify-between rounded-2xl bg-accent p-5 text-white shadow-card backface-hidden">
+        <span class="text-xs tracking-widest uppercase opacity-80">Code</span>
+        <span class="font-mono text-lg tracking-wider" data-gift-code>{demoCadeau.cardCode}</span>
+        <span
+          class="inline-flex w-max items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink"
+          data-gift-redeem
+          role="button"
+        >
+          🎁 <span data-gift-redeem-label>{demoCadeau.redeem}</span>
+        </span>
+      </span>
+    </button>
+  </div>
+
+  {/* Stempelkaart */}
+  <div class="rounded-2xl border border-line bg-white p-5 shadow-card">
+    <div class="flex items-baseline justify-between gap-3">
+      <p class="font-semibold">{demoCadeau.stampTitle}</p>
+      <p class="text-muted text-xs">{demoCadeau.stampHint}</p>
+    </div>
+    <div class="mt-4 grid grid-cols-5 gap-2.5">
+      {
+        Array.from({ length: demoCadeau.stampCount }, (_, i) => (
+          <button
+            type="button"
+            class="stamp flex aspect-square items-center justify-center rounded-full border-2 border-dashed border-line text-lg transition-all aria-pressed:border-solid aria-pressed:border-accent aria-pressed:bg-accent/10"
+            data-stamp
+            aria-pressed="false"
+            aria-label={`Stempel ${i + 1}`}
+          />
+        ))
+      }
+    </div>
+    <p class="mt-4 h-5 text-sm font-medium text-accent" data-stamp-status aria-live="polite"></p>
+  </div>
+</div>
+
+<style>
+  .giftcard[aria-expanded='true'] {
+    transform: rotateY(180deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .giftcard {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { demoCadeau } from '../../data/site';
+  import { confettiBurst } from '../../scripts/confetti';
+
+  const root = document.querySelector<HTMLElement>('[data-cadeau]');
+  if (root) {
+    const card = root.querySelector<HTMLButtonElement>('[data-gift-flip]')!;
+    const redeem = root.querySelector<HTMLElement>('[data-gift-redeem]')!;
+    const redeemLabel = root.querySelector<HTMLElement>('[data-gift-redeem-label]')!;
+    card.setAttribute('aria-expanded', 'false');
+
+    card.addEventListener('click', (event) => {
+      // Klik op "Verzilveren" (achterkant) = verzilveren, niet terugdraaien.
+      if (redeem.contains(event.target as Node)) {
+        event.stopPropagation();
+        redeemLabel.textContent = demoCadeau.redeemed;
+        confettiBurst(redeem);
+        return;
+      }
+      card.setAttribute('aria-expanded', String(card.getAttribute('aria-expanded') !== 'true'));
+    });
+
+    // Stempelkaart
+    const stamps = [...root.querySelectorAll<HTMLButtonElement>('[data-stamp]')];
+    const status = root.querySelector<HTMLElement>('[data-stamp-status]')!;
+    let stamped = 0;
+
+    for (const stamp of stamps) {
+      stamp.addEventListener('click', () => {
+        if (stamp.getAttribute('aria-pressed') === 'true') return;
+        stamp.setAttribute('aria-pressed', 'true');
+        stamp.textContent = '✓';
+        stamped += 1;
+        if (stamped === stamps.length) {
+          status.textContent = demoCadeau.stampReward;
+          confettiBurst(stamps[stamps.length - 1]);
+        } else {
+          status.textContent = `${stamped}/${stamps.length} stempels`;
+        }
+      });
+    }
+  }
+</script>

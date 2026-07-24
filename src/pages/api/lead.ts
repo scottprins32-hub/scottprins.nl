@@ -9,6 +9,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { getSecret } from 'astro:env/server';
 import { basePackages } from '../../data/pricing';
 import { calcTotals } from '../../lib/calc';
 import { validateLead, type LeadPayload } from '../../lib/lead';
@@ -61,9 +62,9 @@ export const POST: APIRoute = async ({ request }) => {
     return json(200, { ok: true });
   }
 
-  // Runtime uitlezen (niet import.meta.env): zo werkt een key die je later
-  // op Vercel toevoegt direct, zonder rebuild.
-  const apiKey = process.env.RESEND_API_KEY;
+  // getSecret leest runtime-omgeving (Vercel) én .env (lokaal): een key die
+  // je later op Vercel toevoegt werkt direct, zonder rebuild.
+  const apiKey = getSecret('RESEND_API_KEY');
   if (!apiKey) {
     return json(503, { ok: false, error: 'email_not_configured' });
   }

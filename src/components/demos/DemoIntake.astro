@@ -1,0 +1,131 @@
+---
+/**
+ * Demo 8 — Digitale intake: meerstaps-formulier met voortgangsbalk.
+ * Verstuurt niets; het gaat om het gevoel van de flow.
+ */
+import { demoIntake } from '../../data/site';
+
+const totalSteps = demoIntake.steps.length;
+---
+
+<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-intake>
+  <div class="flex items-center justify-between gap-4 text-sm">
+    <p class="font-semibold" data-intake-title>{demoIntake.steps[0].title}</p>
+    <p class="text-muted tabular-nums" data-intake-count>Stap 1 van {totalSteps}</p>
+  </div>
+  <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-cream-dim">
+    <div
+      class="h-full rounded-full bg-accent transition-all duration-500 motion-reduce:transition-none"
+      style={`width: ${100 / totalSteps}%`}
+      data-intake-bar
+    >
+    </div>
+  </div>
+
+  {
+    demoIntake.steps.map((step, stepIndex) => (
+      <div class:list={['mt-5 grid gap-4', { hidden: stepIndex !== 0 }]} data-intake-step={stepIndex}>
+        {step.fields.map((field) => (
+          <div>
+            <label class="text-sm font-medium" for={`intake-${field.id}`}>
+              {field.label}
+            </label>
+            {field.type === 'textarea' ? (
+              <textarea
+                id={`intake-${field.id}`}
+                class="mt-1.5 w-full rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+                rows="3"
+                placeholder={field.placeholder}
+              />
+            ) : field.type === 'choice' && 'options' in field ? (
+              <div class="mt-1.5 flex flex-wrap gap-2" role="group" aria-labelledby={`intake-${field.id}`}>
+                {field.options!.map((option, i) => (
+                  <label class="cursor-pointer rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors has-checked:border-accent has-checked:bg-accent has-checked:text-white">
+                    <input type="radio" name={`intake-${field.id}`} class="sr-only" checked={i === 0} />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <input
+                id={`intake-${field.id}`}
+                type="text"
+                class="mt-1.5 w-full rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+                placeholder={field.placeholder}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    ))
+  }
+
+  {/* Klaar-scherm */}
+  <div class="mt-5 hidden py-4 text-center" data-intake-step="done" aria-live="polite">
+    <p class="text-4xl" aria-hidden="true">📋</p>
+    <h3 class="font-display mt-3 text-xl font-semibold">{demoIntake.doneTitle}</h3>
+    <p class="text-muted mx-auto mt-2 max-w-sm text-sm">{demoIntake.doneText}</p>
+  </div>
+
+  <div class="mt-6 flex items-center justify-between gap-3" data-intake-nav>
+    <button
+      type="button"
+      class="rounded-xl border border-line px-4 py-2.5 text-sm font-medium transition-colors hover:border-accent disabled:invisible"
+      data-intake-back
+      disabled>{demoIntake.back}</button
+    >
+    <button
+      type="button"
+      class="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+      data-intake-next>{demoIntake.next}</button
+    >
+  </div>
+</div>
+
+<script>
+  import { demoIntake } from '../../data/site';
+
+  const root = document.querySelector<HTMLElement>('[data-intake]');
+  if (root) {
+    const stepPanels = [...root.querySelectorAll<HTMLElement>('[data-intake-step]')];
+    const bar = root.querySelector<HTMLElement>('[data-intake-bar]')!;
+    const title = root.querySelector<HTMLElement>('[data-intake-title]')!;
+    const count = root.querySelector<HTMLElement>('[data-intake-count]')!;
+    const back = root.querySelector<HTMLButtonElement>('[data-intake-back]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-intake-next]')!;
+    const total = demoIntake.steps.length;
+    let current = 0;
+
+    function render(): void {
+      const done = current >= total;
+      stepPanels.forEach((panel) =>
+        panel.classList.toggle(
+          'hidden',
+          panel.dataset.intakeStep !== (done ? 'done' : String(current)),
+        ),
+      );
+      bar.style.width = `${(Math.min(current + 1, total) / total) * 100}%`;
+      if (done) {
+        title.textContent = demoIntake.doneTitle;
+        count.textContent = '';
+        next.textContent = demoIntake.restart;
+        back.disabled = true;
+      } else {
+        title.textContent = demoIntake.steps[current].title;
+        count.textContent = `Stap ${current + 1} van ${total}`;
+        next.textContent = current === total - 1 ? demoIntake.send : demoIntake.next;
+        back.disabled = current === 0;
+      }
+    }
+
+    next.addEventListener('click', () => {
+      current = current >= total ? 0 : current + 1;
+      render();
+    });
+    back.addEventListener('click', () => {
+      current = Math.max(0, current - 1);
+      render();
+    });
+    render();
+  }
+</script>

@@ -1,0 +1,97 @@
+---
+/**
+ * Demo 3 — Interactieve kaart.
+ * Echte Google Maps-embed (keyless iframe), maar pas geladen zodra de
+ * sectie bijna in beeld is (IntersectionObserver): scheelt derde-partij-
+ * JavaScript bij pageload én houdt Lighthouse schoon.
+ */
+import { demoKaart } from '../../data/site';
+
+const locations = demoKaart.locations;
+---
+
+<div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-kaart>
+  <div class="flex flex-wrap gap-2 border-b border-line p-4">
+    {
+      locations.map((loc, i) => (
+        <button
+          type="button"
+          class="loc-chip flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:border-accent aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-white"
+          data-loc-chip
+          data-q={loc.q}
+          data-name={loc.name}
+          data-address={loc.address}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          <span class="pin inline-block h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
+          {loc.name.replace('Demo Fietsen ', '')}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="relative aspect-[16/10] bg-cream-dim" data-kaart-frame>
+    {/* Placeholder tot de iframe geladen is */}
+    <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center" data-kaart-placeholder>
+      <span class="text-3xl" aria-hidden="true">📍</span>
+      <p class="font-medium" data-kaart-name>{locations[0].name}</p>
+      <p class="text-muted text-sm">{demoKaart.privacyNote}</p>
+    </div>
+  </div>
+
+  <p class="border-t border-line px-4 py-3 text-sm text-muted" data-kaart-address>
+    {locations[0].address}
+  </p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-kaart]');
+  if (root) {
+    const frame = root.querySelector<HTMLElement>('[data-kaart-frame]')!;
+    const placeholder = root.querySelector<HTMLElement>('[data-kaart-placeholder]')!;
+    const address = root.querySelector<HTMLElement>('[data-kaart-address]')!;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-loc-chip]')];
+    let iframe: HTMLIFrameElement | null = null;
+
+    const embedUrl = (q: string) =>
+      `https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&hl=nl&output=embed`;
+
+    function showLocation(chip: HTMLButtonElement) {
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      address.textContent = `${chip.dataset.name} · ${chip.dataset.address}`;
+      if (iframe) iframe.src = embedUrl(chip.dataset.q!);
+    }
+
+    function mountIframe() {
+      if (iframe) return;
+      const active = chips.find((c) => c.getAttribute('aria-pressed') === 'true') ?? chips[0];
+      iframe = document.createElement('iframe');
+      iframe.className = 'absolute inset-0 h-full w-full border-0';
+      iframe.title = `Kaart — ${active.dataset.name}`;
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.src = embedUrl(active.dataset.q!);
+      placeholder.remove();
+      frame.appendChild(iframe);
+    }
+
+    // Kaart pas laden als de sectie bijna in beeld is.
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          mountIframe();
+          io.disconnect();
+        }
+      },
+      { rootMargin: '300px' },
+    );
+    io.observe(frame);
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        mountIframe(); // klik telt ook als expliciete opt-in
+        showLocation(chip);
+      }),
+    );
+  }
+</script>

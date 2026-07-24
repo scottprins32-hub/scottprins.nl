@@ -1,0 +1,135 @@
+---
+/**
+ * Demo 7 — Before/after-slider. Beide "screenshots" zijn gewoon HTML/CSS
+ * (geen afbeeldingen): links een 2010-tafeltjes-site, rechts de moderne
+ * versie van dezelfde fictieve bakkerij. Een echte <input type="range">
+ * stuurt de clip aan → slepen, toetsenbord en screenreader werken vanzelf.
+ */
+import { demoBeforeAfter } from '../../data/site';
+
+const bakkerij = demoBeforeAfter.bakkerij;
+---
+
+<div
+  class="ba-wrap relative aspect-[16/11] overflow-hidden rounded-2xl border border-line shadow-card select-none sm:aspect-[16/9]"
+  data-beforeafter
+  style="--split: 50%"
+>
+  {/* NA — moderne site (onderste laag) */}
+  <div class="absolute inset-0 overflow-hidden bg-[#faf6ef]">
+    <div class="flex h-full flex-col p-4 sm:p-6">
+      <div class="flex items-center justify-between">
+        <p class="font-display text-sm font-semibold text-[#3d2c1e] sm:text-base">{bakkerij.name}</p>
+        <span class="rounded-full bg-[#3d2c1e] px-3 py-1 text-[10px] font-semibold text-white sm:text-xs">Bestel online</span>
+      </div>
+      <div class="mt-auto">
+        <p class="font-display text-xl leading-tight font-semibold text-[#3d2c1e] sm:text-3xl">{bakkerij.tagline}</p>
+        <div class="mt-3 flex gap-2">
+          {
+            bakkerij.items.map((item) => (
+              <span class="rounded-xl bg-white px-2.5 py-1.5 text-[10px] font-medium text-[#3d2c1e] shadow-card sm:text-xs">
+                🥖 {item}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-3 gap-2" aria-hidden="true">
+        <div class="h-8 rounded-lg bg-[#e8dcc8] sm:h-14"></div>
+        <div class="h-8 rounded-lg bg-[#e8dcc8] sm:h-14"></div>
+        <div class="h-8 rounded-lg bg-[#d9b98a] sm:h-14"></div>
+      </div>
+    </div>
+  </div>
+
+  {/* VOOR — 2010-site (bovenste laag, wordt weggeclipt) */}
+  <div class="absolute inset-0 overflow-hidden bg-[#e8e8e8]" style="clip-path: inset(0 calc(100% - var(--split)) 0 0)">
+    <div class="ba-old h-full overflow-hidden p-2" aria-hidden="true">
+      <div class="border-2 border-[#999] bg-[#fffef0]">
+        <p class="ba-old-title bg-[#7c4a03] px-2 py-1.5 text-center text-sm font-bold text-[#ffff00] sm:text-lg">
+          ~*~ Welkom bij {bakkerij.name} ~*~
+        </p>
+        <div class="flex gap-1 border-b-2 border-[#999] bg-[#d4c49a] px-1 py-0.5 text-[9px] font-bold text-[#00c] underline sm:text-xs">
+          <span>Home</span><span>|</span><span>Fotoalbum</span><span>|</span><span>Gastenboek</span><span>|</span><span>Links</span>
+        </div>
+        <div class="grid grid-cols-[1fr_2fr] gap-1 p-1">
+          <div class="border border-[#999] bg-[#eee] p-1 text-[8px] leading-snug sm:text-[10px]">
+            <p class="font-bold underline">Menu</p>
+            <p>» Ons brood</p>
+            <p>» Openingstijden</p>
+            <p>» Route</p>
+            <p class="mt-1 text-[#c00]">NIEUW!! Nu ook appeltaart!!</p>
+            <p class="mt-1">Bezoekers: 004217</p>
+          </div>
+          <div class="border border-[#999] p-1 text-[8px] leading-snug sm:text-[10px]">
+            <p class="text-center font-bold text-[#c00]">*** {bakkerij.tagline} ***</p>
+            <div class="mt-1 flex h-10 items-center justify-center border border-[#999] bg-[#ddd] text-[8px] italic sm:h-16">
+              [foto_winkel_klein.jpg]
+            </div>
+            <p class="mt-1">
+              Al meer dan 25 jaar u vertrouwde adres voor {bakkerij.items.join(', ').toLowerCase()} en nog veel meer!!! Kom gerust eens langs in onze winkel.
+            </p>
+            <p class="mt-1 text-center text-[#00c] underline">klik hier voor de openingstijden</p>
+          </div>
+        </div>
+        <p class="border-t-2 border-[#999] bg-[#d4c49a] py-0.5 text-center text-[8px] sm:text-[10px]">
+          © 2010 | Deze site werkt het beste in Internet Explorer 8
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* Verticale scheidingslijn + greep */}
+  <div
+    class="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-white shadow-[0_0_12px_rgb(0_0_0/0.4)]"
+    style="left: var(--split)"
+    aria-hidden="true"
+  >
+    <span
+      class="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-sm font-bold text-ink shadow-card-lg"
+    >
+      ⇄
+    </span>
+  </div>
+
+  {/* Labels */}
+  <span class="absolute top-3 left-3 z-10 rounded-full bg-ink/80 px-2.5 py-1 text-[10px] font-semibold text-white sm:text-xs">
+    {demoBeforeAfter.beforeLabel}
+  </span>
+  <span class="absolute top-3 right-3 z-10 rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold text-white sm:text-xs">
+    {demoBeforeAfter.afterLabel}
+  </span>
+
+  {/* De échte controller: onzichtbare range over de hele breedte */}
+  <input
+    type="range"
+    class="ba-range absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0"
+    min="0"
+    max="100"
+    value="50"
+    step="0.5"
+    aria-label={demoBeforeAfter.sliderLabel}
+    data-ba-range
+  />
+</div>
+
+<style>
+  .ba-old {
+    font-family: 'Times New Roman', Times, serif;
+  }
+  /* Focusring zichtbaar houden ondanks opacity-0 op de input zelf */
+  .ba-wrap:has(.ba-range:focus-visible) {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('[data-beforeafter]');
+  if (wrap) {
+    const range = wrap.querySelector<HTMLInputElement>('[data-ba-range]')!;
+    range.addEventListener('input', () => {
+      wrap.style.setProperty('--split', `${range.value}%`);
+    });
+  }
+</script>
