@@ -6,10 +6,12 @@
  * naar de gepinde scrub-versie via de klasse `hero--animated`.
  */
 import { hero } from '../data/site';
+import Logo from './Logo.astro';
 ---
 
 <section class="hero grain relative bg-ink text-cream" data-hero>
   <div class="relative flex h-svh flex-col items-center justify-center overflow-hidden px-5">
+    <Logo class="absolute top-5 left-5 z-20 sm:top-7 sm:left-7" />
     <canvas
       class="pointer-events-none absolute inset-0 h-full w-full opacity-70"
       data-hero-canvas

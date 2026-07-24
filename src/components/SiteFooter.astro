@@ -1,12 +1,14 @@
 ---
 /** Footer met bedrijfsgegevens ({BTW} nog vervangen vóór livegang). */
 import { footer, site } from '../data/site';
+import Logo from './Logo.astro';
 ---
 
 <footer class="grain bg-ink py-14 text-cream">
   <div class="mx-auto max-w-6xl px-5">
     <div class="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
       <div>
+        <Logo class="mb-5" />
         <p class="font-display text-2xl font-semibold">{footer.cta}</p>
         <div class="mt-4 flex flex-wrap gap-3">
           <a

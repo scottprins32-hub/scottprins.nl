@@ -40,7 +40,7 @@
 
     count.textContent = String(chosen.length);
     label.textContent = chosen.length === 1 ? 'optie' : 'opties';
-    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}/mnd` : eur(upfront);
+    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)} p/m` : eur(upfront);
 
     const visible = chosen.length > 0;
     pill.classList.toggle('translate-y-20', !visible);

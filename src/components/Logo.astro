@@ -1,0 +1,35 @@
+---
+/**
+ * SCOTTPRINS-woordmerk met het </>-beeldmerk uit het design system.
+ * Kleur volgt de tekstkleur van de omgeving (currentColor); het
+ * accent-bolletje kleurt mee met --accent.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2.5', className]}>
+  <svg
+    viewBox="0 0 44 28"
+    class="h-5 w-auto"
+    aria-hidden="true"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    {/* < */}
+    <path d="M10 5 3 14l7 9"></path>
+    {/* / */}
+    <path d="M21 4 15 24"></path>
+    {/* nodes die samen een > vormen */}
+    <path d="M27 7.5 38 14l-11 6.5" stroke-width="1.6" opacity="0.45"></path>
+    <circle cx="27" cy="7.5" r="2.7" fill="var(--accent)" stroke="none"></circle>
+    <circle cx="38" cy="14" r="2.7" fill="currentColor" stroke="none"></circle>
+    <circle cx="27" cy="20.5" r="2.7" fill="currentColor" stroke="none"></circle>
+  </svg>
+  <span class="text-sm font-medium tracking-[0.2em] uppercase">Scott<span class="font-bold">Prins</span></span>
+</span>

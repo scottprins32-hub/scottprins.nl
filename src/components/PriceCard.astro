@@ -23,7 +23,7 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
 >
   {
     addon.popular && (
-      <span class="absolute -top-3 right-5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
+      <span class="badge-populair absolute -top-3 right-5 shadow-card">
         {configurator.popularBadge}
       </span>
     )

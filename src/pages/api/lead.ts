@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const totals = calcTotals(lead.selection);
   const baseName = basePackages.find((p) => p.id === lead.selection.base)?.name ?? 'Onbekend';
-  const subject = `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${eur(totals.upfront)} + ${eur(totals.monthly)}/mnd`;
+  const subject = `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${eur(totals.upfront)} + ${eur(totals.monthly)} p/m`;
 
   try {
     const res = await fetch('https://api.resend.com/emails', {

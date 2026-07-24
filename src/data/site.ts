@@ -43,15 +43,15 @@ export const howItWorks = {
   steps: [
     {
       title: 'Kies je basis',
-      text: 'Eén sterke pagina of een complete site — drie heldere pakketten met vaste prijzen.',
+      text: 'Visitekaartje, Compleet of Interactief — drie eerlijke pakketten met vaste prijzen.',
     },
     {
       title: 'Kies je extra’s',
-      text: 'Alles wat je hieronder ziet werken, kun je aanzetten. Alleen betalen voor wat je gebruikt.',
+      text: 'Op deze site probeer je elke functie live: voeg toe wat bij jouw zaak past.',
     },
     {
       title: 'Live binnen 5 dagen',
-      text: 'Jij levert je verhaal en foto’s, ik bouw. Meestal sta je binnen een week live.',
+      text: 'Binnen 24 uur een offerte + gratis demo-voorstel. Akkoord? Dan bouw ik direct.',
     },
   ],
 } as const;

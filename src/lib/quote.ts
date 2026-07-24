@@ -17,13 +17,13 @@ export function summarizeSelection(selection: Selection): string {
   const lines: string[] = [
     'Mijn samenstelling via scottprins.nl:',
     '',
-    `Basispakket: ${base.name} (${eur(base.upfront)} + ${eur(base.monthly)}/mnd)`,
+    `Basispakket: ${base.name} (${eur(base.upfront)} + ${eur(base.monthly)} p/m)`,
   ];
 
   if (chosen.length > 0) {
     lines.push('Extra’s:');
     for (const a of chosen) {
-      const monthly = a.monthly > 0 ? ` + ${eur(a.monthly)}/mnd` : '';
+      const monthly = a.monthly > 0 ? ` + ${eur(a.monthly)} p/m` : '';
       lines.push(`- ${a.name} (${eur(a.upfront)}${monthly})`);
     }
   } else {
@@ -31,7 +31,7 @@ export function summarizeSelection(selection: Selection): string {
   }
 
   lines.push(
-    `Onderhoud: ${care.name}${care.monthlyDelta > 0 ? ` (+${eur(care.monthlyDelta)}/mnd)` : ' (inbegrepen)'}`,
+    `Onderhoud: ${care.name}${care.monthlyDelta > 0 ? ` (+${eur(care.monthlyDelta)} p/m)` : ' (inbegrepen)'}`,
     '',
     `Totaal eenmalig: ${eur(totals.upfront)}`,
     `Totaal per maand: ${eur(totals.monthly)}`,

@@ -37,6 +37,7 @@ export interface BasePackage {
   upfront: number;
   monthly: number;
   includes: string[];
+  popular?: boolean;
 }
 
 export interface Addon {
@@ -64,43 +65,41 @@ export const basePackages: BasePackage[] = [
   {
     id: 'visitekaartje',
     name: 'Visitekaartje',
-    description: 'Eén krachtige pagina die je zaak professioneel neerzet.',
+    description: 'Eén sterke pagina die je zaak verkoopt.',
     upfront: 395,
     monthly: 19,
     includes: [
-      'Eén pagina, perfect op mobiel',
+      'One-pager, perfect op mobiel',
       'Contactformulier + WhatsApp-knop',
-      'Google Maps & routebeschrijving',
-      'Razendsnel en vindbaar (basis-SEO)',
+      'Basis-SEO',
       'Hosting, domein & SSL geregeld',
     ],
   },
   {
     id: 'compleet',
     name: 'Compleet',
-    description: 'Meerdere pagina’s met alles wat een groeiend bedrijf nodig heeft.',
+    description: 'Meerdere pagina’s, klaar om te groeien.',
     upfront: 745,
     monthly: 29,
     includes: [
       'Tot 5 pagina’s',
       'Alles uit Visitekaartje',
-      'Blog of nieuwsberichten',
-      'Uitgebreide SEO per pagina',
       'Koppeling met je Google Bedrijfsprofiel',
+      'Statistieken',
     ],
+    popular: true,
   },
   {
     id: 'interactief',
     name: 'Interactief',
-    description: 'Een website die werk uit handen neemt: boekingen, aanvragen, meer.',
+    description: 'Voor zaken die online wérken.',
     upfront: 1195,
     monthly: 49,
     includes: [
       'Tot 10 pagina’s',
       'Alles uit Compleet',
-      'Eén interactieve module naar keuze inbegrepen',
-      'Maatwerk-animaties',
-      'Voorrang bij wijzigingen',
+      '2 add-ons naar keuze inbegrepen',
+      'Prioriteit bij wijzigingen',
     ],
   },
 ];
@@ -109,7 +108,7 @@ export const addons: Addon[] = [
   {
     id: 'agenda',
     name: 'Online agenda',
-    shortPitch: 'Klanten boeken zelf een afspraak — jij houdt je agenda over.',
+    shortPitch: 'Klanten boeken zelf een afspraak.',
     upfront: 250,
     monthly: 15,
     demoSectionId: 'menu-agenda',
@@ -118,7 +117,7 @@ export const addons: Addon[] = [
   {
     id: 'chatbot',
     name: 'AI-chatbot',
-    shortPitch: 'Beantwoordt vragen 24/7, getraind op jouw zaak.',
+    shortPitch: 'Beantwoordt vragen, dag en nacht.',
     upfront: 295,
     monthly: 25,
     demoSectionId: 'menu-chatbot',
@@ -127,7 +126,7 @@ export const addons: Addon[] = [
   {
     id: 'ai-telefonist',
     name: 'AI-telefonist',
-    shortPitch: 'Neemt op als jij niet kunt, spreekt Nederlands en maakt notities.',
+    shortPitch: 'Neemt op als jij je handen vol hebt.',
     upfront: 395,
     monthly: 49,
     demoSectionId: null,
@@ -135,7 +134,7 @@ export const addons: Addon[] = [
   {
     id: 'bestellen',
     name: 'Eigen online bestellen',
-    shortPitch: 'Bestellingen via je eigen site — zonder platform-commissie.',
+    shortPitch: 'Bestellen via je eigen site — zonder platform-commissie.',
     upfront: 395,
     monthly: 29,
     demoSectionId: 'menu-bestellen',
@@ -143,7 +142,7 @@ export const addons: Addon[] = [
   {
     id: 'kaart',
     name: 'Interactieve kaart',
-    shortPitch: 'Al je locaties op een stijlvolle kaart met routeknop.',
+    shortPitch: 'Al je locaties, mooi op de kaart.',
     upfront: 95,
     monthly: 0,
     demoSectionId: 'menu-kaart',
@@ -151,7 +150,7 @@ export const addons: Addon[] = [
   {
     id: 'scrollvideo',
     name: 'Scroll-video / animaties',
-    shortPitch: 'De opening van deze site — maar dan voor jouw merk.',
+    shortPitch: 'Die opening van deze site — voor jouw merk.',
     upfront: 245,
     monthly: 0,
     demoSectionId: 'menu-scrollvideo',
@@ -159,7 +158,7 @@ export const addons: Addon[] = [
   {
     id: 'intake',
     name: 'Digitale intake',
-    shortPitch: 'Nieuwe klanten vullen alles vooraf in — jij begint voorbereid.',
+    shortPitch: 'Slim formulier in stappen.',
     upfront: 145,
     monthly: 0,
     demoSectionId: 'menu-intake',
@@ -167,7 +166,7 @@ export const addons: Addon[] = [
   {
     id: 'calculator',
     name: 'Prijscalculator',
-    shortPitch: 'Bezoekers rekenen zelf hun prijs uit — jij krijgt warme leads.',
+    shortPitch: 'Klanten rekenen zelf hun prijs uit.',
     upfront: 195,
     monthly: 0,
     demoSectionId: 'menu-calculator',
@@ -175,7 +174,7 @@ export const addons: Addon[] = [
   {
     id: 'beforeafter',
     name: 'Before/after-slider',
-    shortPitch: 'Laat je resultaat zien met één veegbeweging.',
+    shortPitch: 'Laat het verschil zien.',
     upfront: 75,
     monthly: 0,
     demoSectionId: 'menu-beforeafter',
@@ -183,7 +182,7 @@ export const addons: Addon[] = [
   {
     id: 'reviews',
     name: 'Reviews-wall',
-    shortPitch: 'Je Google-reviews automatisch en stijlvol in beeld.',
+    shortPitch: 'Je Google-reviews, live op je site.',
     upfront: 75,
     monthly: 5,
     demoSectionId: 'menu-reviews',
@@ -192,7 +191,7 @@ export const addons: Addon[] = [
   {
     id: 'meertalig',
     name: 'Meertalig',
-    shortPitch: 'Je site in meerdere talen, netjes en vindbaar geregeld.',
+    shortPitch: 'NL/EN met één klik.',
     upfront: 145,
     monthly: 0,
     demoSectionId: 'menu-meertalig',
@@ -200,7 +199,7 @@ export const addons: Addon[] = [
   {
     id: 'portaal',
     name: 'Klantenportaal',
-    shortPitch: 'Documenten, afspraken en facturen achter een eigen login.',
+    shortPitch: 'Documenten en facturen achter login.',
     upfront: 345,
     monthly: 15,
     demoSectionId: 'menu-portaal',
@@ -208,7 +207,7 @@ export const addons: Addon[] = [
   {
     id: 'cadeaubonnen',
     name: 'Cadeaubonnen',
-    shortPitch: 'Verkoop digitale bonnen rechtstreeks vanaf je site.',
+    shortPitch: 'Verkoop bonnen, direct betaald.',
     upfront: 195,
     monthly: 10,
     demoSectionId: 'menu-cadeau',
@@ -216,7 +215,7 @@ export const addons: Addon[] = [
   {
     id: 'stempelkaart',
     name: 'Digitale stempelkaart',
-    shortPitch: 'Vaste klanten belonen — zonder papieren kaartjes.',
+    shortPitch: 'Klanten komen terug.',
     upfront: 195,
     monthly: 10,
     demoSectionId: 'menu-cadeau',
@@ -224,7 +223,7 @@ export const addons: Addon[] = [
   {
     id: 'sms',
     name: 'SMS-herinneringen',
-    shortPitch: 'Minder no-shows door automatische afspraak-reminders.',
+    shortPitch: 'Minder no-shows.',
     upfront: 95,
     monthly: 10,
     demoSectionId: null,
@@ -232,7 +231,7 @@ export const addons: Addon[] = [
   {
     id: 'nieuwsbrief',
     name: 'Nieuwsbrief-koppeling',
-    shortPitch: 'Inschrijvingen rechtstreeks in je maillijst.',
+    shortPitch: 'Blijf in beeld bij je klanten.',
     upfront: 145,
     monthly: 10,
     demoSectionId: null,
@@ -243,21 +242,21 @@ export const carePlans: CarePlan[] = [
   {
     id: 'basis',
     name: 'Basis',
-    description: 'Hosting, updates & support — zit al bij je pakket in.',
+    description: 'Inbegrepen in je pakket.',
     upfrontDelta: 0,
     monthlyDelta: 0,
   },
   {
     id: 'plus',
     name: 'Plus',
-    description: 'Elke maand kleine wijzigingen + voorrang bij vragen.',
+    description: 'Maandelijkse wijzigingen + rapportage.',
     upfrontDelta: 0,
     monthlyDelta: 30,
   },
   {
     id: 'premium',
     name: 'Premium',
-    description: 'Doorlopend verbeteren, rapportage & onbeperkt kleine wijzigingen.',
+    description: 'Onbeperkt kleine wijzigingen, prioriteit.',
     upfrontDelta: 0,
     monthlyDelta: 70,
   },
