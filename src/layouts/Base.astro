@@ -78,6 +78,30 @@ const jsonLd = {
     */}
     <script is:inline>
       document.documentElement.classList.add('js');
+
+      /*
+       * Ankerlinks + content-visibility: secties die nog niet gerenderd
+       * zijn hebben alleen een geschatte hoogte, dus de browser rekent de
+       * sprong mis. Vóór elke sprong maken we daarom alles tot en met het
+       * doel echt zichtbaar en forceren we één layout — daarna klopt de
+       * positie exact. Inline en met capture, zodat dit gebeurt vóórdat de
+       * browser zelf de scroll inzet.
+       */
+      document.addEventListener(
+        'click',
+        (event) => {
+          const link = event.target.closest?.('a[href^="#"]');
+          if (!link) return;
+          const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+          if (!target) return;
+          for (const section of document.querySelectorAll('.defer-render')) {
+            section.style.contentVisibility = 'visible';
+            if (section === target || section.contains(target)) break;
+          }
+          target.getBoundingClientRect();
+        },
+        true,
+      );
     </script>
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

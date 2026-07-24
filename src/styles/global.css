@@ -231,6 +231,25 @@ section[id],
   }
 }
 
+/* -------------------- Renderwerk uitstellen ------------------------ */
+/*
+ * De browser berekende bij het laden de layout van álle twaalf
+ * demo-secties (inclusief een tweede volledige 3D-scène in optie 11),
+ * terwijl je er nog geen enkele ziet. content-visibility slaat dat werk
+ * over tot je in de buurt komt. De inhoud blijft gewoon in de DOM staan —
+ * vindbaar, doorzoekbaar, kopieerbaar — alleen het rekenwerk verschuift.
+ *
+ * LET OP: de geschatte hoogte (contain-intrinsic-size) is nooit exact
+ * gelijk aan de echte, en over twaalf secties loopt dat verschil op tot
+ * ~1000 px. Een klik op een ankerlink zou daardoor naast het doel landen.
+ * Base.astro maakt de secties tot aan het doel daarom eerst écht zichtbaar
+ * vóór de sprong; zie het script daar.
+ */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 /* ------------------------ Grain (donkere secties) ------------------ */
 /* SVG-ruis als data-URI: geen extra request, ~0,3 KB.                 */
 .grain {
