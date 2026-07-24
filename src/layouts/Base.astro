@@ -70,6 +70,16 @@ const jsonLd = {
       crossorigin
     />
 
+    {/*
+      Blokkeert één regel lang, en dat is precies de bedoeling: component-scripts
+      zijn modules (deferred) en draaien pas ná de eerste paint. Zonder deze vlag
+      flitst de statische eindtoestand van de hero kort in beeld. Met `.js` op
+      <html> weet de CSS meteen dat JavaScript het overneemt.
+    */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>

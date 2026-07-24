@@ -1,201 +1,270 @@
 ---
 /**
- * De intro in drie bedrijven:
- * 1. Bij het laden: geen zwart gat maar een logo-splash die vanzelf
- *    wegvloeit, waarna het lege browserframe "de site" opent.
- * 2. Tijdens het scrollen (gepind, ±5 scrolls): de site bouwt zichzelf
- *    op uit herkenbare stukken van déze site (HeroScene), met alleen
- *    een klein dag-label als tekst (Dag 1 — schets … Dag 5 — live).
- * 3. Op het eind: de scène dimt, de kopregel + optie-11-caption komen erover.
+ * De opening: split screen. Links de belofte in tekst, rechts een échte
+ * mini-scottprins.nl die zichzelf in 3D in elkaar zet.
  *
- * Wie scrolt terwijl de splash nog speelt, krijgt geen wachttijd: de
- * intro spoelt dan direct door naar het einde en de scrub neemt over.
- * Zonder JavaScript of met reduced motion staat hier het statische
- * eindbeeld: kopregel + caption + afgebouwde mini-site.
+ * Wat de bezoeker beleeft:
+ *  t=0      kopregel, knoppen en een gekleurde aurora staan er meteen —
+ *           geen zwart scherm, en er is direct iets te dóén.
+ *  ~0,4 s   de stukken van de site komen uit de diepte aanvliegen en
+ *           blijven zweven in een gekantelde 3D-opstelling.
+ *  muis     de hele scène kantelt mee met de cursor (bewijs: geen video).
+ *  scrollen de bouw gaat verder — dag 1 t/m 5 — en op het eind draait de
+ *           camera vlak, klikt alles op zijn plek en gaat de site "live".
+ *
+ * Zonder JavaScript of met prefers-reduced-motion staat hier direct het
+ * eindbeeld: volledige tekst plus de afgebouwde, vlakke mini-site.
  */
 import { hero } from '../data/site';
 import HeroScene from './HeroScene.astro';
 import Logo from './Logo.astro';
 ---
 
-<section class="hero grain relative bg-ink text-cream" data-hero>
-  <div class="relative flex h-svh flex-col items-center justify-center overflow-hidden px-5">
-    <Logo class="absolute top-5 left-5 z-20 sm:top-7 sm:left-7" data-hero-corner-logo />
+<section class="hero relative overflow-hidden bg-ink text-cream" data-hero>
+  {/* Kleur en licht: langzaam drijvende aurora achter alles */}
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora-1"></span>
+    <span class="aurora-2"></span>
+    <span class="aurora-3"></span>
+  </div>
+  <div class="grain absolute inset-0" aria-hidden="true"></div>
 
-    {/* Splash bij binnenkomst — alleen in de geanimeerde variant */}
+  <div
+    class="relative mx-auto grid h-svh w-full max-w-7xl grid-rows-[auto_1fr_auto] gap-2 overflow-hidden px-5 pt-5 pb-5 sm:px-8"
+  >
+    <Logo class="shrink-0" />
+
+    {/* min-w-0 op de grid én op beide kolommen: anders weigeren grid-items
+        smaller te worden dan hun min-content en loopt de hero op mobiel uit
+        het scherm. */}
     <div
-      class="hero-splash pointer-events-none absolute inset-0 z-30 flex-col items-center justify-center gap-4"
-      data-hero-splash
-      aria-hidden="true"
+      class="grid min-h-0 min-w-0 items-center gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1fr)] lg:gap-12"
     >
-      <Logo class="scale-[1.8] sm:scale-[2.2]" />
-      <p class="mt-4 text-xs tracking-[0.3em] text-muted-dark uppercase">Webdesign · Nederland</p>
-    </div>
+      {/* ---------------- Links: de belofte ---------------- */}
+      <div class="relative z-10 min-w-0 max-w-xl">
+        <p class="kicker" data-hero-eyebrow>{hero.eyebrow}</p>
 
-    {/* De mini-site die zichzelf opbouwt */}
-    <div class="hero-scene-wrap w-full max-w-2xl opacity-40" data-hero-scene>
-      <HeroScene />
-    </div>
-
-    {/* Eindbeeld: kopregel over de gedimde scène */}
-    <h1
-      class="font-display text-display absolute inset-x-0 top-1/2 z-10 mx-auto max-w-4xl px-5 text-center font-semibold text-balance"
-      data-hero-headline
-    >
-      {hero.headline}
-    </h1>
-
-    {/* Dag-labels: het enige tekstje tijdens de bouw-animatie. */}
-    <div class="hero-days absolute bottom-24 left-1/2 z-10 -translate-x-1/2" aria-hidden="true">
-      {
-        hero.days.map((day, i) => {
-          const [dag, stap] = day.split(' — ');
-          return (
-            <span
-              class="day-chip col-start-1 row-start-1 rounded-full bg-ink-soft/90 px-4 py-2 text-xs font-semibold tracking-widest whitespace-nowrap uppercase ring-1 ring-white/10"
-              data-day={i}
-            >
-              <span class="text-accent-soft">{dag}</span>
-              <span class="text-muted-dark"> — {stap}</span>
+        <h1
+          class="font-display mt-3 text-[clamp(1.95rem,4.4vw,3.9rem)] leading-[1.03] font-semibold tracking-[-0.02em] text-balance"
+          data-hero-headline
+        >
+          {hero.headline.split(' ').map((word, i) => (
+            <span class="hero-word">
+              <span style={`--i:${i}`}>{word}</span>
             </span>
-          );
-        })
-      }
+          ))}
+        </h1>
+
+        <p class="text-muted-dark mt-4 max-w-lg text-base sm:text-lg" data-hero-sub>{hero.sub}</p>
+
+        {/* Meteen iets te doen — niet pas na vijf schermen scrollen */}
+        <div class="mt-6 flex flex-wrap items-center gap-3" data-hero-actions>
+          <a
+            href={hero.actions.primary.href}
+            class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_var(--accent)] transition-transform hover:-translate-y-0.5 sm:px-6 sm:py-3.5 sm:text-base motion-reduce:hover:translate-y-0"
+          >
+            {hero.actions.primary.label}
+          </a>
+          <a
+            href={hero.actions.secondary.href}
+            class="rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold transition-colors hover:border-accent sm:px-6 sm:py-3.5 sm:text-base"
+          >
+            {hero.actions.secondary.label}
+          </a>
+        </div>
+
+        {/* Voortgangsbalk van de vijf bouwdagen + de meelopende regel */}
+        <div class="mt-7" data-hero-rail>
+          {/* De vijf-balkjes zijn op een telefoon te fijnmazig; daar draagt
+              alleen de meelopende dagregel het verhaal. */}
+          <ol class="hidden items-center gap-2 sm:flex" aria-hidden="true">
+            {
+              hero.days.map((day, i) => (
+                <li class="flex flex-1 flex-col gap-1.5" data-rail-step={i}>
+                  <span class="block h-[3px] rounded-full bg-white/15">
+                    <span class="block h-full w-0 rounded-full bg-accent" data-rail-fill />
+                  </span>
+                  <span class="text-[10px] font-semibold tracking-wider text-muted-dark uppercase transition-colors">
+                    {day.label}
+                  </span>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="hero-beats relative mt-3.5 grid min-h-[2.75rem]">
+            {
+              hero.days.map((day, i) => (
+                <p
+                  class="col-start-1 row-start-1 self-start text-sm leading-relaxed text-cream/90"
+                  data-hero-beat={i}
+                >
+                  {day.text}
+                </p>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      {/* ---------------- Rechts: de site die zichzelf bouwt ---------------- */}
+      {/* Op kleine schermen begrenst de scène zich op de beschikbare hoogte
+          (4:3 → breedte × 0,75), zodat hij nooit onder de vouw wegvalt. */}
+      <div
+        class="hero-scene-wrap relative mx-auto w-full max-w-[min(100%,44svh)] min-w-0 lg:max-w-none"
+        data-hero-scene
+      >
+        <HeroScene interactive />
+      </div>
     </div>
 
-    {/* Dit regeltje leert de bezoeker hoe de hele site werkt. */}
-    <a
-      class="absolute bottom-12 left-1/2 z-10 w-max max-w-[92vw] -translate-x-1/2 rounded-full bg-ink-soft/90 px-5 py-2.5 text-center text-sm font-medium text-cream ring-1 ring-white/15 transition-colors hover:ring-accent"
-      href={`#${hero.captionTargetId}`}
-      data-hero-caption>{hero.caption}</a
-    >
-
-    <p
-      class="hero-hint absolute bottom-4 left-1/2 z-10 -translate-x-1/2 text-xs tracking-widest text-muted-dark uppercase"
-      data-hero-hint
-      aria-hidden="true"
-    >
-      {hero.scrollHint} ↓
-    </p>
+    {/* Voet: de caption die uitlegt hoe de site werkt + scroll-hint */}
+    <div class="relative z-10 flex min-w-0 shrink-0 flex-col items-center gap-2">
+      {/* w-fit, niet w-max: max-content zou de hele grid-kolom oprekken tot
+          de breedte van deze zin en de hero op mobiel uit beeld duwen. */}
+      <a
+        class="w-fit max-w-full rounded-full bg-ink-soft/80 px-5 py-2.5 text-center text-sm font-medium text-cream ring-1 ring-white/15 backdrop-blur transition-colors hover:ring-accent"
+        href={`#${hero.captionTargetId}`}
+        data-hero-caption>{hero.caption}</a
+      >
+      <p class="hero-hint text-xs tracking-widest text-muted-dark uppercase" data-hero-hint aria-hidden="true">
+        {hero.scrollHint} ↓
+      </p>
+    </div>
   </div>
 </section>
 
 <style>
-  [data-hero-headline] {
-    text-shadow: 0 2px 28px rgb(11 14 17 / 0.85);
-    /* Verticaal centreren; in de geanimeerde variant neemt GSAP dit over
-       via yPercent zodat de y-tween ermee kan combineren. */
-    transform: translateY(-50%);
+  /* Woord-voor-woord reveal van de kopregel (masker, geen layout shift). */
+  .hero-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
   }
-  /* Statische variant (no-JS / reduced motion): geen splash/dag-labels/hint. */
-  .hero-splash,
-  .hero-days,
+  .hero-word > span {
+    display: inline-block;
+    padding-right: 0.22em;
+  }
   .hero-hint {
     display: none;
   }
-  .hero--animated .hero-splash {
-    display: flex;
-  }
-  /* Geanimeerde variant: labels gestapeld in één grid-cel voor de crossfade. */
-  .hero--animated .hero-days {
-    display: grid;
-  }
-  .hero--animated .hero-hint {
+  .js .hero-hint {
     display: block;
+  }
+  /* Zonder JS: alleen de laatste (meest complete) regel tonen, anders
+     stapelen alle vijf de dagteksten over elkaar heen. */
+  .hero-beats [data-hero-beat]:not([data-hero-beat='4']) {
+    visibility: hidden;
   }
 </style>
 
 <script>
-  import { gsap, NO_PREFERENCE, ScrollTrigger } from '../scripts/motion';
-  import { buildSceneTimeline } from '../scripts/scene-timeline';
+  import { gsap, NO_PREFERENCE } from '../scripts/motion';
+  import {
+    attachPointerTilt,
+    buildSceneTimeline,
+    INTRO_END,
+    startIdleFloat,
+  } from '../scripts/scene-timeline';
+  import { toggleAddon } from '../scripts/store';
 
   const section = document.querySelector<HTMLElement>('[data-hero]');
   if (section) {
-    const splash = section.querySelector<HTMLElement>('[data-hero-splash]')!;
     const sceneWrap = section.querySelector<HTMLElement>('[data-hero-scene]')!;
     const sceneRoot = sceneWrap.querySelector<HTMLElement>('[data-scene-root]')!;
-    const cornerLogo = section.querySelector<HTMLElement>('[data-hero-corner-logo]')!;
-    const headline = section.querySelector<HTMLElement>('[data-hero-headline]')!;
-    const days = [...section.querySelectorAll<HTMLElement>('[data-day]')];
-    const caption = section.querySelector<HTMLElement>('[data-hero-caption]')!;
-    const hint = section.querySelector<HTMLElement>('[data-hero-hint]')!;
+    const camera = sceneWrap.querySelector<HTMLElement>('[data-scene-camera]')!;
+    const beats = [...section.querySelectorAll<HTMLElement>('[data-hero-beat]')];
+    const railFills = [...section.querySelectorAll<HTMLElement>('[data-rail-fill]')];
+    const railLabels = [...section.querySelectorAll<HTMLElement>('[data-rail-step] span:last-child')];
+    const chrome = [
+      section.querySelector('[data-hero-eyebrow]'),
+      section.querySelector('[data-hero-sub]'),
+      section.querySelector('[data-hero-actions]'),
+      section.querySelector('[data-hero-rail]'),
+      section.querySelector('[data-hero-caption]'),
+    ].filter(Boolean) as HTMLElement[];
 
-    // De scène-opbouw beslaat het eerste deel van de scrub; daarna maakt
-    // hij plaats voor de kopregel (het "live"-moment).
-    const SCENE_END = 0.88;
+    // De mini "+ In mijn website" doet écht iets: de agenda belandt in de
+    // configurator. Klein grapje, groot effect — de hero ís de site.
+    sceneRoot.querySelector('[data-scene-add]')?.addEventListener('click', () => {
+      toggleAddon('agenda');
+    });
 
     const mm = gsap.matchMedia();
 
     mm.add(NO_PREFERENCE, () => {
-      section.classList.add('hero--animated');
-
       const sceneTl = buildSceneTimeline(sceneRoot);
-      gsap.set(headline, { yPercent: -50 });
-      gsap.set([headline, caption, ...days], { autoAlpha: 0 });
-      gsap.set([sceneWrap, cornerLogo, hint], { autoAlpha: 0 });
+      gsap.set(beats, { autoAlpha: 0, y: 10 });
+      gsap.set(beats[0], { autoAlpha: 1, y: 0 });
 
-      // --- Bedrijf 1: splash bij het laden (tijd-gestuurd, niet scroll) ---
-      const intro = gsap.timeline();
+      // ---- Bedrijf 1: alles is er meteen, en de scène vliegt binnen ----
+      // (De kopregel onthult zichzelf via CSS — zie global.css.)
+      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
       intro
-        .fromTo(
-          splash,
-          { autoAlpha: 0, scale: 0.92 },
-          { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'power2.out' },
-        )
-        .to(splash, { autoAlpha: 0, y: -28, duration: 0.45, ease: 'power2.in' }, '+=0.75')
-        .fromTo(
-          sceneWrap,
-          { scale: 0.94 },
-          { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'power2.out' },
-          '-=0.12',
-        )
-        .to([cornerLogo, hint], { autoAlpha: 1, duration: 0.35 }, '<+=0.2');
+        .to(chrome, { autoAlpha: 1, duration: 0.5, stagger: 0.08 }, 0.25)
+        .to(sceneTl, { progress: INTRO_END, duration: 1.9, ease: 'power2.out' }, 0.1);
 
-      // --- Bedrijf 2+3: de scroll-scrub ---
-      sceneTl.duration(SCENE_END);
-      const tl = gsap.timeline({
+      // Zweven + muis-parallax zodra de intro geland is: het beeld leeft,
+      // ook als de bezoeker niets doet.
+      let stopFloat: (() => void) | undefined;
+      let stopTilt: (() => void) | undefined;
+      intro.call(() => {
+        stopFloat = startIdleFloat(sceneRoot);
+        stopTilt = attachPointerTilt(camera);
+      });
+
+      // ---- Bedrijf 2: scrollen bouwt verder ----
+      const scrollTl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=450%',
+          end: '+=380%',
           pin: true,
-          scrub: 0.6,
+          scrub: 0.5,
           anticipatePin: 1,
-          // Scrolt iemand tijdens de splash? Spoel de intro dan door,
-          // zodat de scrub nooit tegen de intro in zit te vechten.
           onUpdate: (self) => {
-            if (self.progress > 0.005 && intro.progress() < 1) intro.progress(1);
+            // Scrollt iemand meteen? Dan de intro doorspoelen, niet dubbel animeren.
+            if (self.progress > 0.004 && intro.progress() < 1) intro.progress(1);
+            // De scrub neemt de bouw over vanaf waar de intro ophield.
+            sceneTl.progress(INTRO_END + self.progress * (1 - INTRO_END));
+
+            // Voortgangsbalk + dagregel volgen dezelfde bouw.
+            const stage = gsap.utils.clamp(0, 4.999, self.progress * 5);
+            const index = Math.floor(stage);
+            railFills.forEach((fill, i) => {
+              fill.style.width = `${gsap.utils.clamp(0, 1, stage - i) * 100}%`;
+            });
+            railLabels.forEach((label, i) => {
+              label.classList.toggle('text-cream', i === index);
+            });
+            beats.forEach((beat, i) => {
+              gsap.to(beat, {
+                autoAlpha: i === index ? 1 : 0,
+                y: i === index ? 0 : 10,
+                duration: 0.25,
+                overwrite: 'auto',
+              });
+            });
           },
         },
       });
 
-      tl.add(sceneTl.play(), 0);
-      tl.to(hint, { autoAlpha: 0, duration: 0.03 }, 0.03);
-
-      // Vijf dag-labels, netjes verdeeld over de bouw-fase.
-      days.forEach((chip, i) => {
-        const start = 0.02 + i * (SCENE_END / days.length);
-        tl.fromTo(chip, { y: 14 }, { autoAlpha: 1, y: 0, duration: 0.03 }, start);
-        tl.to(chip, { autoAlpha: 0, y: -14, duration: 0.03 }, start + SCENE_END / days.length - 0.035);
-      });
-
-      // "Live": scène dimt tot achtergrond, kopregel + caption verschijnen.
-      tl.to(sceneWrap, { opacity: 0.3, scale: 0.96, duration: 0.08 }, SCENE_END)
-        .fromTo(headline, { y: 28 }, { autoAlpha: 1, y: 0, duration: 0.08 }, SCENE_END + 0.02)
-        .fromTo(caption, { y: 16 }, { autoAlpha: 1, y: 0, duration: 0.06 }, SCENE_END + 0.06);
+      // Op het eind maakt de tekst plaats voor het resultaat.
+      scrollTl.to(sceneWrap, { scale: 1.04, duration: 1 }, 0);
 
       return () => {
-        section.classList.remove('hero--animated');
         intro.kill();
         sceneTl.kill();
-        gsap.set([headline, caption, hint, cornerLogo, sceneWrap, splash, ...days], {
-          clearProps: 'all',
-        });
+        scrollTl.kill();
+        stopFloat?.();
+        stopTilt?.();
+        gsap.set([...chrome, ...beats, sceneWrap], { clearProps: 'all' });
       };
     });
 
-    // Reduced motion: geen splash, geen pin — het afgebouwde eindbeeld
-    // staat er al (de statische HTML-toestand), dus niets te doen.
+    // Reduced motion vraagt geen JavaScript: de CSS-startstand hierboven
+    // geldt alleen bij `no-preference`, dus de scène staat dan gewoon
+    // afgebouwd en vlak in beeld.
   }
 </script>

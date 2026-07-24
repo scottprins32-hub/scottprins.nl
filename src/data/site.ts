@@ -25,16 +25,29 @@ export const site = {
 /* ------------------------------ Hero ------------------------------ */
 
 export const hero = {
-  /** Eindbeeld van de intro — tegelijk de belangrijkste zin van de site. */
+  eyebrow: 'Webdesign uit Nederland · vaste prijzen',
+  /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
   headline: 'Websites die werken. Gebouwd in dagen, niet maanden.',
+  /** Vaste ondertitel onder de H1. */
+  sub: 'Kies je basis, kies je extra’s — en zie precies wat je krijgt terwijl je site zichzelf bouwt. Live binnen 5 dagen, altijd een vaste prijs.',
+  actions: {
+    primary: { label: 'Stel je website samen', href: '#configurator' },
+    secondary: { label: 'Bekijk de menukaart', href: '#menukaart' },
+  },
   /**
-   * De vijf bouwdagen die tijdens het scrollen voorbijkomen terwijl de
-   * site zichzelf opbouwt. Bewust bijna geen tekst — de animatie is de show.
+   * De vijf bouwdagen. `label` verschijnt in de voortgangsbalk links,
+   * `text` is de regel die tijdens het scrollen meeloopt met de bouw.
    */
-  days: ['Dag 1 — schets', 'Dag 2 — ontwerp', 'Dag 3 — bouwen', 'Dag 4 — content', 'Dag 5 — live'],
+  days: [
+    { label: 'Schets', text: 'Dag 1 — we beginnen bij jouw verhaal. Geen template.' },
+    { label: 'Ontwerp', text: 'Dag 2 — jouw kleuren, jouw foto’s, jouw toon.' },
+    { label: 'Bouwen', text: 'Dag 3 — alles wat je hier ziet werken, kun je bestellen.' },
+    { label: 'Content', text: 'Dag 4 — teksten, prijzen en openingstijden staan erin.' },
+    { label: 'Live', text: 'Dag 5 — vindbaar, snel, en van jou. Klaar voor klanten.' },
+  ],
   caption: '↑ Dit effect? Ook gewoon te bestellen. Optie 11 op de menukaart.',
   captionTargetId: 'menu-scrollvideo',
-  scrollHint: 'Scroll om te bouwen',
+  scrollHint: 'Scroll — dan bouwt hij zichzelf',
 } as const;
 
 /* --------------------------- Zo werkt het -------------------------- */
