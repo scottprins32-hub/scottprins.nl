@@ -87,6 +87,14 @@ const jsonLd = {
        * positie exact. Inline en met capture, zodat dit gebeurt vóórdat de
        * browser zelf de scroll inzet.
        */
+      const revealUpTo = (target) => {
+        for (const section of document.querySelectorAll('.defer-render')) {
+          section.style.contentVisibility = 'visible';
+          if (section === target || section.contains(target)) break;
+        }
+        target.getBoundingClientRect();
+      };
+
       document.addEventListener(
         'click',
         (event) => {
@@ -94,14 +102,36 @@ const jsonLd = {
           if (!link) return;
           const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
           if (!target) return;
-          for (const section of document.querySelectorAll('.defer-render')) {
-            section.style.contentVisibility = 'visible';
-            if (section === target || section.contains(target)) break;
-          }
-          target.getBoundingClientRect();
+          revealUpTo(target);
         },
         true,
       );
+
+      /*
+       * Dezelfde misrekening treft een gedeelde link (scottprins.nl/#over-scott):
+       * de browser springt al vóór de secties echt gerenderd zijn, waarna de
+       * pagina onder je wegkrimpt en je honderden pixels naast het doel staat.
+       * Een klik onderscheppen helpt daar niet — er is geen klik. Dus na het
+       * laden zelf corrigeren, en alleen als het nog niet klopt.
+       */
+      let placedAt = null;
+      const jumpToHash = () => {
+        if (location.hash.length < 2) return;
+        const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        if (!target) return;
+        // Nooit corrigeren als de bezoeker zelf al aan het scrollen is.
+        if (placedAt !== null && Math.abs(window.scrollY - placedAt) > 4) return;
+        revealUpTo(target);
+        if (Math.abs(target.getBoundingClientRect().top - 88) > 4) target.scrollIntoView();
+        placedAt = window.scrollY;
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', jumpToHash);
+      } else {
+        jumpToHash();
+      }
+      window.addEventListener('load', jumpToHash);
+      window.addEventListener('hashchange', () => { placedAt = null; jumpToHash(); });
     </script>
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

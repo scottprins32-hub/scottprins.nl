@@ -59,3 +59,33 @@ hero-CTA → configurator en configurator → demo agenda landen alle vier op
 88 px (de `scroll-margin-top` voor de navigatiebalk). LCP 2,284 s.
 TBT liep licht op (203 → 247 ms) doordat het uitgestelde renderwerk deels
 tijdens het scrollen terugkomt; LCP is hier het doel, dus behouden.
+
+## 2026-07-25 — regressie: alles ónder het demo-blok bleef leeg
+
+`content-visibility: auto` met `contain-intrinsic-size: auto 900px` schat elke
+demo-sectie ~255px te hoog. Over twaalf secties is dat 3055px: bij het laden is
+de pagina 22248px, na het echt renderen 19193px.
+
+ScrollTrigger berekent zijn posities bij het laden, dus met de schatting. De
+reveal van "Over Scott" stond daardoor op scrollY 19771 — terwijl de échte
+pagina maar tot 18293 scrolt. Onbereikbaar, dus de trigger ging nooit af. En
+omdat `gsap.from(..., autoAlpha: 0)` de begintoestand meteen zet, bleef de
+sectie permanent onzichtbaar. Hetzelfde gold voor de count-up: die bleef op
+`0+` staan in plaats van `25+`.
+
+Zichtbaar als: Over Scott leeg, statistieken op 0. Niet als foutmelding — er
+stond niets in de console.
+
+Fix: ResizeObserver op `document.body` in motion.ts die `ScrollTrigger.refresh()`
+aanroept zodra de documenthoogte stil ligt (120ms debounce).
+
+Meteen meegenomen: `jumpToHash` in Base.astro. De klik-onderschepping dekte
+alleen klikken, niet een binnenkomst op `/#sectie`. `#menu-portaal` landde
+daardoor 88px naast het doel en de landing hing ervan af of de pagina al
+gekrompen was. Nu deterministisch, met een guard zodat een bezoeker die zelf
+al scrolt niet teruggetrokken wordt.
+
+Les: een perf-wijziging die de documenthoogte verandert, raakt elke
+scroll-gebaseerde animatie op de pagina. Test na zo'n wijziging niet alleen de
+sprongen, maar ook of de secties eronder nog verschijnen.
+

@@ -19,6 +19,26 @@ if (document.fonts?.ready) {
   document.fonts.ready.then(() => ScrollTrigger.refresh());
 }
 
+/*
+ * .defer-render secties krijgen hun échte hoogte pas als de browser ze
+ * rendert. De schatting (contain-intrinsic-size) zit er per sectie ~255px
+ * naast en over twaalf secties krimpt de pagina daardoor ~3000px zodra je
+ * er langs scrollt. Elke triggerpositie die vóór dat moment berekend is,
+ * wijst dan te ver naar beneden — voor alles ónder het demo-blok (Over
+ * Scott, de statistieken) zelfs voorbij het einde van de pagina, zodat die
+ * triggers nooit meer afgaan en de sectie leeg blijft.
+ *
+ * Daarom: herbereken zodra de documenthoogte verandert en weer stil ligt.
+ */
+if ('ResizeObserver' in window) {
+  let settle: number | undefined;
+  const ro = new ResizeObserver(() => {
+    clearTimeout(settle);
+    settle = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+  });
+  ro.observe(document.body);
+}
+
 export { gsap, ScrollTrigger };
 
 export const REDUCED = '(prefers-reduced-motion: reduce)';
