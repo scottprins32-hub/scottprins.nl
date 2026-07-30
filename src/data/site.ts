@@ -426,15 +426,27 @@ export const configurator = {
  * Twee complete voorbeeldsites. Let op: de bedrijven zijn verzonnen — dit is
  * geen opgeleverd klantwerk. Zeg dat er ook bij; het maakt de rest
  * geloofwaardiger, niet minder. Echte casestudies horen in `proof.cases`.
+ *
+ * `base` + `addons` zijn met opzet exact gelijk aan een preset in pricing.ts
+ * ('praktijk' en 'klus'). Daardoor klopt niet alleen de prijs die hier staat,
+ * maar licht in de configurator ook de bijbehorende snelstart-knop op zodra
+ * je hier op "Zet deze samenstelling klaar" tikt.
  */
 export const showcase = {
   kicker: 'Voorbeelden',
   title: 'Twee complete sites. Klik ze kapot.',
-  lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site: twee volledige voorbeelden die je zelf kunt gebruiken. De bedrijven heb ik verzonnen — alles wat je aanklikt werkt echt.',
+  lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
+  contentsLabel: 'Wat zit erin',
+  totalLabel: 'Deze site',
+  totalNote: 'Vaste prijs. Live binnen 5 werkdagen.',
+  presetCta: 'Zet deze samenstelling klaar',
+  openCta: 'Open de hele site',
+  liveBadge: 'Bekijk live',
   sites: [
     {
       name: 'Fysio Vesting',
       sector: 'Fysiotherapiepraktijk · Naarden',
+      domain: 'fysiovesting.nl',
       href: 'https://ad-1-kliniek.base44.app',
       /**
        * Basisnaam van de schermafbeelding in `public/`. Showcase.astro maakt
@@ -442,65 +454,37 @@ export const showcase = {
        * hij het beeld over en werkt de kaart gewoon zonder.
        */
       image: '/voorbeeld-fysio',
-      /** Kort: waar je op moet klikken als je maar één ding probeert. */
-      tryThis: 'Plan hieronder een intake — precies zoals een patiënt dat doet.',
-      /** Label op de uitklapper in de variant 'uitklap'. */
-      tryHere: 'Probeer het intake-scherm',
-      rest: 'Op de site zelf zit ook het patiëntportaal met oefenvideo’s en het beheerscherm voor de praktijk.',
-      /** Bijbehorende opties op de menukaart, zodat de link naar binnen wijst. */
-      addons: ['agenda', 'intake', 'portaal'] as const,
+      summary: 'Een complete praktijksite: patiënten plannen zelf, de intake staat klaar voor ze binnenlopen.',
+      base: 'interactief',
+      /** Gelijk aan preset 'praktijk' in pricing.ts. */
+      addons: ['agenda', 'intake', 'portaal', 'sms'] as const,
+      /** Eén korte regel per optie: wat het hier doet, niet wat het is. */
+      does: {
+        agenda: 'patiënten boeken zelf, ook \u2019s avonds',
+        intake: 'vooraf ingevuld in plaats van in de wachtkamer',
+        portaal: 'oefenvideo\u2019s en afspraken achter een eigen inlog',
+        sms: 'herinnering een dag van tevoren',
+      },
+      extra: '+ een beheerscherm waarop de praktijk de agenda openzet.',
     },
     {
       name: 'Hovenier Van Slooten',
       sector: 'Hovenier & bestrating · Deventer',
+      domain: 'hovenier-vanslooten.nl',
       href: 'https://ad-2-vakman.base44.app',
       image: '/voorbeeld-vakman',
-      tryThis: 'Twee vragen en je weet waar je aan toe bent.',
-      tryHere: 'Probeer de prijsindicatie',
-      rest: 'Op de site zelf gaat de aanvraag daarna door met foto’s, en staan de projecten met voor- en na-beeld.',
+      summary: 'Een complete vakmansite: je weet in twee vragen waar je aan toe bent, en de aanvraag komt compleet binnen.',
+      base: 'compleet',
+      /** Gelijk aan preset 'klus' in pricing.ts. */
       addons: ['calculator', 'intake', 'beforeafter'] as const,
+      does: {
+        calculator: 'prijsindicatie in vier stappen',
+        intake: 'maten en foto\u2019s meteen mee',
+        beforeafter: 'projecten met voor- en na-beeld',
+      },
+      extra: '+ één overzicht waarop alle aanvragen binnenkomen.',
     },
   ],
-} as const;
-
-/**
- * Teksten voor de twee nagebouwde mini-previews in de sectie Voorbeelden.
- * Bewust nagebouwd en niet ingesloten: base44 stuurt `x-frame-options: DENY`
- * mee, dus een iframe is geen optie — en een screenshot veroudert zodra de
- * demo verandert. Dit blijft klein en klikbaar; de echte site is één klik weg.
- */
-export const showcasePreview = {
-  fysio: {
-    heading: 'Intake plannen',
-    sub: 'Ook zonder verwijzing',
-    days: [
-      { id: 'do', label: 'do 12', slots: ['09:00', '11:30'] },
-      { id: 'vr', label: 'vr 13', slots: ['08:30', '14:00', '16:15'] },
-      { id: 'ma', label: 'ma 16', slots: ['10:00', '15:30'] },
-    ],
-    confirmTitle: 'Gelukt.',
-    confirmText: 'Je krijgt een mail ter bevestiging — en de intake staat ingevuld klaar vóór je binnenloopt.',
-    restart: 'Nog eens',
-  },
-  vakman: {
-    heading: 'Wat gaat het kosten?',
-    typeLabel: 'Wat wilt u laten doen?',
-    types: [
-      { id: 'tuin', label: 'Complete tuin', base: 4200, perM2: 145 },
-      { id: 'bestrating', label: 'Alleen bestrating', base: 1400, perM2: 95 },
-      { id: 'onderhoud', label: 'Onderhoud', base: 300, perM2: 12 },
-    ],
-    /** Bewust niet "de tuin": de vraag geldt ook als je bestrating kiest. */
-    sizeLabel: 'Hoe groot is het oppervlak?',
-    sizeUnit: 'm²',
-    sizeMin: 20,
-    sizeMax: 150,
-    sizeValue: 60,
-    resultLabel: 'Indicatie',
-    /** Bandbreedte: ±12% rond de berekening. Nooit één hard bedrag. */
-    spread: 0.12,
-    note: 'Een plan, een prijs, geen meerwerk.',
-  },
 } as const;
 
 /* ------------------------------ Proof ------------------------------ */

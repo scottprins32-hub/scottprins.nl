@@ -1,36 +1,55 @@
 ---
 /**
- * Voorbeelden: twee complete demo-sites.
+ * Voorbeelden: twee complete demo-sites, elk met zijn samenstelling én de
+ * prijs van het geheel.
  *
- * Waarom niet ingesloten: base44 stuurt `x-frame-options: DENY` mee, dus een
- * iframe wordt geweigerd. Vandaar een schermafbeelding die zelf de link is,
- * plus een nagebouwd stukje van de demo dat wél werkt.
+ * Dit is de enige plek op de pagina waar staat wat een héle site kost — de
+ * menukaart geeft losse opties, de configurator laat je zelf rekenen. Daarmee
+ * is deze sectie de brug: losse onderdelen → twee complete recepten → jouw
+ * eigen samenstelling.
  *
- * TIJDELIJK: `VARIANT` staat hier om drie opzetten naast elkaar te kunnen
- * bekijken. Zodra de keuze gemaakt is gaat deze schakelaar eruit en blijft
- * er één opbouw over.
+ * Waarom de demo niet ingesloten is: base44 stuurt `x-frame-options: DENY`
+ * mee, dus een iframe wordt geweigerd. Vandaar een schermafbeelding die zelf
+ * de link is.
+ *
+ * Alle bedragen komen uit pricing.ts via calcTotals — nooit ingetypt, zodat
+ * een prijswijziging hier vanzelf meeloopt.
  */
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { showcase } from '../data/site';
 import { addons } from '../data/pricing';
-import PreviewFysio from './showcase/PreviewFysio.astro';
-import PreviewVakman from './showcase/PreviewVakman.astro';
-
-type Variant = 'huidig' | 'zonder' | 'uitklap';
-const VARIANT: Variant = 'uitklap';
+import { calcTotals, addonCost, isIncluded } from '../lib/calc';
+import { eur, eurPerMonth, priceLine } from '../lib/format';
 
 const addonById = new Map(addons.map((a) => [a.id, a]));
-
-/* Niet `#menu-${id}` aannemen: bij 'cadeaubonnen' heet de sectie
-   'menu-cadeau', en drie opties (sms, nieuwsbrief, ai-telefonist) hebben
-   helemaal geen demo-sectie. pricing.ts weet het, dus vraag het daar. */
 
 /* Vanaf de projectmap, niet vanaf dit bestand: na compilatie wijst
    `import.meta.url` niet meer naar src/components/ en zou de check
    stilletjes altijd 'nee' zeggen. */
 const hasImage = (base: string): boolean =>
   existsSync(resolve(process.cwd(), `public${base}-1200.webp`));
+
+/** Regels + totaal per kaart, één keer uitgerekend bij het bouwen. */
+const kaarten = showcase.sites.map((s) => {
+  const regels = s.addons.map((id) => {
+    const addon = addonById.get(id)!;
+    const kosten = addonCost(s.base, addon);
+    const gratis = isIncluded(s.base, id);
+    return {
+      naam: addon.name,
+      doet: (s.does as Record<string, string>)[id],
+      /* 'Inbegrepen' is hier het sterkste woord op de kaart: het laat zien
+         dat een groter pakket opties meebrengt in plaats van bijtelt. */
+      prijs: gratis ? 'inbegrepen' : priceLine(kosten.upfront, kosten.monthly),
+      gratis,
+      /* Niet `#menu-${id}` aannemen: bij 'cadeaubonnen' heet de sectie
+         'menu-cadeau', en sms/nieuwsbrief/ai-telefonist hebben er geen. */
+      href: addon.demoSectionId ? `#${addon.demoSectionId}` : null,
+    };
+  });
+  return { ...s, regels, totaal: calcTotals({ base: s.base, addons: [...s.addons], care: 'basis' }) };
+});
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="voorbeelden" data-reveal-section>
@@ -41,99 +60,128 @@ const hasImage = (base: string): boolean =>
       <p class="text-muted text-lead mt-3">{showcase.lead}</p>
     </header>
 
-    <div class="mt-10 grid items-start gap-6 md:grid-cols-2">
+    {/* Geen items-start: zo worden beide kaarten even hoog en staan de twee
+        knoppen op één lijn. */}
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
       {
-        showcase.sites.map((s, i) => (
+        kaarten.map((s) => (
           <article
-            class="flex flex-col rounded-2xl border border-line bg-white p-6 shadow-card transition-shadow hover:shadow-card-lg sm:p-7"
+            class="flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-card transition-shadow hover:shadow-card-lg"
             data-reveal
           >
             {
               hasImage(s.image) && (
-                /* Het beeld is zelf de link naar de demo. aria-hidden en niet
-                   focusbaar: de knop eronder gaat naar dezelfde plek, dus
-                   anders kom je met toetsenbord twee keer langs hetzelfde. */
+                /* Het beeld is zelf de link. aria-hidden en niet focusbaar:
+                   de knop onderaan gaat naar dezelfde plek, dus anders kom je
+                   met toetsenbord twee keer langs hetzelfde. */
                 <a
                   href={s.href}
                   target="_blank"
                   rel="noopener"
-                  class="group/shot mb-5 block overflow-hidden rounded-xl border border-line bg-cream-dim"
+                  class="group/shot relative block border-b border-line bg-cream-dim"
                   tabindex="-1"
                   aria-hidden="true"
                 >
-                  <span class="flex items-center gap-1.5 border-b border-line bg-white px-3 py-2">
+                  <span class="flex items-center gap-1.5 bg-white px-3 py-2">
                     <span class="size-2 rounded-full bg-line" />
                     <span class="size-2 rounded-full bg-line" />
                     <span class="size-2 rounded-full bg-line" />
+                    <span class="text-muted ml-2 truncate text-xs">{s.domain}</span>
                   </span>
-                  <img
-                    src={`${s.image}-1200.webp`}
-                    srcset={`${s.image}-600.webp 600w, ${s.image}-1200.webp 1200w`}
-                    sizes="(min-width: 768px) 45vw, 90vw"
-                    width="1200"
-                    height="687"
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    class="w-full transition-transform duration-500 group-hover/shot:scale-[1.03]"
-                  />
+                  <span class="block overflow-hidden">
+                    <img
+                      src={`${s.image}-1200.webp`}
+                      srcset={`${s.image}-600.webp 600w, ${s.image}-1200.webp 1200w`}
+                      sizes="(min-width: 768px) 45vw, 90vw"
+                      width="1200"
+                      height="687"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      class="w-full transition-transform duration-500 group-hover/shot:scale-[1.03]"
+                    />
+                  </span>
+                  {/* Altijd zichtbaar, niet alleen bij hover: op een telefoon
+                      bestaat hover niet en moet het beeld tóch als deur lezen. */}
+                  <span class="absolute right-3 bottom-3 rounded-lg bg-white/95 px-2.5 py-1 text-xs font-semibold shadow-card">
+                    {showcase.liveBadge} ↗
+                  </span>
                 </a>
               )
             }
 
-            <p class="kicker">{s.sector}</p>
-            <h3 class="font-display text-h3 mt-2 font-semibold">{s.name}</h3>
+            <div class="flex flex-1 flex-col p-6 sm:p-7">
+              <p class="kicker">{s.sector}</p>
+              <h3 class="font-display text-h3 mt-2 font-semibold">{s.name}</h3>
+              <p class="text-muted mt-2 text-sm leading-relaxed">{s.summary}</p>
 
-            {VARIANT !== 'zonder' && <p class="text-muted mt-2 text-sm">{s.tryThis}</p>}
-
-            {/* A — huidig: het widget staat er meteen, altijd open. */}
-            {VARIANT === 'huidig' && <div class="mt-5">{i === 0 ? <PreviewFysio /> : <PreviewVakman />}</div>}
-
-            {/* C — uitklap: rust op de kaart, interactie op verzoek.
-                <details> doet dit zonder een regel JavaScript en is
-                out of the box bedienbaar met het toetsenbord. */}
-            {
-              VARIANT === 'uitklap' && (
-                <details class="pv-details mt-4 rounded-xl border border-line">
-                  <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium transition-colors hover:text-accent">
-                    {s.tryHere}
-                    <span class="pv-chev text-muted transition-transform" aria-hidden="true">
-                      ▾
+              <p class="text-muted mt-6 text-xs font-semibold tracking-wide uppercase">
+                {showcase.contentsLabel}
+              </p>
+              <ul class="mt-2 divide-y divide-line border-y border-line">
+                {s.regels.map((r) => (
+                  <li class="flex items-baseline justify-between gap-4 py-2.5">
+                    <span class="min-w-0 text-sm">
+                      {r.href ? (
+                        <a
+                          href={r.href}
+                          class="font-medium underline decoration-line underline-offset-4 hover:text-accent"
+                        >
+                          {r.naam}
+                        </a>
+                      ) : (
+                        <span class="font-medium">{r.naam}</span>
+                      )}
+                      <span class="text-muted"> — {r.doet}</span>
                     </span>
-                  </summary>
-                  <div class="border-t border-line p-4">{i === 0 ? <PreviewFysio /> : <PreviewVakman />}</div>
-                </details>
-              )
-            }
+                    <span
+                      class:list={[
+                        'shrink-0 text-xs tabular-nums',
+                        r.gratis ? 'font-semibold text-accent' : 'text-muted',
+                      ]}
+                    >
+                      {r.prijs}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p class="text-muted mt-2 text-xs">{s.extra}</p>
 
-            <p class="text-muted mt-4 text-xs leading-relaxed">{s.rest}</p>
+              {/* mt-auto duwt prijs en knoppen naar de onderrand, zodat ze bij
+                  beide kaarten op dezelfde hoogte staan. */}
+              <div class="mt-auto pt-6">
+                <p class="flex items-baseline justify-between gap-3">
+                  <span class="text-muted text-sm">{showcase.totalLabel}</span>
+                  <span class="font-display text-lg font-semibold tabular-nums">
+                    {priceLine(s.totaal.upfront, s.totaal.monthly)}
+                  </span>
+                </p>
+                <p class="text-muted mt-1 text-xs">{showcase.totalNote}</p>
 
-            {/* Terug naar de menukaart: elke voorbeeldsite is opgebouwd uit
-                opties die hierboven los te proberen — en te bestellen — zijn. */}
-            <p class="mt-4 flex flex-wrap gap-2">
-              {s.addons.map((id) => {
-                const addon = addonById.get(id)!;
-                const chip = 'rounded-full bg-cream-dim px-3 py-1 text-xs font-medium text-muted';
-                return addon.demoSectionId ? (
-                  <a href={`#${addon.demoSectionId}`} class={`${chip} transition-colors hover:text-accent`}>
-                    {addon.name}
+                <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener"
+                    class="inline-flex items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-accent"
+                  >
+                    {showcase.openCta}
+                    <span aria-hidden="true">↗</span>
+                    <span class="sr-only">— {s.name}, opent in een nieuw tabblad</span>
                   </a>
-                ) : (
-                  <span class={chip}>{addon.name}</span>
-                );
-              })}
-            </p>
-
-            <a
-              href={s.href}
-              target="_blank"
-              rel="noopener"
-              class="mt-5 inline-flex w-fit items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-accent"
-            >
-              Open de hele site
-              <span aria-hidden="true">↗</span>
-              <span class="sr-only">— {s.name}, opent in een nieuw tabblad</span>
-            </a>
+                  {/* Bewust een tekstknop en geen tweede vlak: hij mag de
+                      zwarte knop niet beconcurreren. */}
+                  <button
+                    type="button"
+                    class="text-sm font-medium underline underline-offset-4 transition-colors hover:text-accent"
+                    data-showcase-base={s.base}
+                    data-showcase-addons={s.addons.join(',')}
+                  >
+                    {showcase.presetCta} →
+                  </button>
+                </div>
+              </div>
+            </div>
           </article>
         ))
       }
@@ -141,12 +189,21 @@ const hasImage = (base: string): boolean =>
   </div>
 </section>
 
-<style>
-  /* Safari toont anders nog een eigen driehoekje naast het onze. */
-  .pv-details summary::-webkit-details-marker {
-    display: none;
+<script>
+  import { applyPreset } from '../scripts/store';
+  import type { AddonId, BasePackageId } from '../data/pricing';
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-showcase-base]')) {
+    button.addEventListener('click', () => {
+      applyPreset(
+        button.dataset.showcaseBase as BasePackageId,
+        button.dataset.showcaseAddons!.split(',') as AddonId[],
+      );
+      /* Niet zelf naar #configurator springen: de secties erboven staan op
+         content-visibility en hebben pas een echte hoogte zodra ze renderen.
+         Base.astro vangt dat af bij een klik op een <a href="#…">, dus laten
+         we die het werk doen dat hij al goed doet. */
+      document.querySelector<HTMLAnchorElement>('a[href="#configurator"]')?.click();
+    });
   }
-  .pv-details[open] .pv-chev {
-    transform: rotate(180deg);
-  }
-</style>
+</script>
