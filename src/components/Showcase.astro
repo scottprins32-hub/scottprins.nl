@@ -7,12 +7,26 @@
  * screenshot veroudert zodra de demo verandert. Zo blijft het klikbaar,
  * zelf-gehost en altijd actueel — en staat de echte site één knop verderop.
  */
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { showcase } from '../data/site';
 import { addons } from '../data/pricing';
 import PreviewFysio from './showcase/PreviewFysio.astro';
 import PreviewVakman from './showcase/PreviewVakman.astro';
 
 const addonName = new Map(addons.map((a) => [a.id, a.name]));
+
+/**
+ * De schermafbeeldingen worden los geüpload naar `public/`. Zolang ze er niet
+ * zijn laten we het beeld weg in plaats van een gebroken plaatje te tonen —
+ * de kaart werkt ook zonder. Deze check draait bij het bouwen, niet in de
+ * browser, dus hij kost een bezoeker niets.
+ */
+/* Vanaf de projectmap, niet vanaf dit bestand: na compilatie wijst
+   `import.meta.url` niet meer naar src/components/ en zou de check
+   stilletjes altijd 'nee' zeggen. */
+const hasImage = (base: string): boolean =>
+  existsSync(resolve(process.cwd(), `public${base}-1200.webp`));
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="voorbeelden" data-reveal-section>
@@ -30,6 +44,40 @@ const addonName = new Map(addons.map((a) => [a.id, a.name]));
             class="flex flex-col rounded-2xl border border-line bg-white p-6 shadow-card transition-shadow hover:shadow-card-lg sm:p-7"
             data-reveal
           >
+            {
+              hasImage(s.image) && (
+                /* Het beeld is zelf de link naar de demo. Een vaste
+                   verhouding met object-cover: dan maakt het niet uit hoe
+                   hoog de schermafbeelding is, en verspringt de kaart niet
+                   terwijl het plaatje binnenkomt. */
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener"
+                  class="group/shot mb-5 block overflow-hidden rounded-xl border border-line bg-cream-dim"
+                  tabindex="-1"
+                  aria-hidden="true"
+                >
+                  <span class="flex items-center gap-1.5 border-b border-line bg-white px-3 py-2">
+                    <span class="size-2 rounded-full bg-line" />
+                    <span class="size-2 rounded-full bg-line" />
+                    <span class="size-2 rounded-full bg-line" />
+                  </span>
+                  <img
+                    src={`${s.image}-1200.webp`}
+                    srcset={`${s.image}-600.webp 600w, ${s.image}-1200.webp 1200w`}
+                    sizes="(min-width: 768px) 45vw, 90vw"
+                    width="1200"
+                    height="687"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full transition-transform duration-500 group-hover/shot:scale-[1.03]"
+                  />
+                </a>
+              )
+            }
+
             <p class="kicker">{s.sector}</p>
             <h3 class="font-display text-h3 mt-2 font-semibold">{s.name}</h3>
             <p class="text-muted mt-2 text-sm">{s.tryThis}</p>

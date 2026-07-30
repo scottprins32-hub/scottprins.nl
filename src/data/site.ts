@@ -436,6 +436,12 @@ export const showcase = {
       name: 'Fysio Vesting',
       sector: 'Fysiotherapiepraktijk · Naarden',
       href: 'https://ad-1-kliniek.base44.app',
+      /**
+       * Basisnaam van de schermafbeelding in `public/`. Showcase.astro maakt
+       * daar `-600.webp` en `-1200.webp` van. Ontbreekt het bestand, dan slaat
+       * hij het beeld over en werkt de kaart gewoon zonder.
+       */
+      image: '/voorbeeld-fysio',
       /** Kort: waar je op moet klikken als je maar één ding probeert. */
       tryThis: 'Plan hieronder een intake — precies zoals een patiënt dat doet.',
       rest: 'Op de site zelf zit ook het patiëntportaal met oefenvideo’s en het beheerscherm voor de praktijk.',
@@ -446,6 +452,7 @@ export const showcase = {
       name: 'Hovenier Van Slooten',
       sector: 'Hovenier & bestrating · Deventer',
       href: 'https://ad-2-vakman.base44.app',
+      image: '/voorbeeld-vakman',
       tryThis: 'Twee vragen en je weet waar je aan toe bent.',
       rest: 'Op de site zelf gaat de aanvraag daarna door met foto’s, en staan de projecten met voor- en na-beeld.',
       addons: ['calculator', 'intake', 'beforeafter'] as const,
