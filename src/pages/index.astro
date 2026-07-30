@@ -57,7 +57,7 @@ import {
     <HowItWorks />
 
     {/* Intro van de menukaart */}
-    <section class="bg-cream pt-16 text-ink sm:pt-24" id="menukaart" data-reveal-section>
+    <section class="bg-cream pt-16 text-ink sm:pt-24" id="menu" data-reveal-section>
       <div class="mx-auto max-w-6xl px-5">
         <header class="max-w-2xl" data-reveal>
           <p class="kicker">{menuIntro.kicker}</p>
@@ -67,7 +67,7 @@ import {
       </div>
     </section>
 
-    <MenuSection id="menu-agenda" index={1} kicker={demoAgenda.kicker} title={demoAgenda.title} lead={demoAgenda.lead} addonIds={['agenda']} pacing="fade">
+    <MenuSection id="menu-booking" index={1} kicker={demoAgenda.kicker} title={demoAgenda.title} lead={demoAgenda.lead} addonIds={['agenda']} pacing="fade">
       <DemoAgenda />
     </MenuSection>
 
@@ -75,7 +75,7 @@ import {
       <DemoChatbot />
     </MenuSection>
 
-    <MenuSection id="menu-kaart" index={3} kicker={demoKaart.kicker} title={demoKaart.title} lead={demoKaart.lead} addonIds={['kaart']} pacing="parallax">
+    <MenuSection id="menu-map" index={3} kicker={demoKaart.kicker} title={demoKaart.title} lead={demoKaart.lead} addonIds={['kaart']} pacing="parallax">
       <DemoKaart />
     </MenuSection>
 
@@ -83,7 +83,7 @@ import {
       <DemoCalculator />
     </MenuSection>
 
-    <MenuSection id="menu-bestellen" index={5} kicker={demoBestellen.kicker} title={demoBestellen.title} lead={demoBestellen.lead} addonIds={['bestellen']} pacing="none">
+    <MenuSection id="menu-ordering" index={5} kicker={demoBestellen.kicker} title={demoBestellen.title} lead={demoBestellen.lead} addonIds={['bestellen']} pacing="none">
       <DemoBestellen />
     </MenuSection>
 
@@ -99,11 +99,11 @@ import {
       <DemoIntake />
     </MenuSection>
 
-    <MenuSection id="menu-portaal" index={9} kicker={demoPortaal.kicker} title={demoPortaal.title} lead={demoPortaal.lead} addonIds={['portaal']} pacing="parallax">
+    <MenuSection id="menu-portal" index={9} kicker={demoPortaal.kicker} title={demoPortaal.title} lead={demoPortaal.lead} addonIds={['portaal']} pacing="parallax">
       <DemoPortaal />
     </MenuSection>
 
-    <MenuSection id="menu-meertalig" index={10} kicker={demoMeertalig.kicker} title={demoMeertalig.en.title} lead={demoMeertalig.en.lead} addonIds={['meertalig']} pacing="fade">
+    <MenuSection id="menu-multilingual" index={10} kicker={demoMeertalig.kicker} title={demoMeertalig.en.title} lead={demoMeertalig.en.lead} addonIds={['meertalig']} pacing="fade">
       <DemoMeertalig />
     </MenuSection>
 
@@ -111,7 +111,7 @@ import {
       <DemoScrollvideo />
     </MenuSection>
 
-    <MenuSection id="menu-cadeau" index={12} kicker={demoCadeau.kicker} title={demoCadeau.title} lead={demoCadeau.lead} addonIds={['cadeaubonnen']} pacing="parallax">
+    <MenuSection id="menu-giftcards" index={12} kicker={demoCadeau.kicker} title={demoCadeau.title} lead={demoCadeau.lead} addonIds={['cadeaubonnen']} pacing="parallax">
       <DemoCadeau />
     </MenuSection>
 

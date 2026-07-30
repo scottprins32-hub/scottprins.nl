@@ -121,7 +121,7 @@ export const addons: Addon[] = [
     shortPitch: 'Customers book their own appointment.',
     upfront: 195,
     monthly: 15,
-    demoSectionId: 'menu-agenda',
+    demoSectionId: 'menu-booking',
     popular: true,
   },
   {
@@ -147,7 +147,7 @@ export const addons: Addon[] = [
     shortPitch: 'No platform commission.',
     upfront: 345,
     monthly: 29,
-    demoSectionId: 'menu-bestellen',
+    demoSectionId: 'menu-ordering',
   },
   {
     id: 'kaart',
@@ -155,7 +155,7 @@ export const addons: Addon[] = [
     shortPitch: 'All your locations, neatly on the map.',
     upfront: 75,
     monthly: 0,
-    demoSectionId: 'menu-kaart',
+    demoSectionId: 'menu-map',
   },
   {
     id: 'scrollvideo',
@@ -204,7 +204,7 @@ export const addons: Addon[] = [
     shortPitch: 'NL/EN in one click.',
     upfront: 95,
     monthly: 0,
-    demoSectionId: 'menu-meertalig',
+    demoSectionId: 'menu-multilingual',
   },
   {
     id: 'portaal',
@@ -212,7 +212,7 @@ export const addons: Addon[] = [
     shortPitch: 'Documents and invoices behind a login.',
     upfront: 295,
     monthly: 15,
-    demoSectionId: 'menu-portaal',
+    demoSectionId: 'menu-portal',
   },
   {
     id: 'cadeaubonnen',
@@ -220,7 +220,7 @@ export const addons: Addon[] = [
     shortPitch: 'Sell gift cards and bring customers back.',
     upfront: 245,
     monthly: 10,
-    demoSectionId: 'menu-cadeau',
+    demoSectionId: 'menu-giftcards',
   },
   {
     id: 'sms',

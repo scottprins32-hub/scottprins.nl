@@ -32,7 +32,7 @@ export const hero = {
   sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Live in 5 days, always a fixed price.',
   actions: {
     primary: { label: 'Build your website', href: '#configurator' },
-    secondary: { label: 'See the menu', href: '#menukaart' },
+    secondary: { label: 'See the menu', href: '#menu' },
   },
   /**
    * De vijf bouwdagen. `label` verschijnt in de voortgangsbalk links,
@@ -61,11 +61,11 @@ export const hero = {
 
 export const nav = {
   links: [
-    { label: 'Menu', href: '#menukaart' },
-    { label: 'Examples', href: '#voorbeelden' },
+    { label: 'Menu', href: '#menu' },
+    { label: 'Examples', href: '#examples' },
     { label: 'Pricing', href: '#configurator' },
-    { label: 'Results', href: '#resultaat' },
-    { label: 'About Scott', href: '#over-scott' },
+    { label: 'Results', href: '#results' },
+    { label: 'About Scott', href: '#about' },
     { label: 'FAQ', href: '#faq' },
   ],
   cta: 'Quote',
