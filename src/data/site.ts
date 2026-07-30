@@ -437,13 +437,8 @@ export const showcase = {
       sector: 'Fysiotherapiepraktijk · Naarden',
       href: 'https://ad-1-kliniek.base44.app',
       /** Kort: waar je op moet klikken als je maar één ding probeert. */
-      tryThis: 'Plan een intake — je krijgt meteen een bevestiging.',
-      features: [
-        'Online agenda, ook zonder verwijzing',
-        'Digitale intake in dezelfde flow',
-        'Patiëntportaal met oefenvideo’s',
-        'Beheerscherm voor de praktijk',
-      ],
+      tryThis: 'Plan hieronder een intake — precies zoals een patiënt dat doet.',
+      rest: 'Op de site zelf zit ook het patiëntportaal met oefenvideo’s en het beheerscherm voor de praktijk.',
       /** Bijbehorende opties op de menukaart, zodat de link naar binnen wijst. */
       addons: ['agenda', 'intake', 'portaal'] as const,
     },
@@ -451,16 +446,51 @@ export const showcase = {
       name: 'Hovenier Van Slooten',
       sector: 'Hovenier & bestrating · Deventer',
       href: 'https://ad-2-vakman.base44.app',
-      tryThis: 'Doe de prijsindicatie — drie vragen, één minuut.',
-      features: [
-        'Prijsindicatie in drie vragen',
-        'Offerte-aanvraag met foto’s erbij',
-        'Projecten met voor- en na-beeld',
-        'Aanvragen op één beheerscherm',
-      ],
+      tryThis: 'Twee vragen en je weet waar je aan toe bent.',
+      rest: 'Op de site zelf gaat de aanvraag daarna door met foto’s, en staan de projecten met voor- en na-beeld.',
       addons: ['calculator', 'intake', 'beforeafter'] as const,
     },
   ],
+} as const;
+
+/**
+ * Teksten voor de twee nagebouwde mini-previews in de sectie Voorbeelden.
+ * Bewust nagebouwd en niet ingesloten: base44 stuurt `x-frame-options: DENY`
+ * mee, dus een iframe is geen optie — en een screenshot veroudert zodra de
+ * demo verandert. Dit blijft klein en klikbaar; de echte site is één klik weg.
+ */
+export const showcasePreview = {
+  fysio: {
+    heading: 'Intake plannen',
+    sub: 'Ook zonder verwijzing',
+    days: [
+      { id: 'do', label: 'do 12', slots: ['09:00', '11:30'] },
+      { id: 'vr', label: 'vr 13', slots: ['08:30', '14:00', '16:15'] },
+      { id: 'ma', label: 'ma 16', slots: ['10:00', '15:30'] },
+    ],
+    confirmTitle: 'Gelukt.',
+    confirmText: 'Je krijgt een mail ter bevestiging — en de intake staat ingevuld klaar vóór je binnenloopt.',
+    restart: 'Nog eens',
+  },
+  vakman: {
+    heading: 'Wat gaat het kosten?',
+    typeLabel: 'Wat wilt u laten doen?',
+    types: [
+      { id: 'tuin', label: 'Complete tuin', base: 4200, perM2: 145 },
+      { id: 'bestrating', label: 'Alleen bestrating', base: 1400, perM2: 95 },
+      { id: 'onderhoud', label: 'Onderhoud', base: 300, perM2: 12 },
+    ],
+    /** Bewust niet "de tuin": de vraag geldt ook als je bestrating kiest. */
+    sizeLabel: 'Hoe groot is het oppervlak?',
+    sizeUnit: 'm²',
+    sizeMin: 20,
+    sizeMax: 150,
+    sizeValue: 60,
+    resultLabel: 'Indicatie',
+    /** Bandbreedte: ±12% rond de berekening. Nooit één hard bedrag. */
+    spread: 0.12,
+    note: 'Een plan, een prijs, geen meerwerk.',
+  },
 } as const;
 
 /* ------------------------------ Proof ------------------------------ */

@@ -1,0 +1,91 @@
+---
+/**
+ * Mini-preview van de demo Hovenier Van Slooten: twee vragen → bandbreedte.
+ * Nooit één hard bedrag; dat is precies het punt van zo'n prijsindicatie.
+ */
+import { showcasePreview } from '../../data/site';
+
+const { vakman } = showcasePreview;
+---
+
+<div class="rounded-xl border border-line bg-cream-dim/60 p-4" data-pv-vakman>
+  <p class="text-sm font-semibold">{vakman.heading}</p>
+
+  <p class="text-muted mt-3 text-xs" id="pv-type-label">{vakman.typeLabel}</p>
+  <div class="mt-2 flex flex-wrap gap-2" role="group" aria-labelledby="pv-type-label">
+    {
+      vakman.types.map((type, i) => (
+        <button
+          type="button"
+          class="pv-type rounded-lg border border-line bg-white px-3 py-1.5 text-xs font-medium transition-colors"
+          data-pv-type={type.id}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          {type.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="mt-4 flex items-baseline justify-between gap-3">
+    <label class="text-muted text-xs" for="pv-size">{vakman.sizeLabel}</label>
+    <output class="text-xs font-semibold text-accent" for="pv-size" data-pv-size-out></output>
+  </div>
+  <input
+    type="range"
+    id="pv-size"
+    class="mt-1.5 w-full accent-[var(--accent)]"
+    data-pv-size
+    min={vakman.sizeMin}
+    max={vakman.sizeMax}
+    value={vakman.sizeValue}
+    step="5"
+  />
+
+  <div class="mt-4 rounded-lg bg-ink px-4 py-3 text-cream">
+    <p class="text-muted-dark text-xs">{vakman.resultLabel}</p>
+    <p class="font-display mt-0.5 text-lg font-semibold tabular-nums" data-pv-result></p>
+    <p class="text-muted-dark mt-1 text-xs">{vakman.note}</p>
+  </div>
+</div>
+
+<style>
+  .pv-type[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { showcasePreview } from '../../data/site';
+  import { eur } from '../../lib/format';
+
+  const root = document.querySelector<HTMLElement>('[data-pv-vakman]');
+  if (root) {
+    const cfg = showcasePreview.vakman;
+    const size = root.querySelector<HTMLInputElement>('[data-pv-size]')!;
+    const sizeOut = root.querySelector<HTMLElement>('[data-pv-size-out]')!;
+    const result = root.querySelector<HTMLElement>('[data-pv-result]')!;
+    const types = [...root.querySelectorAll<HTMLButtonElement>('[data-pv-type]')];
+
+    function update(): void {
+      const active = types.find((b) => b.getAttribute('aria-pressed') === 'true')!.dataset.pvType;
+      const type = cfg.types.find((t) => t.id === active)!;
+      const mid = type.base + Number(size.value) * type.perM2;
+      // Afronden op 100 zodat het als indicatie leest, niet als offerte.
+      const round = (n: number) => Math.round(n / 100) * 100;
+      sizeOut.textContent = `${size.value} ${cfg.sizeUnit}`;
+      result.textContent = `${eur(round(mid * (1 - cfg.spread)))} – ${eur(round(mid * (1 + cfg.spread)))}`;
+    }
+
+    for (const btn of types) {
+      btn.addEventListener('click', () => {
+        for (const other of types) other.setAttribute('aria-pressed', String(other === btn));
+        update();
+      });
+    }
+    size.addEventListener('input', update);
+    update();
+  }
+</script>
