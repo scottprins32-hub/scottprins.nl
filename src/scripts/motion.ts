@@ -19,12 +19,57 @@ if (document.fonts?.ready) {
   document.fonts.ready.then(() => ScrollTrigger.refresh());
 }
 
+/**
+ * De `.defer-render`-secties (content-visibility: auto) staan bij het laden
+ * op een geschátte hoogte en krijgen hun echte hoogte pas als je in de buurt
+ * komt. Elke keer dat dat gebeurt verschuift alles eronder, en de posities
+ * die ScrollTrigger bij het laden heeft uitgerekend kloppen niet meer —
+ * waardoor triggers verderop nooit meer afgaan. Dus: opnieuw meten zodra er
+ * een sectie echt rendert, gebundeld in één frame.
+ */
+let refreshQueued = false;
+function queueRefresh(): void {
+  if (refreshQueued) return;
+  refreshQueued = true;
+  requestAnimationFrame(() => {
+    refreshQueued = false;
+    ScrollTrigger.refresh();
+  });
+}
+
+if ('oncontentvisibilityautostatechange' in document.body) {
+  for (const section of document.querySelectorAll('.defer-render')) {
+    section.addEventListener('contentvisibilityautostatechange', queueRefresh);
+  }
+}
+
 export { gsap, ScrollTrigger };
 
 export const REDUCED = '(prefers-reduced-motion: reduce)';
 export const NO_PREFERENCE = '(prefers-reduced-motion: no-preference)';
 
 export const prefersReducedMotion = (): boolean => window.matchMedia(REDUCED).matches;
+
+/**
+ * Vangnet onder elke reveal. `gsap.from` zet de blokken meteen op
+ * autoAlpha 0; gaat de bijbehorende trigger daarna niet af, dan blijft de
+ * sectie leeg. Een IntersectionObserver kijkt naar wat er écht in beeld
+ * staat en kan dus niet de mist in gaan met verschoven posities: staat de
+ * sectie in beeld en is er nog niets gebeurd, dan spelen we hem gewoon af.
+ * Zichtbare inhoud gaat vóór een nette timing.
+ */
+function ensureRevealed(section: HTMLElement, tween: gsap.core.Tween): void {
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      if (tween.progress() === 0 && !tween.isActive()) tween.play();
+    },
+    // Pas als er een strook van betekenis in beeld staat, niet bij de eerste pixel.
+    { rootMargin: '0px 0px -15% 0px' },
+  );
+  io.observe(section);
+}
 
 /**
  * Zet de standaard-reveals en de sectie-pacing aan.
@@ -42,7 +87,7 @@ export function initSectionMotion(): void {
     for (const section of fadeSections) {
       const targets = section.querySelectorAll('[data-reveal]');
       if (targets.length === 0) continue;
-      gsap.from(targets, {
+      const tween = gsap.from(targets, {
         y: 36,
         autoAlpha: 0,
         duration: 0.7,
@@ -50,6 +95,7 @@ export function initSectionMotion(): void {
         stagger: 0.12,
         scrollTrigger: { trigger: section, start: 'top 72%', once: true },
       });
+      ensureRevealed(section, tween);
     }
 
     // 2) Parallax-secties: alleen het decoratieve sectienummer beweegt
