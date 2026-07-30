@@ -7,14 +7,24 @@ const { about } = content(Astro.currentLocale);
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="about" data-reveal-section>
   <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 md:grid-cols-[300px_minmax(0,1fr)]">
-    {/* Fotoplaceholder — vervang door <img> met echte foto */}
+    {/* De foto staat in dezelfde 3:4-verhouding als het bestand zelf, dus
+        object-cover snijdt er niets af. bg-ink blijft staan als achtergrond
+        zolang de afbeelding nog laadt. */}
     <div
-      class="mx-auto flex aspect-[3/4] w-56 items-end justify-center overflow-hidden rounded-2xl bg-ink text-cream shadow-card-lg md:w-full"
+      class="mx-auto aspect-[3/4] w-56 overflow-hidden rounded-2xl bg-ink shadow-card-lg md:w-full"
       data-reveal
-      role="img"
-      aria-label={about.photoAlt}
     >
-      <span class="mb-6 text-7xl" aria-hidden="true">👨‍💻</span>
+      <img
+        src="/scott-800.webp"
+        srcset="/scott-400.webp 400w, /scott-800.webp 800w"
+        sizes="(min-width: 768px) 300px, 14rem"
+        width="800"
+        height="1067"
+        alt={about.photoAlt}
+        loading="lazy"
+        decoding="async"
+        class="h-full w-full object-cover"
+      />
     </div>
 
     <div data-reveal>
