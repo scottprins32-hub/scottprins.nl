@@ -444,6 +444,8 @@ export const showcase = {
       image: '/voorbeeld-fysio',
       /** Kort: waar je op moet klikken als je maar één ding probeert. */
       tryThis: 'Plan hieronder een intake — precies zoals een patiënt dat doet.',
+      /** Label op de uitklapper in de variant 'uitklap'. */
+      tryHere: 'Probeer het intake-scherm',
       rest: 'Op de site zelf zit ook het patiëntportaal met oefenvideo’s en het beheerscherm voor de praktijk.',
       /** Bijbehorende opties op de menukaart, zodat de link naar binnen wijst. */
       addons: ['agenda', 'intake', 'portaal'] as const,
@@ -454,6 +456,7 @@ export const showcase = {
       href: 'https://ad-2-vakman.base44.app',
       image: '/voorbeeld-vakman',
       tryThis: 'Twee vragen en je weet waar je aan toe bent.',
+      tryHere: 'Probeer de prijsindicatie',
       rest: 'Op de site zelf gaat de aanvraag daarna door met foto’s, en staan de projecten met voor- en na-beeld.',
       addons: ['calculator', 'intake', 'beforeafter'] as const,
     },

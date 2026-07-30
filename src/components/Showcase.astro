@@ -1,11 +1,14 @@
 ---
 /**
- * Voorbeelden: twee complete demo-sites, elk met een nagebouwde mini-preview.
+ * Voorbeelden: twee complete demo-sites.
  *
- * Waarom nagebouwd en niet ingesloten of gefotografeerd: base44 stuurt
- * `x-frame-options: DENY` mee (dus een iframe wordt geweigerd), en een
- * screenshot veroudert zodra de demo verandert. Zo blijft het klikbaar,
- * zelf-gehost en altijd actueel — en staat de echte site één knop verderop.
+ * Waarom niet ingesloten: base44 stuurt `x-frame-options: DENY` mee, dus een
+ * iframe wordt geweigerd. Vandaar een schermafbeelding die zelf de link is,
+ * plus een nagebouwd stukje van de demo dat wél werkt.
+ *
+ * TIJDELIJK: `VARIANT` staat hier om drie opzetten naast elkaar te kunnen
+ * bekijken. Zodra de keuze gemaakt is gaat deze schakelaar eruit en blijft
+ * er één opbouw over.
  */
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -14,14 +17,15 @@ import { addons } from '../data/pricing';
 import PreviewFysio from './showcase/PreviewFysio.astro';
 import PreviewVakman from './showcase/PreviewVakman.astro';
 
-const addonName = new Map(addons.map((a) => [a.id, a.name]));
+type Variant = 'huidig' | 'zonder' | 'uitklap';
+const VARIANT: Variant = 'uitklap';
 
-/**
- * De schermafbeeldingen worden los geüpload naar `public/`. Zolang ze er niet
- * zijn laten we het beeld weg in plaats van een gebroken plaatje te tonen —
- * de kaart werkt ook zonder. Deze check draait bij het bouwen, niet in de
- * browser, dus hij kost een bezoeker niets.
- */
+const addonById = new Map(addons.map((a) => [a.id, a]));
+
+/* Niet `#menu-${id}` aannemen: bij 'cadeaubonnen' heet de sectie
+   'menu-cadeau', en drie opties (sms, nieuwsbrief, ai-telefonist) hebben
+   helemaal geen demo-sectie. pricing.ts weet het, dus vraag het daar. */
+
 /* Vanaf de projectmap, niet vanaf dit bestand: na compilatie wijst
    `import.meta.url` niet meer naar src/components/ en zou de check
    stilletjes altijd 'nee' zeggen. */
@@ -46,10 +50,9 @@ const hasImage = (base: string): boolean =>
           >
             {
               hasImage(s.image) && (
-                /* Het beeld is zelf de link naar de demo. Een vaste
-                   verhouding met object-cover: dan maakt het niet uit hoe
-                   hoog de schermafbeelding is, en verspringt de kaart niet
-                   terwijl het plaatje binnenkomt. */
+                /* Het beeld is zelf de link naar de demo. aria-hidden en niet
+                   focusbaar: de knop eronder gaat naar dezelfde plek, dus
+                   anders kom je met toetsenbord twee keer langs hetzelfde. */
                 <a
                   href={s.href}
                   target="_blank"
@@ -80,23 +83,45 @@ const hasImage = (base: string): boolean =>
 
             <p class="kicker">{s.sector}</p>
             <h3 class="font-display text-h3 mt-2 font-semibold">{s.name}</h3>
-            <p class="text-muted mt-2 text-sm">{s.tryThis}</p>
 
-            <div class="mt-5">{i === 0 ? <PreviewFysio /> : <PreviewVakman />}</div>
+            {VARIANT !== 'zonder' && <p class="text-muted mt-2 text-sm">{s.tryThis}</p>}
+
+            {/* A — huidig: het widget staat er meteen, altijd open. */}
+            {VARIANT === 'huidig' && <div class="mt-5">{i === 0 ? <PreviewFysio /> : <PreviewVakman />}</div>}
+
+            {/* C — uitklap: rust op de kaart, interactie op verzoek.
+                <details> doet dit zonder een regel JavaScript en is
+                out of the box bedienbaar met het toetsenbord. */}
+            {
+              VARIANT === 'uitklap' && (
+                <details class="pv-details mt-4 rounded-xl border border-line">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium transition-colors hover:text-accent">
+                    {s.tryHere}
+                    <span class="pv-chev text-muted transition-transform" aria-hidden="true">
+                      ▾
+                    </span>
+                  </summary>
+                  <div class="border-t border-line p-4">{i === 0 ? <PreviewFysio /> : <PreviewVakman />}</div>
+                </details>
+              )
+            }
 
             <p class="text-muted mt-4 text-xs leading-relaxed">{s.rest}</p>
 
             {/* Terug naar de menukaart: elke voorbeeldsite is opgebouwd uit
                 opties die hierboven los te proberen — en te bestellen — zijn. */}
             <p class="mt-4 flex flex-wrap gap-2">
-              {s.addons.map((id) => (
-                <a
-                  href={`#menu-${id}`}
-                  class="rounded-full bg-cream-dim px-3 py-1 text-xs font-medium text-muted transition-colors hover:text-accent"
-                >
-                  {addonName.get(id)}
-                </a>
-              ))}
+              {s.addons.map((id) => {
+                const addon = addonById.get(id)!;
+                const chip = 'rounded-full bg-cream-dim px-3 py-1 text-xs font-medium text-muted';
+                return addon.demoSectionId ? (
+                  <a href={`#${addon.demoSectionId}`} class={`${chip} transition-colors hover:text-accent`}>
+                    {addon.name}
+                  </a>
+                ) : (
+                  <span class={chip}>{addon.name}</span>
+                );
+              })}
             </p>
 
             <a
@@ -115,3 +140,13 @@ const hasImage = (base: string): boolean =>
     </div>
   </div>
 </section>
+
+<style>
+  /* Safari toont anders nog een eigen driehoekje naast het onze. */
+  .pv-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .pv-details[open] .pv-chev {
+    transform: rotate(180deg);
+  }
+</style>
