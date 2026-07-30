@@ -1,0 +1,73 @@
+---
+/**
+ * Voorbeelden: twee complete demo-sites die je in een nieuw tabblad opent.
+ *
+ * Bewust géén iframe en géén screenshot van buitenaf: een iframe kost een
+ * tweede volledige pagina-load boven de vouw, en een externe afbeelding zou
+ * de "geen externe requests"-belofte van deze site breken. De kaart vertelt
+ * wat erin zit; de link doet de rest.
+ */
+import { showcase } from '../data/site';
+import { addons } from '../data/pricing';
+
+const addonName = new Map(addons.map((a) => [a.id, a.name]));
+---
+
+<section class="bg-cream py-16 text-ink sm:py-24" id="voorbeelden" data-reveal-section>
+  <div class="mx-auto max-w-6xl px-5">
+    <header class="max-w-2xl" data-reveal>
+      <p class="kicker">{showcase.kicker}</p>
+      <h2 class="font-display text-h2 mt-2 font-semibold">{showcase.title}</h2>
+      <p class="text-muted text-lead mt-3">{showcase.lead}</p>
+    </header>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {
+        showcase.sites.map((s) => (
+          <article
+            class="group flex flex-col rounded-2xl border border-line bg-white p-7 shadow-card transition-shadow hover:shadow-card-lg"
+            data-reveal
+          >
+            <p class="kicker">{s.sector}</p>
+            <h3 class="font-display mt-2 text-h3 font-semibold">{s.name}</h3>
+
+            <ul class="text-muted mt-5 grid gap-2 text-sm">
+              {s.features.map((f) => (
+                <li class="flex gap-2.5">
+                  <span class="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+
+            <p class="mt-5 text-sm font-medium text-ink">{s.tryThis}</p>
+
+            {/* Terug naar de menukaart: elke voorbeeldsite is opgebouwd uit
+                opties die hierboven los te proberen — en te bestellen — zijn. */}
+            <p class="mt-4 flex flex-wrap gap-2">
+              {s.addons.map((id) => (
+                <a
+                  href={`#menu-${id}`}
+                  class="rounded-full bg-cream-dim px-3 py-1 text-xs font-medium text-muted transition-colors hover:text-accent"
+                >
+                  {addonName.get(id)}
+                </a>
+              ))}
+            </p>
+
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener"
+              class="mt-6 inline-flex w-fit items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-accent"
+            >
+              Open {s.name}
+              <span aria-hidden="true">↗</span>
+              <span class="sr-only">(opent in een nieuw tabblad)</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

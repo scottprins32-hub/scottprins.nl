@@ -62,6 +62,7 @@ export const hero = {
 export const nav = {
   links: [
     { label: 'Menukaart', href: '#menukaart' },
+    { label: 'Voorbeelden', href: '#voorbeelden' },
     { label: 'Prijzen', href: '#configurator' },
     { label: 'Resultaat', href: '#resultaat' },
     { label: 'Over Scott', href: '#over-scott' },
@@ -418,6 +419,48 @@ export const configurator = {
     whatsappButton: 'Liever appen? Stuur je samenstelling direct door',
     privacyNote: 'Je gegevens gebruik ik alleen om je offerte te sturen. Zie de privacyverklaring.',
   },
+} as const;
+
+/* ---------------------------- Voorbeelden --------------------------- */
+/**
+ * Twee complete voorbeeldsites. Let op: de bedrijven zijn verzonnen — dit is
+ * geen opgeleverd klantwerk. Zeg dat er ook bij; het maakt de rest
+ * geloofwaardiger, niet minder. Echte casestudies horen in `proof.cases`.
+ */
+export const showcase = {
+  kicker: 'Voorbeelden',
+  title: 'Twee complete sites. Klik ze kapot.',
+  lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site: twee volledige voorbeelden die je zelf kunt gebruiken. De bedrijven heb ik verzonnen — alles wat je aanklikt werkt echt.',
+  sites: [
+    {
+      name: 'Fysio Vesting',
+      sector: 'Fysiotherapiepraktijk · Naarden',
+      href: 'https://ad-1-kliniek.base44.app',
+      /** Kort: waar je op moet klikken als je maar één ding probeert. */
+      tryThis: 'Plan een intake — je krijgt meteen een bevestiging.',
+      features: [
+        'Online agenda, ook zonder verwijzing',
+        'Digitale intake in dezelfde flow',
+        'Patiëntportaal met oefenvideo’s',
+        'Beheerscherm voor de praktijk',
+      ],
+      /** Bijbehorende opties op de menukaart, zodat de link naar binnen wijst. */
+      addons: ['agenda', 'intake', 'portaal'] as const,
+    },
+    {
+      name: 'Hovenier Van Slooten',
+      sector: 'Hovenier & bestrating · Deventer',
+      href: 'https://ad-2-vakman.base44.app',
+      tryThis: 'Doe de prijsindicatie — drie vragen, één minuut.',
+      features: [
+        'Prijsindicatie in drie vragen',
+        'Offerte-aanvraag met foto’s erbij',
+        'Projecten met voor- en na-beeld',
+        'Aanvragen op één beheerscherm',
+      ],
+      addons: ['calculator', 'intake', 'beforeafter'] as const,
+    },
+  ],
 } as const;
 
 /* ------------------------------ Proof ------------------------------ */
