@@ -1,6 +1,8 @@
 ---
 /** Over Scott — kort, menselijk, één (placeholder-)foto. */
-import { about, site } from '../data/site';
+import { site } from '../data/site';
+import { content } from '../data/content';
+const { about } = content(Astro.currentLocale);
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="about" data-reveal-section>
@@ -26,7 +28,7 @@ import { about, site } from '../data/site';
           rel="noopener"
           class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
         >
-          💬 Message me on WhatsApp
+          {about.whatsappButton}
         </a>
         <a
           href={`mailto:${site.email}`}

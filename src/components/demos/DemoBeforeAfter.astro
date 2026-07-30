@@ -5,9 +5,10 @@
  * versie van dezelfde fictieve bakkerij. Een echte <input type="range">
  * stuurt de clip aan → slepen, toetsenbord en screenreader werken vanzelf.
  */
-import { demoBeforeAfter } from '../../data/site';
-
+import { content } from '../../data/content';
+const { demoBeforeAfter } = content(Astro.currentLocale);
 const bakkerij = demoBeforeAfter.bakkerij;
+const oud = bakkerij.oud;
 ---
 
 <div
@@ -20,7 +21,7 @@ const bakkerij = demoBeforeAfter.bakkerij;
     <div class="flex h-full flex-col p-4 sm:p-6">
       <div class="flex items-center justify-between">
         <p class="font-display text-sm font-semibold text-[#3d2c1e] sm:text-base">{bakkerij.name}</p>
-        <span class="rounded-full bg-[#3d2c1e] px-3 py-1 text-[10px] font-semibold text-white sm:text-xs">Order online</span>
+        <span class="rounded-full bg-[#3d2c1e] px-3 py-1 text-[10px] font-semibold text-white sm:text-xs">{bakkerij.orderButton}</span>
       </div>
       <div class="mt-auto">
         <p class="font-display text-xl leading-tight font-semibold text-[#3d2c1e] sm:text-3xl">{bakkerij.tagline}</p>
@@ -47,33 +48,31 @@ const bakkerij = demoBeforeAfter.bakkerij;
     <div class="ba-old h-full overflow-hidden p-2" aria-hidden="true">
       <div class="border-2 border-[#999] bg-[#fffef0]">
         <p class="ba-old-title bg-[#7c4a03] px-2 py-1.5 text-center text-sm font-bold text-[#ffff00] sm:text-lg">
-          ~*~ Welcome to {bakkerij.name} ~*~
+          {oud.welkom} {bakkerij.name} ~*~
         </p>
         <div class="flex gap-1 border-b-2 border-[#999] bg-[#d4c49a] px-1 py-0.5 text-[9px] font-bold text-[#00c] underline sm:text-xs">
-          <span>Home</span><span>|</span><span>Photo album</span><span>|</span><span>Guestbook</span><span>|</span><span>Links</span>
+          {oud.nav.map((item, i) => (<><span>{item}</span>{i < oud.nav.length - 1 && <span>|</span>}</>))}
         </div>
         <div class="grid grid-cols-[1fr_2fr] gap-1 p-1">
           <div class="border border-[#999] bg-[#eee] p-1 text-[8px] leading-snug sm:text-[10px]">
-            <p class="font-bold underline">Menu</p>
-            <p>» Our bread</p>
-            <p>» Opening hours</p>
-            <p>» Directions</p>
-            <p class="mt-1 text-[#c00]">NEW!! Now with apple pie!!</p>
-            <p class="mt-1">Visitors: 004217</p>
+            <p class="font-bold underline">{oud.menuTitle}</p>
+            {oud.menuItems.map((item) => (<p>{item}</p>))}
+            <p class="mt-1 text-[#c00]">{oud.nieuws}</p>
+            <p class="mt-1">{oud.bezoekers}</p>
           </div>
           <div class="border border-[#999] p-1 text-[8px] leading-snug sm:text-[10px]">
             <p class="text-center font-bold text-[#c00]">*** {bakkerij.tagline} ***</p>
             <div class="mt-1 flex h-10 items-center justify-center border border-[#999] bg-[#ddd] text-[8px] italic sm:h-16">
-              [shop_photo_small.jpg]
+              {oud.foto}
             </div>
             <p class="mt-1">
-              For over 25 years your trusted address for {bakkerij.items.join(', ').toLowerCase()} and much more!!! Do drop by the shop.
+              {oud.bodyPre} {bakkerij.items.join(', ').toLowerCase()} {oud.bodyPost}
             </p>
-            <p class="mt-1 text-center text-[#00c] underline">click here for the opening hours</p>
+            <p class="mt-1 text-center text-[#00c] underline">{oud.link}</p>
           </div>
         </div>
         <p class="border-t-2 border-[#999] bg-[#d4c49a] py-0.5 text-center text-[8px] sm:text-[10px]">
-          © 2010 | This site works best in Internet Explorer 8
+          {oud.footer}
         </p>
       </div>
     </div>

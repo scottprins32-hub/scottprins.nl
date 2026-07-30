@@ -1,0 +1,77 @@
+---
+/**
+ * Taalschakelaar NL | EN.
+ *
+ * Staat bewust op drie plekken: linksboven náást het logo in de hero (dus
+ * meteen in beeld, nog vóór er gescrold is), in de navigatiebalk die ná de
+ * hero binnenschuift, en op de privacypagina. Anders is hij op een telefoon
+ * nergens te vinden zolang je nog boven in beeld staat — en dan scrolt een
+ * Nederlandstalige bezoeker op /en/ helemaal niet verder.
+ *
+ * Het is een echte link naar de andere pagina, geen JavaScript-schakelaar:
+ * werkt zonder JS, is deelbaar en Google ziet beide versies.
+ */
+import { content, toLocale, altPath, LOCALES } from '../data/content';
+
+interface Props {
+  /** 'donker' staat op de ink-achtergrond, 'licht' op cream. */
+  variant?: 'donker' | 'licht';
+  class?: string;
+}
+const { variant = 'donker', class: className = '' } = Astro.props;
+
+const locale = toLocale(Astro.currentLocale);
+const { nav } = content(locale);
+/* Het pad zonder taalprefix, zodat je op /privacy blijft als je wisselt. */
+const kaal = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+
+const donker = variant === 'donker';
+---
+
+<nav
+  class:list={[
+    'flex shrink-0 items-center gap-1 rounded-full p-1 text-xs font-semibold',
+    donker ? 'bg-white/10 text-cream ring-1 ring-white/15' : 'bg-ink/8 text-ink ring-1 ring-ink/10',
+    className,
+  ]}
+  aria-label={nav.langLabel}
+>
+  {/* Wereldbol: maakt in één oogopslag duidelijk dat dit over taal gaat,
+      ook voor iemand die de afkortingen NL/EN niet herkent. */}
+  <svg
+    class="ml-1 h-3.5 w-3.5 opacity-70"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"></path>
+  </svg>
+  {
+    LOCALES.map((code) => {
+      const actief = code === locale;
+      return (
+        <a
+          href={altPath(kaal, code)}
+          hreflang={code}
+          aria-current={actief ? 'true' : undefined}
+          class:list={[
+            'rounded-full px-2 py-1.5 uppercase transition-colors sm:px-2.5',
+            actief
+              ? donker
+                ? 'bg-cream text-ink'
+                : 'bg-ink text-cream'
+              : donker
+                ? 'text-cream/70 hover:text-cream'
+                : 'text-ink/60 hover:text-ink',
+          ]}
+        >
+          {code}
+          <span class="sr-only">{actief ? '' : ` — ${nav.langSwitchTo}`}</span>
+        </a>
+      );
+    })
+  }
+</nav>

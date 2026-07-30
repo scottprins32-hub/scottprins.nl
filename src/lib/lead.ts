@@ -13,6 +13,8 @@ export interface LeadPayload {
   /** Honeypot-veld: mensen laten dit leeg, spambots niet. */
   website: string;
   selection: Selection;
+  /** Taal waarin de bezoeker de site gebruikte; bepaalt hoe Scott terugmailt. */
+  locale: 'nl' | 'en';
 }
 
 export type LeadValidation =
@@ -36,6 +38,7 @@ export function validateLead(input: unknown): LeadValidation {
     message: str(raw.message, 2000),
     website: str(raw.website, 200),
     selection: sanitizeSelection(raw.selection),
+    locale: raw.locale === 'en' ? 'en' : 'nl',
   };
 
   const fields: string[] = [];

@@ -3,7 +3,8 @@
  * Proof-sectie: drie casestudy-kaarten (placeholder-content, vervang in
  * site.ts) + statistiekenrij met count-up (zie initCountups in motion.ts).
  */
-import { proof } from '../data/site';
+import { content } from '../data/content';
+const { proof } = content(Astro.currentLocale);
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="results" data-reveal-section>

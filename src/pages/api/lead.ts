@@ -10,11 +10,11 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
-import { basePackages } from '../../data/pricing';
 import { calcTotals } from '../../lib/calc';
 import { validateLead, type LeadPayload } from '../../lib/lead';
 import { summarizeSelection } from '../../lib/quote';
-import { eur, PER_MONTH } from '../../lib/format';
+import { eur, perMaand } from '../../lib/format';
+import { nl } from '../../data/content/nl';
 
 const TO_ADDRESS = 'scottprins32@gmail.com';
 // Zonder geverifieerd domein staat Resend alleen dit afzenderadres toe.
@@ -27,17 +27,21 @@ const json = (status: number, body: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
+/* Deze mail komt in Scotts eigen inbox, dus altijd Nederlands — ook als de
+   bezoeker de Engelse site gebruikte. De taal van de bezoeker staat er wel
+   bij, zodat hij weet in welke taal hij moet terugmailen. */
 function emailText(lead: LeadPayload): string {
   return [
-    'New quote request via scottprins.nl',
+    'Nieuwe offerte-aanvraag via scottprins.nl',
     '',
-    `Name:     ${lead.name}`,
-    `Company:  ${lead.company || '—'}`,
-    `Phone:    ${lead.phone || '—'}`,
-    `Email:    ${lead.email}`,
+    `Naam:     ${lead.name}`,
+    `Bedrijf:  ${lead.company || '—'}`,
+    `Telefoon: ${lead.phone || '—'}`,
+    `E-mail:   ${lead.email}`,
+    `Taal:     ${lead.locale === 'en' ? 'Engels — antwoord in het Engels' : 'Nederlands'}`,
     '',
-    lead.message ? `Note:\n${lead.message}\n` : '',
-    summarizeSelection(lead.selection),
+    lead.message ? `Opmerking:\n${lead.message}\n` : '',
+    summarizeSelection(lead.selection, 'nl'),
   ]
     .join('\n')
     .replace(/\n{3,}/g, '\n\n');
@@ -70,8 +74,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const totals = calcTotals(lead.selection);
-  const baseName = basePackages.find((p) => p.id === lead.selection.base)?.name ?? 'Unknown';
-  const subject = `Request: ${baseName} + ${lead.selection.addons.length} options — ${eur(totals.upfront)} + ${eur(totals.monthly)}${PER_MONTH}`;
+  const baseName = nl.pricing.base[lead.selection.base]?.name ?? 'Onbekend';
+  const subject = `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${eur(totals.upfront, 'nl')} + ${eur(totals.monthly, 'nl')}${perMaand('nl')}`;
 
   try {
     const res = await fetch('https://api.resend.com/emails', {

@@ -4,7 +4,8 @@
  * 10 veelgestelde vragen herkent op sleutelwoorden en antwoorden
  * "uittypt" (streaming-effect, met reduced-motion-fallback).
  */
-import { demoChatbot } from '../../data/site';
+import { content } from '../../data/content';
+const { demoChatbot } = content(Astro.currentLocale);
 ---
 
 <div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-chatbot>
@@ -15,7 +16,7 @@ import { demoChatbot } from '../../data/site';
     </span>
     <div>
       <p class="text-sm leading-tight font-semibold">{demoChatbot.botName}</p>
-      <p class="text-muted text-xs">replies instantly</p>
+      <p class="text-muted text-xs">{demoChatbot.status}</p>
     </div>
   </div>
 
@@ -50,7 +51,7 @@ import { demoChatbot } from '../../data/site';
       type="submit"
       class="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
     >
-      Send
+      {demoChatbot.sendButton}
     </button>
   </form>
 </div>
@@ -87,7 +88,8 @@ import { demoChatbot } from '../../data/site';
 </style>
 
 <script>
-  import { demoChatbot } from '../../data/site';
+  import { content } from '../../data/content';
+  const { demoChatbot } = content();
 
   const root = document.querySelector<HTMLElement>('[data-chatbot]');
   if (root) {

@@ -1,6 +1,9 @@
 ---
 /** Footer met bedrijfsgegevens ({BTW} nog vervangen vóór livegang). */
-import { footer, site } from '../data/site';
+import { site } from '../data/site';
+import { content, toLocale, altPath } from '../data/content';
+const locale = toLocale(Astro.currentLocale);
+const { footer } = content(locale);
 import Logo from './Logo.astro';
 ---
 
@@ -15,7 +18,7 @@ import Logo from './Logo.astro';
             href="#configurator"
             class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
-            Build your website
+            {footer.ctaButton}
           </a>
           <a
             href={`https://wa.me/${site.whatsapp}`}
@@ -39,7 +42,7 @@ import Logo from './Logo.astro';
 
     <div class="text-muted-dark mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs">
       <p>{footer.rights}</p>
-      <a href="/privacy" class="underline-offset-2 hover:text-cream hover:underline">{footer.privacyLink}</a>
+      <a href={altPath('/privacy', locale)} class="underline-offset-2 hover:text-cream hover:underline">{footer.privacyLink}</a>
     </div>
   </div>
 </footer>

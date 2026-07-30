@@ -4,12 +4,16 @@
  * menukaart iets toevoegt en toont het lopende subtotaal van de
  * gekozen extra's. Klik = naar de configurator.
  */
+import { content } from '../data/content';
+const { configurator } = content(Astro.currentLocale);
 ---
 
 <a
   href="#configurator"
   class="cart-pill fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 translate-y-20 items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream opacity-0 shadow-card-lg ring-1 ring-white/15 transition-all duration-300 hover:ring-accent motion-reduce:transition-none"
   data-cart-pill
+  data-cart-one={configurator.cartOne}
+  data-cart-many={configurator.cartMany}
   aria-hidden="true"
   tabindex="-1"
 >
@@ -17,7 +21,7 @@
     class="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-white"
     data-cart-count>0</span
   >
-  <span data-cart-label>options</span>
+  <span data-cart-label>{configurator.cartMany}</span>
   <span class="text-muted-dark">·</span>
   <span data-cart-total></span>
   <span aria-hidden="true">→</span>
@@ -26,7 +30,7 @@
 <script>
   import { addons } from '../data/pricing';
   import { addonCost, isIncluded } from '../lib/calc';
-  import { eur } from '../lib/format';
+  import { eur, perMaand } from '../lib/format';
   import { subscribe } from '../scripts/store';
 
   const pill = document.querySelector<HTMLAnchorElement>('[data-cart-pill]')!;
@@ -43,8 +47,8 @@
     const monthly = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).monthly, 0);
 
     count.textContent = String(chosen.length);
-    label.textContent = chosen.length === 1 ? 'option' : 'options';
-    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}/mo` : eur(upfront);
+    label.textContent = chosen.length === 1 ? pill.dataset.cartOne! : pill.dataset.cartMany!;
+    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}${perMaand()}` : eur(upfront);
 
     const visible = chosen.length > 0;
     pill.classList.toggle('translate-y-20', !visible);

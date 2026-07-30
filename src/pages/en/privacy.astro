@@ -1,0 +1,12 @@
+---
+/** Engelse privacypagina. Zelfde inhoud als /privacy, andere taal. */
+import Base from '../../layouts/Base.astro';
+import { site } from '../../data/site';
+import { content } from '../../data/content';
+import PrivacyPage from '../../components/PrivacyPage.astro';
+const { privacy } = content(Astro.currentLocale);
+---
+
+<Base title={`${privacy.title} — ${site.legalName}`} description={privacy.metaDescription} path="/privacy">
+  <PrivacyPage />
+</Base>

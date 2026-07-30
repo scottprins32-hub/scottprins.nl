@@ -3,7 +3,8 @@
  * Demo 9 — Klantenportaal: nep-login (alles werkt) → dashboard-reveal
  * met tegels voor documenten, afspraken, facturen en berichten.
  */
-import { demoPortaal } from '../../data/site';
+import { content } from '../../data/content';
+const { demoPortaal } = content(Astro.currentLocale);
 ---
 
 <div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-portaal>

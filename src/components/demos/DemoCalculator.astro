@@ -3,7 +3,8 @@
  * Demo 4 — Prijscalculator: drie sliders → live richtprijs.
  * De formule en alle bedragen staan in site.ts (demoCalculator.formula).
  */
-import { demoCalculator } from '../../data/site';
+import { content } from '../../data/content';
+const { demoCalculator } = content(Astro.currentLocale);
 ---
 
 <div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-calc>
@@ -44,7 +45,8 @@ import { demoCalculator } from '../../data/site';
 </div>
 
 <script>
-  import { demoCalculator } from '../../data/site';
+  import { content } from '../../data/content';
+  const { demoCalculator } = content();
   import { eur } from '../../lib/format';
   import { tweenNumber } from '../../scripts/tween';
 

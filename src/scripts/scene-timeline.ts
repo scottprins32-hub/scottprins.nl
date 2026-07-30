@@ -125,7 +125,7 @@ export function buildSceneTimeline(root: HTMLElement): gsap.core.Timeline {
       {
         x: 0,
         y: 0,
-        z: (i, target: HTMLElement) => parseFloat(getComputedStyle(target).getPropertyValue('--z')) || 0,
+        z: (_i: number, target: HTMLElement) => parseFloat(getComputedStyle(target).getPropertyValue('--z')) || 0,
         rotationY: 0,
         rotationX: 0,
         autoAlpha: 1,

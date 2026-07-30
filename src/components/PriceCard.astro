@@ -5,7 +5,9 @@
  * (Astro dedupliceert component-scripts).
  */
 import { addons, type AddonId } from '../data/pricing';
-import { configurator } from '../data/site';
+import { content, toLocale } from '../data/content';
+const taal = toLocale(Astro.currentLocale);
+const { configurator, pricing } = content(taal);
 import { priceLine } from '../lib/format';
 
 interface Props {
@@ -28,9 +30,9 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
       </span>
     )
   }
-  <h3 class="font-display text-xl font-semibold">{addon.name}</h3>
-  <p class="text-muted mt-1.5 text-sm leading-relaxed">{addon.shortPitch}</p>
-  <p class="mt-4 text-lg font-semibold">{priceLine(addon.upfront, addon.monthly)}</p>
+  <h3 class="font-display text-xl font-semibold">{pricing.addons[addon.id].name}</h3>
+  <p class="text-muted mt-1.5 text-sm leading-relaxed">{pricing.addons[addon.id].shortPitch}</p>
+  <p class="mt-4 text-lg font-semibold">{priceLine(addon.upfront, addon.monthly, taal)}</p>
   <button
     type="button"
     class="add-btn mt-4 w-full rounded-xl border-2 border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent/10 aria-pressed:bg-accent aria-pressed:text-white"
@@ -44,7 +46,8 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
 <script>
   import type { AddonId } from '../data/pricing';
   import { isIncluded } from '../lib/calc';
-  import { configurator } from '../data/site';
+  import { content } from '../data/content';
+  const { configurator } = content();
   import { subscribe, toggleAddon } from '../scripts/store';
 
   const cards = [...document.querySelectorAll<HTMLElement>('[data-price-card]')];

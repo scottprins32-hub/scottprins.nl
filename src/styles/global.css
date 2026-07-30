@@ -171,9 +171,16 @@ section[id],
    binnen voorbij de hero; zonder JS staat hij er gewoon meteen. */
 .js .site-nav {
   transform: translateY(-130%);
+  /* Ook wegnemen uit de tab-volgorde: zonder dit landt de eerste Tab
+     bovenaan de pagina in een balk die niemand ziet — inclusief de
+     taalschakelaar die daarin staat. `visibility` springt pas aan het
+     eind van de transitie om, dus het uitschuiven blijft zichtbaar. */
+  visibility: hidden;
+  transition-property: transform, visibility;
 }
 .js .site-nav[data-visible] {
   transform: translateY(0);
+  visibility: visible;
 }
 
 /* --------------------------- Aurora -------------------------------- */

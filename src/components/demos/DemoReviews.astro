@@ -4,13 +4,13 @@
  * Puur CSS (keyframes in global.css); de track staat er twee keer in voor
  * een naadloze loop. Bij reduced motion wordt het een gewone scrollbare rij.
  */
-import { demoReviews } from '../../data/site';
-
+import { content } from '../../data/content';
+const { demoReviews } = content(Astro.currentLocale);
 // Kaart 2× renderen voor de naadloze loop
 const doubled = [demoReviews.reviews, demoReviews.reviews];
 ---
 
-<div class="marquee overflow-hidden py-2" data-reviews aria-label="Example Google reviews">
+<div class="marquee overflow-hidden py-2" data-reviews aria-label={demoReviews.ariaLabel}>
   {/* Elke helft draagt zijn eigen eind-gap (pr-4): -50% = exact één helft. */}
   <div class="marquee-track">
     {

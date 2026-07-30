@@ -3,7 +3,8 @@
  * Demo 1 — Online agenda: behandeling → behandelaar → tijdstip → bevestiging.
  * Volledig nep-data, maar de flow is exact wat een klant zou doorlopen.
  */
-import { demoAgenda } from '../../data/site';
+import { content } from '../../data/content';
+const { demoAgenda } = content(Astro.currentLocale);
 ---
 
 <div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-agenda>

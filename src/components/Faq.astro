@@ -3,7 +3,8 @@
  * FAQ als native <details name="faq">: exclusief openklappen zonder JS,
  * toegankelijk out-of-the-box.
  */
-import { faq } from '../data/site';
+import { content } from '../data/content';
+const { faq } = content(Astro.currentLocale);
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="faq" data-reveal-section>

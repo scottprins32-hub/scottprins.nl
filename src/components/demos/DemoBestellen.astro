@@ -3,8 +3,8 @@
  * Demo 5 — Eigen online bestellen: mini-menukaart met winkelmand,
  * nep-iDEAL-checkout en een besparingsteller t.o.v. bezorgplatforms.
  */
-import { demoBestellen } from '../../data/site';
-
+import { content } from '../../data/content';
+const { demoBestellen } = content(Astro.currentLocale);
 const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
 ---
 
@@ -35,7 +35,7 @@ const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
     </ul>
     <div class="border-t border-line px-5 py-4">
       <div class="flex items-center justify-between text-sm">
-        <span data-order-count>Nothing ordered yet</span>
+        <span data-order-count data-empty={demoBestellen.emptyCart}>{demoBestellen.emptyCart}</span>
         <span class="font-semibold tabular-nums" data-order-total></span>
       </div>
       <button
@@ -73,7 +73,7 @@ const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
       class="mt-4 w-full rounded-xl bg-accent py-3 font-semibold text-white transition-opacity hover:opacity-90"
       data-order-pay
     >
-      Pay <span data-order-pay-total></span>
+      {demoBestellen.payNow} <span data-order-pay-total></span>
     </button>
   </div>
 
@@ -87,7 +87,7 @@ const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
       class="mt-4 rounded-xl border border-line px-4 py-2 text-sm font-medium transition-colors hover:border-accent"
       data-order-restart
     >
-      Order again
+      {demoBestellen.orderAgain}
     </button>
   </div>
 
@@ -102,7 +102,8 @@ const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
 </div>
 
 <script>
-  import { demoBestellen } from '../../data/site';
+  import { content } from '../../data/content';
+  const { demoBestellen } = content();
   import { tweenNumber } from '../../scripts/tween';
 
   const root = document.querySelector<HTMLElement>('[data-bestellen]');
@@ -144,7 +145,7 @@ const money = (n: number) => `€ ${n.toFixed(2).replace('.', ',')}`;
     root.querySelector('[data-order-restart]')!.addEventListener('click', () => {
       items = 0;
       orderTotal = 0;
-      count.textContent = 'Nothing ordered yet';
+      count.textContent = count.dataset.empty!;
       total.textContent = '';
       checkout.disabled = true;
       show('menu');

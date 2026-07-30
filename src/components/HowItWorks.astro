@@ -1,6 +1,7 @@
 ---
 /** "Zo werkt het" — drie stappen met een staggered reveal (zie motion.ts). */
-import { howItWorks } from '../data/site';
+import { content } from '../data/content';
+const { howItWorks } = content(Astro.currentLocale);
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="zo-werkt-het" data-reveal-section>

@@ -17,10 +17,12 @@
  */
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { showcase } from '../data/site';
+import { content, toLocale } from '../data/content';
+const taal = toLocale(Astro.currentLocale);
+const { showcase, pricing } = content(taal);
 import { addons } from '../data/pricing';
 import { calcTotals, addonCost, isIncluded } from '../lib/calc';
-import { eur, eurPerMonth, priceLine } from '../lib/format';
+import { inbegrepen, priceLine } from '../lib/format';
 
 const addonById = new Map(addons.map((a) => [a.id, a]));
 
@@ -37,11 +39,11 @@ const kaarten = showcase.sites.map((s) => {
     const kosten = addonCost(s.base, addon);
     const gratis = isIncluded(s.base, id);
     return {
-      naam: addon.name,
+      naam: pricing.addons[addon.id].name,
       doet: (s.does as Record<string, string>)[id],
       /* 'Inbegrepen' is hier het sterkste woord op de kaart: het laat zien
          dat een groter pakket opties meebrengt in plaats van bijtelt. */
-      prijs: gratis ? 'included' : priceLine(kosten.upfront, kosten.monthly),
+      prijs: gratis ? inbegrepen(taal) : priceLine(kosten.upfront, kosten.monthly, taal),
       gratis,
       /* Niet `#menu-${id}` aannemen: bij 'cadeaubonnen' heet de sectie
          'menu-cadeau', en sms/nieuwsbrief/ai-telefonist hebben er geen. */
@@ -153,7 +155,7 @@ const kaarten = showcase.sites.map((s) => {
                 <p class="flex items-baseline justify-between gap-3">
                   <span class="text-muted text-sm">{showcase.totalLabel}</span>
                   <span class="font-display text-lg font-semibold tabular-nums">
-                    {priceLine(s.totaal.upfront, s.totaal.monthly)}
+                    {priceLine(s.totaal.upfront, s.totaal.monthly, taal)}
                   </span>
                 </p>
                 <p class="text-muted mt-1 text-xs">{showcase.totalNote}</p>
@@ -167,7 +169,7 @@ const kaarten = showcase.sites.map((s) => {
                   >
                     {showcase.openCta}
                     <span aria-hidden="true">↗</span>
-                    <span class="sr-only">— {s.name}, opens in a new tab</span>
+                    <span class="sr-only">— {s.name}, {showcase.newTab}</span>
                   </a>
                   {/* Bewust een tekstknop en geen tweede vlak: hij mag de
                       zwarte knop niet beconcurreren. */}

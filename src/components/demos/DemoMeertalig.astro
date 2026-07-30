@@ -5,8 +5,8 @@
  * class-toggle regelen de wissel (soepel, en hoogte-stabiel doordat
  * beide versies in dezelfde grid-cel gestapeld staan).
  */
-import { demoMeertalig } from '../../data/site';
-
+import { content } from '../../data/content';
+const { demoMeertalig } = content(Astro.currentLocale);
 const languages = [
   { code: 'nl', label: 'NL', flag: '🇳🇱', copy: demoMeertalig.nl },
   { code: 'en', label: 'EN', flag: '🇬🇧', copy: demoMeertalig.en },
@@ -15,7 +15,7 @@ const languages = [
 
 <div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang="en">
   <div class="flex justify-end">
-    <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label="Choose language">
+    <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label={demoMeertalig.ariaLabel}>
       {
         languages.map((lang) => (
           <button

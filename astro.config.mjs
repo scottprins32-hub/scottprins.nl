@@ -7,6 +7,13 @@ import tailwindcss from '@tailwindcss/vite';
 // Static site + één serverless endpoint (/api/lead, zie `prerender = false` daar).
 // De Vercel-adapter zorgt dat alleen die route een function wordt.
 export default defineConfig({
+  /* Nederlands is de standaardtaal en staat op /, Engels op /en/.
+     prefixDefaultLocale: false houdt de bestaande NL-urls dus intact. */
+  i18n: {
+    defaultLocale: 'nl',
+    locales: ['nl', 'en'],
+    routing: { prefixDefaultLocale: false, redirectToDefaultLocale: false },
+  },
   site: 'https://scottprins.nl',
   output: 'static',
   adapter: vercel(),

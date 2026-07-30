@@ -6,8 +6,10 @@
  * onderhoudsplan. Rechts (sticky): live meerekenende offerte + leadformulier.
  */
 import { addons, basePackages, carePlans, presets } from '../data/pricing';
-import { configurator } from '../data/site';
-import { eur, priceLine } from '../lib/format';
+import { content, toLocale } from '../data/content';
+const taal = toLocale(Astro.currentLocale);
+const { configurator, pricing } = content(taal);
+import { eur, inbegrepen, perMaand, priceLine } from '../lib/format';
 import LeadForm from './LeadForm.astro';
 ---
 
@@ -34,7 +36,7 @@ import LeadForm from './LeadForm.astro';
                 aria-pressed="false"
               >
                 <span aria-hidden="true">{preset.icon}</span>
-                {preset.label}
+                {pricing.presets[preset.id].label}
               </button>
             ))
           }
@@ -51,15 +53,15 @@ import LeadForm from './LeadForm.astro';
               >
                 <input type="radio" name="config-base" value={pkg.id} class="sr-only" data-base-input />
                 <span class="flex items-center gap-2">
-                  <span class="font-display text-lg font-semibold">{pkg.name}</span>
+                  <span class="font-display text-lg font-semibold">{pricing.base[pkg.id].name}</span>
                   {pkg.popular && <span class="badge-populair">{configurator.popularBadge}</span>}
                 </span>
-                <span class="text-muted-dark mt-1 text-sm leading-snug">{pkg.description}</span>
+                <span class="text-muted-dark mt-1 text-sm leading-snug">{pricing.base[pkg.id].description}</span>
                 <span class="mt-3 font-semibold">
-                  {eur(pkg.upfront)} <span class="text-muted-dark font-normal">+ {eur(pkg.monthly)}/mo</span>
+                  {eur(pkg.upfront, taal)} <span class="text-muted-dark font-normal">+ {eur(pkg.monthly, taal)}{perMaand(taal)}</span>
                 </span>
                 <ul class="text-muted-dark mt-3 grid gap-1.5 text-xs">
-                  {pkg.includes.map((line) => (
+                  {pricing.base[pkg.id].includes.map((line) => (
                     <li class="flex gap-1.5">
                       <span class="text-accent" aria-hidden="true">✓</span>
                       {line}
@@ -68,7 +70,7 @@ import LeadForm from './LeadForm.astro';
                   {pkg.includedAddons.map((id) => (
                     <li class="flex gap-1.5 font-medium text-cream/90">
                       <span class="text-accent" aria-hidden="true">★</span>
-                      {addons.find((a) => a.id === id)!.name} <span class="text-accent-soft">free</span>
+                      {pricing.addons[id].name} <span class="text-accent-soft">{configurator.freeLabel}</span>
                     </li>
                   ))}
                 </ul>
@@ -95,18 +97,18 @@ import LeadForm from './LeadForm.astro';
                 />
                 <span class="min-w-0">
                   <span class="flex flex-wrap items-center gap-2 font-semibold">
-                    {addon.name}
+                    {pricing.addons[addon.id].name}
                     {addon.popular && <span class="badge-populair">{configurator.popularBadge}</span>}
                     <span class="badge-populair hidden" data-addon-included-badge>{configurator.includedBadge}</span>
                   </span>
-                  <span class="text-muted-dark mt-0.5 block text-xs leading-snug">{addon.shortPitch}</span>
-                  <span class="mt-1.5 block text-sm font-medium" data-addon-price>{priceLine(addon.upfront, addon.monthly)}</span>
+                  <span class="text-muted-dark mt-0.5 block text-xs leading-snug">{pricing.addons[addon.id].shortPitch}</span>
+                  <span class="mt-1.5 block text-sm font-medium" data-addon-price>{priceLine(addon.upfront, addon.monthly, taal)}</span>
                   {addon.demoSectionId ? (
                     <a
                       href={`#${addon.demoSectionId}`}
                       class="mt-1 inline-block text-xs text-accent-soft underline-offset-2 hover:underline"
                     >
-                      See the demo ↑
+                      {configurator.seeDemo}
                     </a>
                   ) : (
                     <span class="text-muted-dark mt-1 block text-xs italic">{configurator.addonsNoDemoNote}</span>
@@ -128,12 +130,12 @@ import LeadForm from './LeadForm.astro';
               >
                 <input type="radio" name="config-care" value={plan.id} class="sr-only" data-care-input />
                 <span class="font-semibold">
-                  {plan.name}
+                  {pricing.care[plan.id].name}
                   <span class="text-muted-dark font-normal">
-                    {plan.monthlyDelta > 0 ? ` · + ${eur(plan.monthlyDelta)}/mo` : ' · included'}
+                    {plan.monthlyDelta > 0 ? ` · + ${eur(plan.monthlyDelta, taal)}${perMaand(taal)}` : ` · ${inbegrepen(taal)}`}
                   </span>
                 </span>
-                <span class="text-muted-dark mt-1 text-xs leading-snug">{plan.description}</span>
+                <span class="text-muted-dark mt-1 text-xs leading-snug">{pricing.care[plan.id].description}</span>
               </label>
             ))
           }
@@ -175,9 +177,15 @@ import LeadForm from './LeadForm.astro';
     type CarePlanId,
   } from '../data/pricing';
   import { addonCost, calcTotals, isIncluded } from '../lib/calc';
-  import { eur, priceLine } from '../lib/format';
+  import { eur, perMaand, priceLine } from '../lib/format';
   import { applyPreset, setBase, setCare, subscribe, toggleAddon } from '../scripts/store';
   import { tweenNumber } from '../scripts/tween';
+  import { content } from '../data/content';
+
+  /* Zonder argument leest content() de taal van <html lang>, dus dit script
+     werkt ongewijzigd op zowel / als /en/. */
+  const { pricing: t, quote: q, configurator: c } = content();
+  const PER_MONTH = perMaand();
 
   const root = document.querySelector<HTMLElement>('[data-configurator]');
   if (root) {
@@ -224,7 +232,7 @@ import LeadForm from './LeadForm.astro';
         card.querySelector('[data-addon-included-badge]')!.classList.toggle('hidden', !included);
         const addon = addons.find((a) => a.id === id)!;
         card.querySelector('[data-addon-price]')!.textContent = included
-          ? 'Free with your package'
+          ? c.includedButton
           : priceLine(addon.upfront, addon.monthly);
       });
 
@@ -245,24 +253,26 @@ import LeadForm from './LeadForm.astro';
       const paid = addons.filter((a) => sel.addons.includes(a.id) && !isIncluded(sel.base, a.id));
 
       quoteLines.innerHTML = [
-        line(base.name, `${eur(base.upfront)} + ${eur(base.monthly)}/mo`),
-        ...included.map((a) => line(a.name, 'included')),
+        line(t.base[sel.base].name, `${eur(base.upfront)} + ${eur(base.monthly)}${PER_MONTH}`),
+        ...included.map((a) => line(t.addons[a.id].name, q.included)),
         ...paid.map((a) => {
           const cost = addonCost(sel.base, a);
           return line(
-            a.name,
-            cost.monthly > 0 ? `${eur(cost.upfront)} + ${eur(cost.monthly)}/mo` : eur(cost.upfront),
+            t.addons[a.id].name,
+            cost.monthly > 0
+              ? `${eur(cost.upfront)} + ${eur(cost.monthly)}${PER_MONTH}`
+              : eur(cost.upfront),
           );
         }),
         care.monthlyDelta > 0
-          ? line(`${care.name} care`, `+ ${eur(care.monthlyDelta)}/mo`)
-          : line(`${care.name} care`, 'included'),
+          ? line(`${q.care} ${t.care[sel.care].name}`, `+ ${eur(care.monthlyDelta)}${PER_MONTH}`)
+          : line(`${q.care} ${t.care[sel.care].name}`, q.included),
       ].join('');
 
       // Totalen met soepele tween
       const totals = calcTotals(sel);
       tweenNumber(quoteUpfront, totals.upfront, eur);
-      tweenNumber(quoteMonthly, totals.monthly, (n) => `${eur(n)}/mo`);
+      tweenNumber(quoteMonthly, totals.monthly, (n) => `${eur(n)}${PER_MONTH}`);
     });
   }
 </script>

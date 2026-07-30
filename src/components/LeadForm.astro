@@ -5,8 +5,10 @@
  * server), dan verschijnt automatisch de mailto:-fallback. De
  * WhatsApp-knop staat er altijd naast als alternatief.
  */
-import { configurator, site } from '../data/site';
-
+import { site } from '../data/site';
+import { content, toLocale, altPath } from '../data/content';
+const locale = toLocale(Astro.currentLocale);
+const { configurator } = content(locale);
 const f = configurator.form;
 ---
 
@@ -107,8 +109,8 @@ const f = configurator.form;
   </div>
 
   <p class="text-muted-dark text-xs">
-    {f.privacyNote.replace('the privacy policy.', '')}
-    <a href="/privacy" class="underline underline-offset-2 hover:text-cream">privacy policy</a>.
+    {f.privacyNote}
+    <a href={altPath('/privacy', locale)} class="underline underline-offset-2 hover:text-cream">{f.privacyLink}</a>.
   </p>
 </form>
 
@@ -151,6 +153,10 @@ const f = configurator.form;
   import { validateLead } from '../lib/lead';
   import { summarizeSelection } from '../lib/quote';
   import { getSelection, subscribe } from '../scripts/store';
+  import { content } from '../data/content';
+
+  /* Zonder argument leest content() de taal van <html lang>. */
+  const { quote: q } = content();
 
   const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
   if (form) {
@@ -167,7 +173,7 @@ const f = configurator.form;
 
     // WhatsApp-deeplink altijd actueel houden met de huidige samenstelling.
     subscribe((sel) => {
-      const text = `Hi Scott! ${summarizeSelection(sel)}`;
+      const text = `${q.greeting}${summarizeSelection(sel)}`;
       whatsappLink.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
     });
 
@@ -182,16 +188,16 @@ const f = configurator.form;
       const summary = [
         summarizeSelection(getSelection()),
         '',
-        `Name: ${fieldValue('name')}`,
-        `Company: ${fieldValue('company')}`,
-        `Phone: ${fieldValue('phone')}`,
-        fieldValue('message') ? `Note: ${fieldValue('message')}` : '',
+        `${q.name}: ${fieldValue('name')}`,
+        `${q.company}: ${fieldValue('company')}`,
+        `${q.phone}: ${fieldValue('phone')}`,
+        fieldValue('message') ? `${q.note}: ${fieldValue('message')}` : '',
       ]
         .join('\n')
         .slice(0, 1400); // mailto-body's hebben een praktische lengtegrens
 
       mailtoLink.href = `mailto:${site.email}?subject=${encodeURIComponent(
-        'Quote request via scottprins.nl',
+        q.subject,
       )}&body=${encodeURIComponent(summary)}`;
       fallback.classList.remove('hidden');
     }
@@ -208,6 +214,7 @@ const f = configurator.form;
         message: fieldValue('message'),
         website: fieldValue('website'),
         selection: getSelection(),
+        locale: document.documentElement.lang === 'en' ? 'en' : 'nl',
       };
 
       // Zelfde validatie als de server → directe feedback zonder roundtrip.

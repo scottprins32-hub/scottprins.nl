@@ -5,8 +5,8 @@
  * sectie bijna in beeld is (IntersectionObserver): scheelt derde-partij-
  * JavaScript bij pageload én houdt Lighthouse schoon.
  */
-import { demoKaart } from '../../data/site';
-
+import { content } from '../../data/content';
+const { demoKaart } = content(Astro.currentLocale);
 const locations = demoKaart.locations;
 ---
 

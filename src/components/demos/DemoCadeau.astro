@@ -4,7 +4,8 @@
  * (CSS 3D-flip) met confetti bij het verzilveren, plus een digitale
  * stempelkaart die je vol kunt tikken.
  */
-import { demoCadeau } from '../../data/site';
+import { content } from '../../data/content';
+const { demoCadeau } = content(Astro.currentLocale);
 ---
 
 <div class="grid gap-6 sm:grid-cols-2" data-cadeau>
@@ -76,7 +77,8 @@ import { demoCadeau } from '../../data/site';
 </style>
 
 <script>
-  import { demoCadeau } from '../../data/site';
+  import { content } from '../../data/content';
+  const { demoCadeau } = content();
   import { confettiBurst } from '../../scripts/confetti';
 
   const root = document.querySelector<HTMLElement>('[data-cadeau]');

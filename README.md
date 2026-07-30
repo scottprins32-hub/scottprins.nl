@@ -21,7 +21,17 @@ npm run build      # productie-build (statisch + Vercel-functie)
 
 Alle prijzen staan in **`src/data/pricing.ts`**: de drie basispakketten, alle add-ons (met per pakket gratis inbegrepen extra’s via `includedAddons`) en de onderhoudsplannen. Pas daar een getal aan en de menukaart, de configurator, de offertemail én de tests rekenen automatisch mee.
 
-Alle zichtbare tekst staat in **`src/data/site.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de laatste placeholders — grep op `{BTW}` en `{Bedrijf}` (de casestudies).
+Alle zichtbare tekst staat per taal in **`src/data/content/nl.ts`** en **`src/data/content/en.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de laatste placeholders — grep op `{BTW}` en `{Bedrijf}` (de casestudies) in beide bestanden.
+
+## Twee talen — Nederlands is de standaard
+
+De site draait tweetalig: Nederlands op `/`, Engels op `/en/`. Er wordt niets automatisch omgeschakeld op basis van de browser; de bezoeker kiest zelf via de NL|EN-schakelaar rechtsboven in de hero en in de navigatiebalk. Beide zijn echte links, dus ze werken zonder JavaScript en zijn deelbaar.
+
+* `src/data/content/index.ts` — `content(locale)` geeft het juiste taalpakket. Zonder argument (in browser-scripts) leest hij `<html lang>`, dus dezelfde code werkt op beide routes.
+* `altPath(pad, taal)` rekent een pad om naar de andere taal; `Base.astro` maakt daar de canonical en de `hreflang`-links mee.
+* Getallen en valuta volgen de taal: `€ 1.195` / `€ 29 p/m` in het Nederlands, `€1,195` / `€29/mo` in het Engels (zie `src/lib/format.ts`).
+* Een nieuwe tekst toevoegen = een sleutel in **beide** bestanden zetten; `npx astro check` valt erover als er één ontbreekt.
+* De mail naar Scotts eigen inbox blijft altijd Nederlands, met een regel die vermeldt in welke taal de aanvrager de site gebruikte.
 
 ## Accentkleur wisselen — één CSS-variabele
 
@@ -61,15 +71,20 @@ Cloudflare Pages kan ook: vervang dan `@astrojs/vercel` door `@astrojs/cloudflar
 ```
 src/
   data/pricing.ts        ← alle prijzen (types + data, nul imports)
-  data/site.ts           ← alle Nederlandse tekst
+  data/site.ts           ← taalonafhankelijke bedrijfsgegevens
+  data/content/nl.ts     ← alle Nederlandse tekst
+  data/content/en.ts     ← alle Engelse tekst
+  data/content/index.ts  ← content(locale) + altPath()
   lib/calc.ts            ← pure rekenfunctie (client + server!) — getest
   lib/lead.ts            ← gedeelde formuliervalidatie (client + server)
   lib/quote.ts           ← samenstelling → tekst (e-mail, mailto, WhatsApp)
   scripts/store.ts       ← selectie-store (localStorage + CustomEvent)
   scripts/motion.ts      ← GSAP/ScrollTrigger-setup + reduced-motion-guard
   scripts/scene-timeline.ts ← bouw-timeline van de intro (gedeeld met demo 11)
-  pages/index.astro      ← de one-pager
-  pages/privacy.astro    ← AVG-privacyverklaring
+  pages/index.astro      ← de one-pager (NL)   ┐ allebei dun: de inhoud
+  pages/en/index.astro   ← de one-pager (EN)   ┘ staat in HomePage.astro
+  pages/privacy.astro    ← AVG-privacyverklaring (NL)
+  pages/en/privacy.astro ← privacy policy (EN)
   pages/api/lead.ts      ← de enige serverless route
   components/            ← secties; components/demos/ ← de 12 live demo's
 ```
