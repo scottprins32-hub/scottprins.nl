@@ -5,7 +5,7 @@
  */
 import { addons, basePackages, carePlans } from '../data/pricing';
 import { addonCost, calcTotals, isIncluded, sanitizeSelection, type Selection } from './calc';
-import { eur } from './format';
+import { eur, PER_MONTH } from './format';
 
 export function summarizeSelection(selection: Selection): string {
   const sel = sanitizeSelection(selection);
@@ -15,9 +15,9 @@ export function summarizeSelection(selection: Selection): string {
   const totals = calcTotals(sel);
 
   const lines: string[] = [
-    'Mijn samenstelling via scottprins.nl:',
+    'My build via scottprins.nl:',
     '',
-    `Basispakket: ${base.name} (${eur(base.upfront)} + ${eur(base.monthly)} p/m)`,
+    `Base package: ${base.name} (${eur(base.upfront)} + ${eur(base.monthly)}${PER_MONTH})`,
   ];
 
   // Add-ons die bij het pakket horen tellen als "inbegrepen" — ook als de
@@ -26,26 +26,26 @@ export function summarizeSelection(selection: Selection): string {
     .filter((a) => isIncluded(sel.base, a.id))
     .map((a) => a.name);
   if (includedNames.length > 0) {
-    lines.push(`Inbegrepen bij ${base.name}: ${includedNames.join(', ')}`);
+    lines.push(`Included with ${base.name}: ${includedNames.join(', ')}`);
   }
 
   const paid = chosen.filter((a) => !isIncluded(sel.base, a.id));
   if (paid.length > 0) {
-    lines.push('Extra’s:');
+    lines.push('Extras:');
     for (const a of paid) {
       const cost = addonCost(sel.base, a);
-      const monthly = cost.monthly > 0 ? ` + ${eur(cost.monthly)} p/m` : '';
+      const monthly = cost.monthly > 0 ? ` + ${eur(cost.monthly)}${PER_MONTH}` : '';
       lines.push(`- ${a.name} (${eur(cost.upfront)}${monthly})`);
     }
   } else {
-    lines.push('Extra’s: geen');
+    lines.push('Extras: none');
   }
 
   lines.push(
-    `Onderhoud: ${care.name}${care.monthlyDelta > 0 ? ` (+ ${eur(care.monthlyDelta)} p/m)` : ' (inbegrepen)'}`,
+    `Care plan: ${care.name}${care.monthlyDelta > 0 ? ` (+ ${eur(care.monthlyDelta)}${PER_MONTH})` : ' (included)'}`,
     '',
-    `Totaal eenmalig: ${eur(totals.upfront)}`,
-    `Totaal per maand: ${eur(totals.monthly)}`,
+    `Total one-off: ${eur(totals.upfront)}`,
+    `Total per month: ${eur(totals.monthly)}`,
   );
 
   return lines.join('\n');

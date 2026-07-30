@@ -10,7 +10,7 @@ import { demoReviews } from '../../data/site';
 const doubled = [demoReviews.reviews, demoReviews.reviews];
 ---
 
-<div class="marquee overflow-hidden py-2" data-reviews aria-label="Voorbeelden van Google-reviews">
+<div class="marquee overflow-hidden py-2" data-reviews aria-label="Example Google reviews">
   {/* Elke helft draagt zijn eigen eind-gap (pr-4): -50% = exact één helft. */}
   <div class="marquee-track">
     {
@@ -24,7 +24,7 @@ const doubled = [demoReviews.reviews, demoReviews.reviews];
                 </span>
                 <div>
                   <figcaption class="text-sm font-semibold">{review.name}</figcaption>
-                  <p class="text-xs tracking-tight text-amber-500" aria-label={`${review.stars} van 5 sterren`}>
+                  <p class="text-xs tracking-tight text-amber-500" aria-label={`${review.stars} out of 5 stars`}>
                     {'★'.repeat(review.stars)}
                     <span class="text-line">{'★'.repeat(5 - review.stars)}</span>
                   </p>

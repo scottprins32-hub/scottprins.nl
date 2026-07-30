@@ -56,7 +56,7 @@ import LeadForm from './LeadForm.astro';
                 </span>
                 <span class="text-muted-dark mt-1 text-sm leading-snug">{pkg.description}</span>
                 <span class="mt-3 font-semibold">
-                  {eur(pkg.upfront)} <span class="text-muted-dark font-normal">+ {eur(pkg.monthly)} p/m</span>
+                  {eur(pkg.upfront)} <span class="text-muted-dark font-normal">+ {eur(pkg.monthly)}/mo</span>
                 </span>
                 <ul class="text-muted-dark mt-3 grid gap-1.5 text-xs">
                   {pkg.includes.map((line) => (
@@ -68,7 +68,7 @@ import LeadForm from './LeadForm.astro';
                   {pkg.includedAddons.map((id) => (
                     <li class="flex gap-1.5 font-medium text-cream/90">
                       <span class="text-accent" aria-hidden="true">★</span>
-                      {addons.find((a) => a.id === id)!.name} <span class="text-accent-soft">gratis</span>
+                      {addons.find((a) => a.id === id)!.name} <span class="text-accent-soft">free</span>
                     </li>
                   ))}
                 </ul>
@@ -106,7 +106,7 @@ import LeadForm from './LeadForm.astro';
                       href={`#${addon.demoSectionId}`}
                       class="mt-1 inline-block text-xs text-accent-soft underline-offset-2 hover:underline"
                     >
-                      Bekijk de demo ↑
+                      See the demo ↑
                     </a>
                   ) : (
                     <span class="text-muted-dark mt-1 block text-xs italic">{configurator.addonsNoDemoNote}</span>
@@ -130,7 +130,7 @@ import LeadForm from './LeadForm.astro';
                 <span class="font-semibold">
                   {plan.name}
                   <span class="text-muted-dark font-normal">
-                    {plan.monthlyDelta > 0 ? ` · + ${eur(plan.monthlyDelta)} p/m` : ' · inbegrepen'}
+                    {plan.monthlyDelta > 0 ? ` · + ${eur(plan.monthlyDelta)}/mo` : ' · included'}
                   </span>
                 </span>
                 <span class="text-muted-dark mt-1 text-xs leading-snug">{plan.description}</span>
@@ -224,7 +224,7 @@ import LeadForm from './LeadForm.astro';
         card.querySelector('[data-addon-included-badge]')!.classList.toggle('hidden', !included);
         const addon = addons.find((a) => a.id === id)!;
         card.querySelector('[data-addon-price]')!.textContent = included
-          ? 'Gratis bij je pakket'
+          ? 'Free with your package'
           : priceLine(addon.upfront, addon.monthly);
       });
 
@@ -245,24 +245,24 @@ import LeadForm from './LeadForm.astro';
       const paid = addons.filter((a) => sel.addons.includes(a.id) && !isIncluded(sel.base, a.id));
 
       quoteLines.innerHTML = [
-        line(base.name, `${eur(base.upfront)} + ${eur(base.monthly)} p/m`),
-        ...included.map((a) => line(a.name, 'inbegrepen')),
+        line(base.name, `${eur(base.upfront)} + ${eur(base.monthly)}/mo`),
+        ...included.map((a) => line(a.name, 'included')),
         ...paid.map((a) => {
           const cost = addonCost(sel.base, a);
           return line(
             a.name,
-            cost.monthly > 0 ? `${eur(cost.upfront)} + ${eur(cost.monthly)} p/m` : eur(cost.upfront),
+            cost.monthly > 0 ? `${eur(cost.upfront)} + ${eur(cost.monthly)}/mo` : eur(cost.upfront),
           );
         }),
         care.monthlyDelta > 0
-          ? line(`Onderhoud ${care.name}`, `+ ${eur(care.monthlyDelta)} p/m`)
-          : line(`Onderhoud ${care.name}`, 'inbegrepen'),
+          ? line(`${care.name} care`, `+ ${eur(care.monthlyDelta)}/mo`)
+          : line(`${care.name} care`, 'included'),
       ].join('');
 
       // Totalen met soepele tween
       const totals = calcTotals(sel);
       tweenNumber(quoteUpfront, totals.upfront, eur);
-      tweenNumber(quoteMonthly, totals.monthly, (n) => `${eur(n)} p/m`);
+      tweenNumber(quoteMonthly, totals.monthly, (n) => `${eur(n)}/mo`);
     });
   }
 </script>

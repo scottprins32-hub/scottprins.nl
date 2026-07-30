@@ -1,7 +1,7 @@
 ---
 /**
  * Demo 8 — Digitale intake: meerstaps-formulier met voortgangsbalk.
- * Verstuurt niets; het gaat om het gevoel van de flow.
+ * Verstuurt niets; het gaat om het gevoel of de flow.
  */
 import { demoIntake } from '../../data/site';
 
@@ -11,7 +11,7 @@ const totalSteps = demoIntake.steps.length;
 <div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-intake>
   <div class="flex items-center justify-between gap-4 text-sm">
     <p class="font-semibold" data-intake-title>{demoIntake.steps[0].title}</p>
-    <p class="text-muted tabular-nums" data-intake-count>Stap 1 van {totalSteps}</p>
+    <p class="text-muted tabular-nums" data-intake-count>Step 1 of {totalSteps}</p>
   </div>
   <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-cream-dim">
     <div
@@ -112,7 +112,7 @@ const totalSteps = demoIntake.steps.length;
         back.disabled = true;
       } else {
         title.textContent = demoIntake.steps[current].title;
-        count.textContent = `Stap ${current + 1} van ${total}`;
+        count.textContent = `Step ${current + 1} of ${total}`;
         next.textContent = current === total - 1 ? demoIntake.send : demoIntake.next;
         back.disabled = current === 0;
       }

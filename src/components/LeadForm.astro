@@ -107,8 +107,8 @@ const f = configurator.form;
   </div>
 
   <p class="text-muted-dark text-xs">
-    {f.privacyNote.replace('de privacyverklaring.', '')}
-    <a href="/privacy" class="underline underline-offset-2 hover:text-cream">privacyverklaring</a>.
+    {f.privacyNote.replace('the privacy policy.', '')}
+    <a href="/privacy" class="underline underline-offset-2 hover:text-cream">privacy policy</a>.
   </p>
 </form>
 
@@ -167,7 +167,7 @@ const f = configurator.form;
 
     // WhatsApp-deeplink altijd actueel houden met de huidige samenstelling.
     subscribe((sel) => {
-      const text = `Hoi Scott! ${summarizeSelection(sel)}`;
+      const text = `Hi Scott! ${summarizeSelection(sel)}`;
       whatsappLink.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
     });
 
@@ -182,16 +182,16 @@ const f = configurator.form;
       const summary = [
         summarizeSelection(getSelection()),
         '',
-        `Naam: ${fieldValue('name')}`,
-        `Bedrijf: ${fieldValue('company')}`,
-        `Telefoon: ${fieldValue('phone')}`,
-        fieldValue('message') ? `Opmerking: ${fieldValue('message')}` : '',
+        `Name: ${fieldValue('name')}`,
+        `Company: ${fieldValue('company')}`,
+        `Phone: ${fieldValue('phone')}`,
+        fieldValue('message') ? `Note: ${fieldValue('message')}` : '',
       ]
         .join('\n')
         .slice(0, 1400); // mailto-body's hebben een praktische lengtegrens
 
       mailtoLink.href = `mailto:${site.email}?subject=${encodeURIComponent(
-        'Offerte-aanvraag via scottprins.nl',
+        'Quote request via scottprins.nl',
       )}&body=${encodeURIComponent(summary)}`;
       fallback.classList.remove('hidden');
     }

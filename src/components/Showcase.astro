@@ -41,7 +41,7 @@ const kaarten = showcase.sites.map((s) => {
       doet: (s.does as Record<string, string>)[id],
       /* 'Inbegrepen' is hier het sterkste woord op de kaart: het laat zien
          dat een groter pakket opties meebrengt in plaats van bijtelt. */
-      prijs: gratis ? 'inbegrepen' : priceLine(kosten.upfront, kosten.monthly),
+      prijs: gratis ? 'included' : priceLine(kosten.upfront, kosten.monthly),
       gratis,
       /* Niet `#menu-${id}` aannemen: bij 'cadeaubonnen' heet de sectie
          'menu-cadeau', en sms/nieuwsbrief/ai-telefonist hebben er geen. */
@@ -167,7 +167,7 @@ const kaarten = showcase.sites.map((s) => {
                   >
                     {showcase.openCta}
                     <span aria-hidden="true">↗</span>
-                    <span class="sr-only">— {s.name}, opent in een nieuw tabblad</span>
+                    <span class="sr-only">— {s.name}, opens in a new tab</span>
                   </a>
                   {/* Bewust een tekstknop en geen tweede vlak: hij mag de
                       zwarte knop niet beconcurreren. */}

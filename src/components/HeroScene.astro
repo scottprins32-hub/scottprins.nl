@@ -53,7 +53,7 @@ const { interactive = false } = Astro.props;
 
       {/* Lichte zone onderin: de "menukaart" van de mini-site */}
       <div class="absolute inset-x-0 top-[49%] bottom-0 bg-cream" data-menu-zone>
-        <p class="kicker absolute top-[3%] left-[4.5%] text-[1.4cqw]!">De menukaart</p>
+        <p class="kicker absolute top-[3%] left-[4.5%] text-[1.4cqw]!">The menu</p>
       </div>
 
       {/* Schetslijnen (Dag 1) */}
@@ -79,8 +79,8 @@ const { interactive = false } = Astro.props;
     <div class="piece absolute top-[12.5%] left-[7.2%] w-[50%]" data-piece="headline" style="--z: 90px">
       {/* Bewust NIET dezelfde zin als de H1 van de pagina: op een telefoon
           staan die twee vlak onder elkaar en las je 'm anders dubbel. */}
-      <p class="font-display font-semibold text-cream text-[5cqw] leading-[1.05]">Jouw website.</p>
-      <p class="mt-[1cqw] text-muted-dark text-[2cqw]">Kies je basis, kies je extra’s.</p>
+      <p class="font-display font-semibold text-cream text-[5cqw] leading-[1.05]">Your website.</p>
+      <p class="mt-[1cqw] text-muted-dark text-[2cqw]">Pick your base, pick your extras.</p>
     </div>
 
     {/* CTA-knop */}
@@ -89,7 +89,7 @@ const { interactive = false } = Astro.props;
       data-piece="cta"
       style="--z: 150px"
     >
-      Stel je website samen
+      Build your website
     </span>
 
     {/* AI-chatbot (optie 2) */}
@@ -105,10 +105,10 @@ const { interactive = false } = Astro.props;
       </div>
       <div class="grid gap-[1cqw] p-[1.4cqw]">
         <p class="w-fit max-w-[88%] rounded-[1.2cqw] rounded-bl-[0.3cqw] bg-cream-dim p-[1.2cqw] text-ink text-[1.55cqw] leading-snug">
-          Hoi! Vraag me iets over openingstijden of prijzen 💇
+          Hi. Ask me about opening hours or prices 💇
         </p>
         <p class="ml-auto w-fit max-w-[88%] rounded-[1.2cqw] rounded-br-[0.3cqw] bg-accent p-[1.2cqw] text-white text-[1.55cqw] leading-snug">
-          Kan ik vandaag nog terecht?
+          Can I come in today?
         </p>
       </div>
     </div>
@@ -121,7 +121,7 @@ const { interactive = false } = Astro.props;
     >
       <span class="flex flex-wrap items-center gap-[0.8cqw]">
         <span class="font-display font-semibold text-ink text-[1.9cqw]">{agenda.name}</span>
-        <span class="badge-populair px-[1cqw]! py-[0.3cqw]! text-[1.2cqw]!" data-pop>Populair</span>
+        <span class="badge-populair px-[1cqw]! py-[0.3cqw]! text-[1.2cqw]!" data-pop>Popular</span>
       </span>
       <p class="mt-[0.8cqw] font-semibold text-ink text-[1.7cqw]">{priceLine(agenda.upfront, agenda.monthly)}</p>
       {
@@ -131,11 +131,11 @@ const { interactive = false } = Astro.props;
             class="mini-cta mt-[1.2cqw] block w-full rounded-[1cqw] border-[0.25cqw] border-accent py-[0.7cqw] text-center font-semibold text-accent text-[1.5cqw] transition-colors hover:bg-accent hover:text-white"
             data-scene-add
           >
-            + In mijn website
+            + Add to my site
           </button>
         ) : (
           <span class="mt-[1.2cqw] block rounded-[1cqw] border-[0.25cqw] border-accent py-[0.7cqw] text-center font-semibold text-accent text-[1.5cqw]">
-            + In mijn website
+            + Add to my site
           </span>
         )
       }
@@ -165,9 +165,9 @@ const { interactive = false } = Astro.props;
       style="--z: 100px"
     >
       <p class="font-display font-semibold text-cream text-[3.4cqw]">
-        <span class="text-accent-soft" data-pop>5</span> dagen
+        <span class="text-accent-soft" data-pop>5</span> days
       </p>
-      <p class="mt-[0.5cqw] text-muted-dark text-[1.4cqw]">gem. oplevertijd</p>
+      <p class="mt-[0.5cqw] text-muted-dark text-[1.4cqw]">avg. delivery time</p>
     </div>
 
     {/* Agenda-tijdsloten (optie 1) */}

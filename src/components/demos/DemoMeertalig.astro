@@ -13,16 +13,16 @@ const languages = [
 ];
 ---
 
-<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang="nl">
+<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang="en">
   <div class="flex justify-end">
-    <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label="Kies taal / choose language">
+    <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label="Choose language">
       {
         languages.map((lang) => (
           <button
             type="button"
             class="rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors aria-pressed:bg-accent aria-pressed:text-white"
             data-lang-btn={lang.code}
-            aria-pressed={lang.code === 'nl' ? 'true' : 'false'}
+            aria-pressed={lang.code === 'en' ? 'true' : 'false'}
           >
             <span aria-hidden="true">{lang.flag}</span> {lang.label}
           </button>

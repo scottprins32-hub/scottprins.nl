@@ -55,7 +55,7 @@ import { demoCadeau } from '../../data/site';
             class="stamp flex aspect-square items-center justify-center rounded-full border-2 border-dashed border-line text-lg transition-all aria-pressed:border-solid aria-pressed:border-accent aria-pressed:bg-accent/10"
             data-stamp
             aria-pressed="false"
-            aria-label={`Stempel ${i + 1}`}
+            aria-label={`Stamp ${i + 1}`}
           />
         ))
       }
@@ -112,7 +112,7 @@ import { demoCadeau } from '../../data/site';
           status.textContent = demoCadeau.stampReward;
           confettiBurst(stamps[stamps.length - 1]);
         } else {
-          status.textContent = `${stamped}/${stamps.length} stempels`;
+          status.textContent = `${stamped}/${stamps.length} stamps`;
         }
       });
     }

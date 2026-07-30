@@ -17,7 +17,7 @@
     class="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-white"
     data-cart-count>0</span
   >
-  <span data-cart-label>opties</span>
+  <span data-cart-label>options</span>
   <span class="text-muted-dark">·</span>
   <span data-cart-total></span>
   <span aria-hidden="true">→</span>
@@ -43,8 +43,8 @@
     const monthly = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).monthly, 0);
 
     count.textContent = String(chosen.length);
-    label.textContent = chosen.length === 1 ? 'optie' : 'opties';
-    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)} p/m` : eur(upfront);
+    label.textContent = chosen.length === 1 ? 'option' : 'options';
+    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}/mo` : eur(upfront);
 
     const visible = chosen.length > 0;
     pill.classList.toggle('translate-y-20', !visible);
