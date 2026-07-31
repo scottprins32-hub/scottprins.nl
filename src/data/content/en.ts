@@ -508,31 +508,44 @@ const showcase = {
 
 const proof = {
   kicker: 'Results',
-  title: 'Built for business owners like you.',
+  title: 'This is already live. Go and click it.',
+  lead: 'No wall of client logos and no quotes I made up myself. What I do have: two real sites I built and own myself — open them and click around.',
+  visitLabel: 'Open the site',
+  newTab: 'opens in a new tab',
+  builtLabel: 'What runs on it',
   cases: [
     {
-      company: '{Business}',
-      sector: 'Hair salon',
-      result: '{result — e.g. 40% fewer phone calls thanks to online booking}',
-      quote: '{quote from the business owner}',
+      company: 'modernpitching.nl',
+      sector: 'My own business · baseball coaching',
+      href: 'https://modernpitching.nl',
+      extern: true,
+      result: 'Twelve pages, two languages and its own app area — the site my own coaching business runs on.',
+      built: [
+        'AI coach that answers pitchers’ questions',
+        'Booking form for sessions',
+        'Video upload for a free analysis',
+        'Dashboard with progress and messages',
+        'Fully Dutch and English',
+      ],
     },
     {
-      company: '{Business}',
-      sector: 'Restaurant',
-      result: '{result — e.g. €580/month less platform commission}',
-      quote: '{quote from the business owner}',
-    },
-    {
-      company: '{Business}',
-      sector: 'Trades',
-      result: '{result — e.g. 3× more quote requests via the price calculator}',
-      quote: '{quote from the business owner}',
+      company: 'scottprins.nl',
+      sector: 'The page you’re on right now',
+      href: '#menu',
+      extern: false,
+      result: 'Everything on the menu above is live right here. No mockups — you just used the options yourself.',
+      built: [
+        'Twelve working demos, not screenshots',
+        'Configurator that prices your build live',
+        'Quote that lands in my inbox as an email',
+        'Fully Dutch and English',
+      ],
     },
   ],
   stats: [
     { value: 25, suffix: '+', label: 'sites built' },
     { value: 5, suffix: ' days', label: 'avg. delivery time' },
-    { value: 24, prefix: '< ', suffix: ' hours', label: 'response time' },
+    { value: 48, prefix: '< ', suffix: ' hrs', label: 'response time' },
   ],
 } as const;
 

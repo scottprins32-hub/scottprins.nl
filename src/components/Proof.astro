@@ -1,10 +1,16 @@
 ---
 /**
- * Proof-sectie: drie casestudy-kaarten (placeholder-content, vervang in
- * site.ts) + statistiekenrij met count-up (zie initCountups in motion.ts).
+ * Resultaat-sectie. Bewust géén verzonnen klantquotes: er staan twee échte
+ * sites die Scott zelf gebouwd én in eigendom heeft, allebei aanklikbaar.
+ * Dat is het enige bewijs dat een bezoeker zelf kan controleren.
+ *
+ * Daaronder de cijferrij met count-up (zie initCountups in motion.ts).
  */
 import { content } from '../data/content';
 const { proof } = content(Astro.currentLocale);
+
+/* Beide klassen staan hier letterlijk, anders ziet Tailwind ze niet staan. */
+const kolommen = proof.cases.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2';
 ---
 
 <section class="bg-cream py-16 text-ink sm:py-24" id="results" data-reveal-section>
@@ -12,19 +18,41 @@ const { proof } = content(Astro.currentLocale);
     <header class="max-w-2xl" data-reveal>
       <p class="kicker">{proof.kicker}</p>
       <h2 class="font-display text-h2 mt-2 font-semibold">{proof.title}</h2>
+      <p class="text-muted text-lead mt-3">{proof.lead}</p>
     </header>
 
-    <div class="mt-12 grid gap-6 md:grid-cols-3">
+    <div class:list={['mt-12 grid gap-6', kolommen]}>
       {
         proof.cases.map((item) => (
-          <article class="flex flex-col rounded-2xl border border-line bg-white p-7 shadow-card" data-reveal>
+          <a
+            href={item.href}
+            target={item.extern ? '_blank' : undefined}
+            rel={item.extern ? 'noopener' : undefined}
+            class="group flex flex-col rounded-2xl border border-line bg-white p-7 shadow-card transition-shadow hover:border-accent hover:shadow-card-lg"
+            data-reveal
+          >
             <p class="kicker">{item.sector}</p>
             <h3 class="font-display mt-2 text-xl font-semibold">{item.company}</h3>
             <p class="mt-3 font-medium text-accent">{item.result}</p>
-            <blockquote class="text-muted mt-4 border-l-2 border-line pl-4 text-sm leading-relaxed italic">
-              “{item.quote}”
-            </blockquote>
-          </article>
+
+            <p class="text-muted mt-5 text-xs font-semibold tracking-wider uppercase">{proof.builtLabel}</p>
+            <ul class="text-muted mt-2 grid gap-1.5 text-sm">
+              {item.built.map((regel) => (
+                <li class="flex gap-2">
+                  <span class="text-accent" aria-hidden="true">
+                    ✓
+                  </span>
+                  {regel}
+                </li>
+              ))}
+            </ul>
+
+            <span class="mt-6 inline-flex items-center gap-1 text-sm font-semibold group-hover:text-accent">
+              {proof.visitLabel}
+              <span aria-hidden="true">{item.extern ? '↗' : '↑'}</span>
+              {item.extern && <span class="sr-only">({proof.newTab})</span>}
+            </span>
+          </a>
         ))
       }
     </div>
@@ -39,7 +67,9 @@ const { proof } = content(Astro.currentLocale);
               data-prefix={'prefix' in stat ? stat.prefix : ''}
               data-suffix={'suffix' in stat ? stat.suffix : ''}
             >
-              {'prefix' in stat ? stat.prefix : ''}{stat.value}{'suffix' in stat ? stat.suffix : ''}
+              {/* Bewust op één regel: een regelafbreking hiertussen wordt een
+                  spatie, en dan staat er "25 +" in plaats van "25+". */}
+              {`${'prefix' in stat ? stat.prefix : ''}${stat.value}${'suffix' in stat ? stat.suffix : ''}`}
             </dd>
             <dt class="text-muted-dark mt-2 text-sm">{stat.label}</dt>
           </div>

@@ -4,7 +4,6 @@
  *
  * Placeholders die je vóór livegang moet vervangen (grep op '{'):
  *   {BTW}  — in `footer`
- *   proof.cases — echte casestudies
  */
 import { site } from '../site';
 
@@ -511,31 +510,44 @@ const showcase = {
 
 const proof = {
   kicker: 'Resultaat',
-  title: 'Gebouwd voor ondernemers zoals jij.',
+  title: 'Dit draait al. Klik het zelf na.',
+  lead: 'Geen muur met klantlogo’s en geen quotes die ik zelf verzonnen heb. Wel twee echte sites die ik zelf gebouwd heb én zelf bezit — open ze en klik erdoorheen.',
+  visitLabel: 'Bekijk de site',
+  newTab: 'opent in een nieuw tabblad',
+  builtLabel: 'Wat erop draait',
   cases: [
     {
-      company: '{Bedrijf}',
-      sector: 'Kapsalon',
-      result: '{resultaat — bijv. 40% minder telefoontjes dankzij online agenda}',
-      quote: '{quote van de ondernemer}',
+      company: 'modernpitching.nl',
+      sector: 'Mijn eigen bedrijf · honkbaltraining',
+      href: 'https://modernpitching.nl',
+      extern: true,
+      result: 'Twaalf pagina’s, twee talen en een eigen app-omgeving — de site waar mijn eigen coachingbedrijf op draait.',
+      built: [
+        'AI-coach die vragen van pitchers beantwoordt',
+        'Boekingsformulier voor sessies',
+        'Video-upload voor een gratis analyse',
+        'Dashboard met voortgang en berichten',
+        'Volledig Nederlands en Engels',
+      ],
     },
     {
-      company: '{Bedrijf}',
-      sector: 'Restaurant',
-      result: '{resultaat — bijv. € 580/maand minder platform-commissie}',
-      quote: '{quote van de ondernemer}',
-    },
-    {
-      company: '{Bedrijf}',
-      sector: 'Klusbedrijf',
-      result: '{resultaat — bijv. 3× meer offerte-aanvragen via de prijscalculator}',
-      quote: '{quote van de ondernemer}',
+      company: 'scottprins.nl',
+      sector: 'De pagina waar je nu op staat',
+      href: '#menu',
+      extern: false,
+      result: 'Alles op de menukaart hierboven is hier live. Geen mockups: je hebt de opties net zelf zitten gebruiken.',
+      built: [
+        'Twaalf werkende demo’s, geen screenshots',
+        'Configurator die je prijs live meerekent',
+        'Offerte die als mail bij mij binnenkomt',
+        'Volledig Nederlands en Engels',
+      ],
     },
   ],
   stats: [
     { value: 25, suffix: '+', label: 'sites gebouwd' },
     { value: 5, suffix: ' dagen', label: 'gem. oplevertijd' },
-    { value: 24, prefix: '< ', suffix: ' uur', label: 'reactietijd' },
+    { value: 48, prefix: '< ', suffix: ' uur', label: 'reactietijd' },
   ],
 } as const;
 

@@ -21,7 +21,7 @@ npm run build      # productie-build (statisch + Vercel-functie)
 
 Alle prijzen staan in **`src/data/pricing.ts`**: de drie basispakketten, alle add-ons (met per pakket gratis inbegrepen extra’s via `includedAddons`) en de onderhoudsplannen. Pas daar een getal aan en de menukaart, de configurator, de offertemail én de tests rekenen automatisch mee.
 
-Alle zichtbare tekst staat per taal in **`src/data/content/nl.ts`** en **`src/data/content/en.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de laatste placeholders — grep op `{BTW}` en `{Bedrijf}` (de casestudies) in beide bestanden.
+Alle zichtbare tekst staat per taal in **`src/data/content/nl.ts`** en **`src/data/content/en.ts`** (inclusief de FAQ, reviews en de privacyverklaring). Vóór livegang: vervang de laatste placeholder — grep op `{BTW}` — in beide bestanden.
 
 ## Twee talen — Nederlands is de standaard
 
