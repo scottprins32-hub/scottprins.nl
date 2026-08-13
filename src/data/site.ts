@@ -11,4 +11,8 @@ export const site = {
   /** Internationaal formaat zonder '+', voor wa.me-links. */
   whatsapp: '31619900444',
   whatsappDisplay: '+31 6 19 90 04 44',
+  /** Straat + huisnummer en postcode + plaats. Leeg = niet tonen;
+      Scott levert het adres nog aan, daarna is dit de enige plek. */
+  addressStreet: '',
+  addressCity: '',
 } as const;

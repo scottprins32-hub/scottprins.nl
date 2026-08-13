@@ -1,7 +1,7 @@
 /**
  * Geldnotatie — per taal, want daar verschilt hij écht:
- *   nl: € 1.195 · € 29 p/m · € 95 eenmalig
- *   en: €1,195 · €29/mo · €95 one-off
+ *   nl: € 1.440 · € 25 p/m · € 95 eenmalig
+ *   en: €1,440 · €25/mo · €95 one-off
  *
  * Bewust géén import uit data/content: dit bestand zit in vrijwel elke
  * client-bundle, en die hoeft niet allebei de taalpakketten mee te slepen

@@ -14,7 +14,7 @@ const hero = {
   /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
   headline: 'Websites die werken. Gebouwd in dagen, niet maanden.',
   /** Vaste ondertitel onder de H1. */
-  sub: 'Kies je basis, kies je extra’s — en zie precies wat je krijgt terwijl je site zichzelf bouwt. Live binnen 5 dagen, altijd een vaste prijs.',
+  sub: 'Kies je basis, kies je extra’s — en zie precies wat je krijgt terwijl je site zichzelf bouwt. Live binnen 5 werkdagen, altijd een vaste prijs.',
   actions: {
     primary: { label: 'Stel je website samen', href: '#configurator' },
     secondary: { label: 'Bekijk de menukaart', href: '#menu' },
@@ -75,8 +75,8 @@ const howItWorks = {
       text: 'Op deze site probeer je elke functie live: voeg toe wat bij jouw zaak past.',
     },
     {
-      title: 'Live binnen 5 dagen',
-      text: 'Binnen 24 uur een offerte + gratis demo-voorstel. Akkoord? Dan bouw ik direct.',
+      title: 'Live binnen 5 werkdagen',
+      text: 'Binnen 48 uur een offerte + gratis demo-voorstel. Akkoord? Dan bouw ik direct.',
     },
   ],
 } as const;
@@ -107,7 +107,7 @@ const demoAgenda = {
   ],
   slots: ['09:00', '10:30', '11:45', '14:00', '15:30', '16:45'],
   confirmTitle: 'Afspraak bevestigd!',
-  confirmText: 'Zo makkelijk is het voor jouw klanten. Bevestiging en herinnering gaan automatisch.',
+  confirmText: 'Zo makkelijk is het voor jouw klanten. De bevestiging gaat automatisch; sms-herinneringen kunnen erbij als optie.',
   restart: 'Nog een keer proberen',
   stepLabels: ['Behandeling', 'Behandelaar', 'Tijdstip'],
 } as const;
@@ -410,7 +410,7 @@ const configurator = {
   quoteTitle: 'Jouw samenstelling',
   upfrontLabel: 'Eenmalig',
   monthlyLabel: 'Per maand',
-  disclaimer: 'Richtprijs — definitieve offerte na kort gesprek, altijd vaste prijs.',
+  disclaimer: 'Richtprijs excl. btw — definitieve offerte na kort gesprek, altijd vaste prijs.',
   cartOne: 'optie',
   cartMany: 'opties',
   popularBadge: 'Populair',
@@ -429,7 +429,7 @@ const configurator = {
     message: 'Opmerking (optioneel)',
     submit: 'Stuur mijn samenstelling',
     sending: 'Versturen…',
-    success: 'Top! Je ontvangt binnen 24 uur je offerte + een gratis demo-voorstel voor jouw zaak.',
+    success: 'Top! Je ontvangt binnen 48 uur je offerte + een gratis demo-voorstel voor jouw zaak.',
     errorValidation: 'Check even de rood gemarkeerde velden.',
     errorSend: 'Versturen lukte niet. Gebruik een van de knoppen hieronder — je samenstelling gaat automatisch mee.',
     mailtoButton: 'Mail je samenstelling',
@@ -456,7 +456,7 @@ const showcase = {
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',
-  totalNote: 'Vaste prijs. Live binnen 5 werkdagen.',
+  totalNote: 'Vaste prijs. Live binnen 5â7 werkdagen.',
   presetCta: 'Zet deze samenstelling klaar',
   openCta: 'Open de hele site',
   liveBadge: 'Bekijk live',
@@ -589,11 +589,11 @@ const faq = {
     },
     {
       q: 'Hoe zit het met de AVG en privacy?',
-      a: 'Standaard bouw ik zonder tracking-cookies, dus meestal is er geen cookiebanner nodig. Formulieren verlopen versleuteld en je krijgt een passende privacyverklaring bij je site.',
+      a: 'Standaard bouw ik zonder tracking-cookies, dus meestal is er geen cookiebanner nodig. Kies je statistieken of een Google-kaart, dan kijken we samen of een melding nodig is â cookieloze statistieken kunnen ook. Formulieren verlopen versleuteld en je krijgt een passende privacyverklaring bij je site.',
     },
     {
       q: 'Wat kost een wijziging na oplevering?',
-      a: 'Kleine wijzigingen (tekst, foto, openingstijden) zitten bij het Plus- en Premium-onderhoud in. Zonder onderhoudsplan betaal je een vast bedrag per wijziging — vooraf afgesproken, geen uurtje-factuurtje.',
+      a: 'Een kleine wijziging af en toe — een prijs, een foto, je openingstijden — hoort er gewoon bij, ook zonder extra plan. Wil je maandelijks dingen laten aanpassen, dan is daar Plus of Premium voor. Groter meerwerk krijgt altijd eerst een vaste prijs.',
     },
     {
       q: 'Werk je met vaste prijzen?',
@@ -609,13 +609,17 @@ const faq = {
 /* ------------------------------ Footer ------------------------------ */
 
 const footer = {
-  cta: 'Zin om te beginnen?',
+  kicker: 'Samenwerken?',
+  cta: 'Laten we samen iets moois maken.',
+  sub: 'Vertel me over je zaak — binnen 48 uur ligt er een concreet voorstel met een vaste prijs.',
   ctaButton: 'Stel je website samen',
+  phoneLine: 'Bellen of appen:',
   kvkLabel: 'KVK',
   kvk: '89874994',
   btwLabel: 'BTW-id',
   btw: '{BTW}',
   privacyLink: 'Privacyverklaring',
+  termsLink: 'Algemene voorwaarden',
   rights: `© ${new Date().getFullYear()} ${site.legalName}`,
 } as const;
 
@@ -681,10 +685,91 @@ const privacy = {
   backLink: '← Terug naar de site',
 } as const;
 
+/* ----------------------- Algemene voorwaarden ----------------------- */
+/* CONCEPT: betaalritme (50/50), twee revisierondes en de aansprakelijk-
+   heidsgrens zijn door Claude gekozen startpunten — door Scott te
+   bevestigen vóór livegang. */
+
+const voorwaarden = {
+  title: 'Algemene voorwaarden',
+  updated: 'Versie augustus 2026',
+  metaDescription: `Algemene voorwaarden van ${site.legalName}, in gewone taal: hoe een opdracht start, wat je krijgt, hoe betalen werkt en hoe je maandelijks opzegt.`,
+  intro: `Geen kleine lettertjes: dit zijn de afspraken waaronder ik werk, in gewone taal. Ze gelden voor alles wat je bij ${site.legalName} (KVK 89874994) afneemt. Staat er iets tussen dat niet duidelijk is? Mail of app me gewoon — dan leggen we het vast voordat we beginnen.`,
+  sections: [
+    {
+      title: 'Zo start een opdracht',
+      body: [
+        'Mijn aanbod is voor zakelijke klanten: ondernemers, praktijken en verenigingen. Je stelt op deze site je website samen, of we overleggen via mail, telefoon of WhatsApp. Daarna krijg je één duidelijke offerte met een vaste prijs: een eenmalig bedrag en — afhankelijk van je keuzes — een maandbedrag. Alle prijzen zijn exclusief btw.',
+        'De offerte is 30 dagen geldig. Zeg je schriftelijk ja (een mailtje of appje telt ook), dan is dat het startschot en gelden deze voorwaarden.',
+      ],
+    },
+    {
+      title: 'Wat ik lever, en wanneer',
+      body: [
+        'Je krijgt precies wat er in de offerte staat: het gekozen basispakket plus de gekozen opties. De meeste sites staan binnen 5 werkdagen live, gerekend vanaf het moment dat al jouw materiaal (teksten, foto’s, toegangen) binnen is. Complexere modules, zoals een portaal of online bestellen, kunnen een paar dagen extra vragen.',
+        'Vóór de livegang kijken we samen naar het resultaat. Twee rondes met aanpassingen horen bij de prijs. Daarna vallen wijzigingen — groot en klein — onder het onderhoud of onder meerwerk, met eerst een vaste prijs.',
+      ],
+    },
+    {
+      title: 'Betalen',
+      body: [
+        'Het eenmalige bedrag betaal je in twee helften. De eerste factuur stuur ik bij akkoord en de bouw start meteen; de site gaat live zodra die eerste helft binnen is. De tweede factuur volgt na de livegang. Voor beide facturen geldt een betaaltermijn van 14 dagen.',
+        'Het maandbedrag loopt vanaf de livegang en betaal je per maand, op factuur of via automatische incasso — wat we afspreken.',
+        'Betaal je te laat, dan stuur ik eerst een gewone herinnering. Blijft betalen uit, dan gelden de wettelijke rente en incassokosten, en mag ik doorlopende diensten pauzeren tot de betaling binnen is — dat kondig ik altijd eerst aan.',
+        'Lever je na akkoord langer dan drie maanden geen materiaal aan, ondanks een herinnering, dan mag ik het project afronden op basis van wat er ligt; de eerste helft blijft dan verschuldigd.',
+      ],
+    },
+    {
+      title: 'Maandelijkse diensten en opzeggen',
+      body: [
+        'Het maandbedrag dekt hosting, updates en beveiliging, plus de modules met doorlopende kosten (zoals de agenda of de chatbot). Af en toe een kleine wijziging — een prijs, een foto, je openingstijden — hoort daar gewoon bij.',
+        'Opzeggen kan elke maand, per mail of app, en gaat in aan het einde van de lopende maand; er is geen minimumlooptijd. Je site en je domein zijn en blijven van jou: ik lever alle bestanden netjes aan en verhuis je domein kosteloos. Alleen de doorlopende diensten stoppen dan.',
+        'Moet ik het maandbedrag of deze doorlopende diensten ooit aanpassen — bijvoorbeeld omdat kosten van hosting- of AI-partijen veranderen — dan hoor je dat minimaal een maand van tevoren. Ben je het er niet mee eens, dan zeg je gewoon op.',
+      ],
+    },
+    {
+      title: 'Jouw materiaal',
+      body: [
+        'Jij levert de teksten, foto’s en andere content aan, of we spreken af dat ik daarbij help. Jij staat ervoor in dat dat materiaal gebruikt mag worden — dus geen foto’s of teksten van iemand anders zonder toestemming.',
+        'Met persoonsgegevens ga ik om zoals in de privacyverklaring staat. Draaien er op jouw site modules die gegevens van jóuw klanten verwerken (zoals de agenda, intake of het portaal), dan verwerk ik die alleen in jouw opdracht en leggen we dat vast in een korte verwerkersovereenkomst. Zeg je op, dan krijg je een export van die gegevens en verwijder ik ze daarna binnen 30 dagen.',
+      ],
+    },
+    {
+      title: 'Van wie is de site?',
+      body: [
+        'Het domein registreer ik op jouw naam — dat is dus vanaf dag één van jou. De site zelf (het ontwerp, de teksten, de code en de opbouw) is helemaal van jou zodra het eenmalige bedrag volledig is betaald; op verzoek bevestig ik die overdracht met een ondertekend document. Het maandbedrag staat hier los van. Open-source onderdelen blijven onder hun eigen licentie — dat is normaal en kost je niets.',
+        'Ik mag de site in mijn portfolio tonen en er in mijn eigen communicatie naar verwijzen, tenzij jij aangeeft dat liever niet te willen.',
+      ],
+    },
+    {
+      title: 'AI-modules',
+      body: [
+        'De chatbot en de AI-telefonist geven automatische antwoorden. We stellen ze samen zorgvuldig in, maar zulke systemen kunnen een vraag verkeerd begrijpen of een antwoord geven dat niet klopt. Controleer belangrijke informatie (prijzen, openingstijden, afspraken) in de eerste weken dus extra, en geef fouten meteen door — dan stel ik ze bij.',
+        'Wat deze modules namens jouw zaak communiceren, blijft jouw verantwoordelijkheid. Laat ze geen medisch, juridisch of financieel advies geven.',
+      ],
+    },
+    {
+      title: 'Als er iets misgaat',
+      body: [
+        'Ik werk zorgvuldig en gebruik betrouwbare partijen voor hosting en e-mail, maar 100% bereikbaarheid kan niemand beloven. Is er een storing, dan ga ik er direct mee aan de slag.',
+        'Gaat er ondanks alles iets mis waardoor je schade hebt, dan is mijn aansprakelijkheid beperkt tot het bedrag dat je mij in de drie maanden ervoor betaalde — of het eenmalige bedrag van jouw offerte, als dat hoger is. Indirecte schade, zoals gemiste omzet, valt daarbuiten. Niets hiervan beperkt aansprakelijkheid die volgens de wet niet beperkt mag worden.',
+      ],
+    },
+    {
+      title: 'Tot slot',
+      body: [
+        'Op onze afspraken is Nederlands recht van toepassing. Wijzig ik deze voorwaarden, dan blijft voor een lopende bouwopdracht de versie gelden waarmee je akkoord ging; voor doorlopende diensten geldt de aankondigingsregel hierboven.',
+        `Vragen? Mail naar ${site.email} of stuur een appje.`,
+      ],
+    },
+  ],
+  backLink: '← Terug naar de site',
+} as const;
+
 const meta = {
   title: 'Scott Prins — Websites die werken. Gebouwd in dagen, niet maanden.',
   description:
-    'Snelle, moderne websites en web-apps voor kleine ondernemers. Kies je basis, kies je extra’s en zie elke optie live op deze site. Vaste prijzen, live binnen 5 dagen.',
+    'Snelle, moderne websites en web-apps voor kleine ondernemers. Kies je basis, kies je extra’s en zie elke optie live op deze site. Vaste prijzen, live binnen 5 werkdagen.',
 } as const;
 
 /* ------ Teksten in de mini-site die zichzelf bouwt (HeroScene) ------ */
@@ -808,15 +893,15 @@ const pricing = {
   care: {
     basis: {
       name: 'Basis',
-      description: 'Inbegrepen in je pakket.',
+      description: 'Hosting, updates en af en toe een kleine wijziging.',
     },
     plus: {
       name: 'Plus',
-      description: 'Maandelijkse wijzigingen + rapportage.',
+      description: 'Elke maand wijzigingen doorvoeren + rapportage.',
     },
     premium: {
       name: 'Premium',
-      description: 'Onbeperkt kleine wijzigingen, prioriteit.',
+      description: 'Onbeperkt kleine wijzigingen, altijd voorrang.',
     },
   },
   presets: {
@@ -866,4 +951,5 @@ export const nl = {
   faq,
   footer,
   privacy,
+  voorwaarden,
 } as const;

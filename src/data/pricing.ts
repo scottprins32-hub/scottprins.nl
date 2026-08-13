@@ -64,8 +64,8 @@ export interface CarePlan {
 export const basePackages: BasePackage[] = [
   {
     id: 'visitekaartje',
-    upfront: 395,
-    monthly: 19,
+    upfront: 495,
+    monthly: 9,
     // Bewuste afwijking van de design-system-kaart: "WhatsApp-knop" en de
     // hosting-regel staan hier extra, omdat de configurator (anders dan het
     // geprinte prijsoverzicht met z'n FAQ) zelf moet uitleggen wat het
@@ -74,15 +74,15 @@ export const basePackages: BasePackage[] = [
   },
   {
     id: 'compleet',
-    upfront: 745,
-    monthly: 29,
+    upfront: 795,
+    monthly: 15,
     includedAddons: ['meertalig', 'beforeafter'],
     popular: true,
   },
   {
     id: 'interactief',
-    upfront: 1195,
-    monthly: 49,
+    upfront: 995,
+    monthly: 25,
     includedAddons: ['meertalig', 'beforeafter', 'kaart', 'intake', 'reviews'],
   },
 ];
@@ -90,15 +90,15 @@ export const basePackages: BasePackage[] = [
 export const addons: Addon[] = [
   {
     id: 'agenda',
-    upfront: 195,
-    monthly: 15,
+    upfront: 175,
+    monthly: 9,
     demoSectionId: 'menu-booking',
     popular: true,
   },
   {
     id: 'chatbot',
-    upfront: 245,
-    monthly: 25,
+    upfront: 225,
+    monthly: 15,
     demoSectionId: 'menu-chatbot',
     popular: true,
   },
@@ -110,8 +110,8 @@ export const addons: Addon[] = [
   },
   {
     id: 'bestellen',
-    upfront: 345,
-    monthly: 29,
+    upfront: 295,
+    monthly: 0,
     demoSectionId: 'menu-ordering',
   },
   {
@@ -122,7 +122,7 @@ export const addons: Addon[] = [
   },
   {
     id: 'scrollvideo',
-    upfront: 195,
+    upfront: 175,
     monthly: 0,
     demoSectionId: 'menu-scrollvideo',
   },
@@ -134,7 +134,7 @@ export const addons: Addon[] = [
   },
   {
     id: 'calculator',
-    upfront: 145,
+    upfront: 125,
     monthly: 0,
     demoSectionId: 'menu-calculator',
   },
@@ -159,26 +159,26 @@ export const addons: Addon[] = [
   },
   {
     id: 'portaal',
-    upfront: 295,
-    monthly: 15,
+    upfront: 195,
+    monthly: 0,
     demoSectionId: 'menu-portal',
   },
   {
     id: 'cadeaubonnen',
-    upfront: 245,
-    monthly: 10,
+    upfront: 195,
+    monthly: 0,
     demoSectionId: 'menu-giftcards',
   },
   {
     id: 'sms',
     upfront: 75,
-    monthly: 10,
+    monthly: 0,
     demoSectionId: null,
   },
   {
     id: 'nieuwsbrief',
     upfront: 95,
-    monthly: 10,
+    monthly: 0,
     demoSectionId: null,
   },
 ];
@@ -241,11 +241,11 @@ export const carePlans: CarePlan[] = [
   {
     id: 'plus',
     upfrontDelta: 0,
-    monthlyDelta: 30,
+    monthlyDelta: 19,
   },
   {
     id: 'premium',
     upfrontDelta: 0,
-    monthlyDelta: 70,
+    monthlyDelta: 39,
   },
 ];

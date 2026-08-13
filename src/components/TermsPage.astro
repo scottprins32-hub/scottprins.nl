@@ -1,0 +1,41 @@
+---
+/**
+ * Algemene voorwaarden — statisch, zonder JavaScript. Tekst per taal in
+ * src/data/content/. Beide routes (/voorwaarden en /en/voorwaarden)
+ * renderen dit bestand; alleen de taal verschilt.
+ */
+import { site } from '../data/site';
+import { content, toLocale, altPath } from '../data/content';
+import LangSwitch from './LangSwitch.astro';
+
+const locale = toLocale(Astro.currentLocale);
+const { voorwaarden } = content(locale);
+const thuis = altPath('/', locale);
+---
+
+<main id="main" class="bg-cream text-ink min-h-screen">
+  <div class="mx-auto max-w-2xl px-5 py-16 sm:py-24">
+    <div class="flex items-center justify-between gap-3">
+      <a href={thuis} class="text-muted text-sm font-medium hover:text-accent">{voorwaarden.backLink}</a>
+      <LangSwitch variant="licht" />
+    </div>
+    <h1 class="font-display text-h2 mt-6 font-semibold">{voorwaarden.title}</h1>
+    <p class="text-muted mt-2 text-sm">{voorwaarden.updated}</p>
+    <p class="text-lead mt-8">{voorwaarden.intro}</p>
+
+    {
+      voorwaarden.sections.map((section) => (
+        <section class="mt-10">
+          <h2 class="font-display text-h3 font-semibold">{section.title}</h2>
+          {section.body.map((paragraph) => (
+            <p class="text-ink/80 mt-3 leading-relaxed">{paragraph}</p>
+          ))}
+        </section>
+      ))
+    }
+
+    <p class="border-line text-muted mt-14 border-t pt-6 text-sm">
+      {site.legalName} · <a href={thuis} class="underline hover:text-accent">{site.url.replace('https://', '')}</a>
+    </p>
+  </div>
+</main>

@@ -29,7 +29,7 @@ De site draait tweetalig: Nederlands op `/`, Engels op `/en/`. Er wordt niets au
 
 * `src/data/content/index.ts` — `content(locale)` geeft het juiste taalpakket. Zonder argument (in browser-scripts) leest hij `<html lang>`, dus dezelfde code werkt op beide routes.
 * `altPath(pad, taal)` rekent een pad om naar de andere taal; `Base.astro` maakt daar de canonical en de `hreflang`-links mee.
-* Getallen en valuta volgen de taal: `€ 1.195` / `€ 29 p/m` in het Nederlands, `€1,195` / `€29/mo` in het Engels (zie `src/lib/format.ts`).
+* Getallen en valuta volgen de taal: `€ 1.440` / `€ 25 p/m` in het Nederlands, `€1,440` / `€25/mo` in het Engels (zie `src/lib/format.ts`).
 * Een nieuwe tekst toevoegen = een sleutel in **beide** bestanden zetten; `npx astro check` valt erover als er één ontbreekt.
 * De mail naar Scotts eigen inbox blijft altijd Nederlands, met een regel die vermeldt in welke taal de aanvrager de site gebruikte.
 

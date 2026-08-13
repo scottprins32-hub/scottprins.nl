@@ -19,7 +19,7 @@ if (!addon) throw new Error(`Onbekende add-on: ${Astro.props.addonId}`);
 ---
 
 <article
-  class="price-card relative rounded-2xl border border-line bg-white p-6 shadow-card transition-shadow data-[added]:border-accent data-[added]:shadow-card-lg"
+  class="price-card relative rounded-2xl border border-line bg-white p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/50 hover:shadow-card-lg data-[added]:border-accent data-[added]:shadow-card-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0"
   data-price-card
   data-addon-id={addon.id}
 >

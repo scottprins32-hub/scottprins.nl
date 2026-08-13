@@ -408,7 +408,7 @@ const configurator = {
   quoteTitle: 'Your build',
   upfrontLabel: 'One-off',
   monthlyLabel: 'Per month',
-  disclaimer: 'Guide price — final quote after a short chat, always a fixed price.',
+  disclaimer: 'Guide price ex VAT — final quote after a short chat, always a fixed price.',
   cartOne: 'option',
   cartMany: 'options',
   popularBadge: 'Popular',
@@ -587,11 +587,11 @@ const faq = {
     },
     {
       q: 'What about the GDPR and privacy?',
-      a: 'By default I build without tracking cookies, so usually no cookie banner is needed. Forms are sent encrypted and you get a privacy policy to match your site.',
+      a: 'By default I build without tracking cookies, so usually no cookie banner is needed. If you pick visitor stats or a Google map, we’ll check together whether a notice is needed — cookieless stats are an option too. Forms are sent encrypted and you get a privacy policy to match your site.',
     },
     {
       q: 'What does a change cost after launch?',
-      a: 'Small changes (text, photo, opening hours) are included in Plus and Premium maintenance. Without a maintenance plan you pay a fixed price per change — agreed up front, not by the hour.',
+      a: 'The occasional small change — a price, a photo, your opening hours — is simply part of the deal, even without an extra plan. Want things updated monthly? That’s what Plus and Premium are for. Bigger changes always get a fixed price first.',
     },
     {
       q: 'Do you work with fixed prices?',
@@ -607,13 +607,17 @@ const faq = {
 /* ------------------------------ Footer ------------------------------ */
 
 const footer = {
-  cta: 'Fancy getting started?',
+  kicker: 'Work together?',
+  cta: 'Let’s make something great together.',
+  sub: 'Tell me about your business — within 48 hours you’ll have a concrete fixed-price proposal.',
   ctaButton: 'Build your website',
+  phoneLine: 'Call or message:',
   kvkLabel: 'Dutch Chamber of Commerce',
   kvk: '89874994',
   btwLabel: 'VAT ID',
   btw: '{BTW}',
   privacyLink: 'Privacy policy',
+  termsLink: 'Terms & conditions',
   rights: `© ${new Date().getFullYear()} ${site.legalName}`,
 } as const;
 
@@ -673,6 +677,85 @@ const privacy = {
       body: [
         `${site.legalName} · Dutch Chamber of Commerce ${footer.kvk} · ${site.email}`,
         'Questions about this privacy policy? Just email or message me.',
+      ],
+    },
+  ],
+  backLink: '← Back to the site',
+} as const;
+
+/* ----------------------- Algemene voorwaarden ----------------------- */
+/* CONCEPT — zie de notitie in nl.ts. */
+
+const voorwaarden = {
+  title: 'Terms & conditions',
+  updated: 'Version August 2026',
+  metaDescription: `The terms and conditions of ${site.legalName}, in plain language: how a project starts, what you get, how payment works and how you cancel monthly.`,
+  intro: `No small print: these are the terms I work under, in plain language. They apply to everything you buy from ${site.legalName} (Dutch Chamber of Commerce 89874994). Anything unclear? Just email or message me — we’ll put it in writing before we start.`,
+  sections: [
+    {
+      title: 'How a project starts',
+      body: [
+        'My offer is for business customers: entrepreneurs, practices and associations. You build your website on this site, or we talk it through by email, phone or WhatsApp. You then get one clear quote with a fixed price: a one-off amount and — depending on your choices — a monthly amount. All prices exclude VAT.',
+        'The quote is valid for 30 days. Say yes in writing (an email or a WhatsApp message counts) and that’s the starting gun — these terms apply from then on.',
+      ],
+    },
+    {
+      title: 'What I deliver, and when',
+      body: [
+        'You get exactly what the quote says: the chosen base package plus the chosen options. Most sites go live within 5 working days, counted from the moment all your material (copy, photos, logins) is in. More complex modules, such as a portal or online ordering, can take a few days extra.',
+        'Before going live we review the result together. Two rounds of adjustments are part of the price. After that, changes — big and small — fall under maintenance or under extra work, with a fixed price first.',
+      ],
+    },
+    {
+      title: 'Payment',
+      body: [
+        'You pay the one-off amount in two halves. I send the first invoice when you agree and start building right away; the site goes live once that first half is in. The second invoice follows after go-live. Both invoices have a 14-day payment term.',
+        'The monthly amount starts at go-live and is billed per month, by invoice or direct debit — whatever we agree.',
+        'If you pay late, I first send a normal reminder. If payment still doesn’t come, statutory interest and collection costs apply, and I may pause running services until payment is in — always announced first.',
+        'If, after agreeing, you don’t supply material for more than three months despite a reminder, I may wrap up the project based on what’s there; the first half remains due.',
+      ],
+    },
+    {
+      title: 'Monthly services and cancelling',
+      body: [
+        'The monthly amount covers hosting, updates and security, plus the modules with running costs (such as online booking or the chatbot). The occasional small change — a price, a photo, your opening hours — is simply part of it.',
+        'You can cancel any month, by email or message, effective at the end of the current month; there is no minimum term. Your site and your domain are and remain yours: I hand over all files neatly and transfer your domain free of charge. Only the running services stop.',
+        'If I ever need to change the monthly amount or these running services — for instance because hosting or AI providers change their costs — you’ll hear at least a month in advance. Don’t agree? Then you simply cancel.',
+      ],
+    },
+    {
+      title: 'Your material',
+      body: [
+        'You supply the copy, photos and other content, or we agree that I help with that. You guarantee that this material may be used — so no photos or texts that belong to someone else without permission.',
+        'Personal data is handled as described in the privacy policy. If your site runs modules that process your own customers’ data (such as online booking, intake or the portal), I process that data only on your instructions and we record this in a short data processing agreement. If you cancel, you get an export of that data and I delete it within 30 days.',
+      ],
+    },
+    {
+      title: 'Who owns the site?',
+      body: [
+        'I register the domain in your name — so that’s yours from day one. The site itself (the design, the copy, the code and the structure) is entirely yours once the one-off amount is paid in full; on request I confirm that transfer with a signed document. The monthly amount is separate from this. Open-source components remain under their own licences — that’s normal and costs you nothing.',
+        'I may show the site in my portfolio and refer to it in my own communication, unless you tell me you’d rather I didn’t.',
+      ],
+    },
+    {
+      title: 'AI modules',
+      body: [
+        'The chatbot and the AI phone assistant give automated answers. We set them up carefully together, but systems like these can misunderstand a question or give an answer that isn’t right. So double-check important information (prices, opening hours, appointments) in the first weeks, and report mistakes straight away — I’ll adjust them.',
+        'What these modules communicate on behalf of your business remains your responsibility. Don’t let them give medical, legal or financial advice.',
+      ],
+    },
+    {
+      title: 'If something goes wrong',
+      body: [
+        'I work carefully and use reliable parties for hosting and email, but nobody can promise 100% uptime. If there’s an outage, I get on it straight away.',
+        'If despite everything something goes wrong and you suffer damages, my liability is limited to the amount you paid me in the three months before — or the one-off amount of your quote, if that is higher. Indirect damages, such as lost revenue, are excluded. None of this limits liability that cannot legally be limited.',
+      ],
+    },
+    {
+      title: 'Finally',
+      body: [
+        'Dutch law applies to our agreements. If I change these terms, an ongoing build keeps the version you agreed to; for running services the announcement rule above applies.',
+        `Questions? Email ${site.email} or send a message.`,
       ],
     },
   ],
@@ -806,15 +889,15 @@ const pricing = {
   care: {
     basis: {
       name: 'Basic',
-      description: 'Included in your package.',
+      description: 'Hosting, updates and the occasional small tweak.',
     },
     plus: {
       name: 'Plus',
-      description: 'Monthly changes + reporting.',
+      description: 'Changes applied every month + reporting.',
     },
     premium: {
       name: 'Premium',
-      description: 'Unlimited small changes, priority.',
+      description: 'Unlimited small changes, always priority.',
     },
   },
   presets: {
@@ -864,4 +947,5 @@ export const en = {
   faq,
   footer,
   privacy,
+  voorwaarden,
 } as const;
