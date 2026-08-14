@@ -684,7 +684,7 @@ const privacy = {
 } as const;
 
 /* ----------------------- Algemene voorwaarden ----------------------- */
-/* CONCEPT — zie de notitie in nl.ts. */
+/* Door Scott bevestigd — zie de notitie in nl.ts. */
 
 const voorwaarden = {
   title: 'Terms & conditions',

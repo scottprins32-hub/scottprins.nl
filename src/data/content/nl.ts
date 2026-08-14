@@ -686,9 +686,8 @@ const privacy = {
 } as const;
 
 /* ----------------------- Algemene voorwaarden ----------------------- */
-/* CONCEPT: betaalritme (50/50), twee revisierondes en de aansprakelijk-
-   heidsgrens zijn door Claude gekozen startpunten — door Scott te
-   bevestigen vóór livegang. */
+/* Door Scott bevestigd (aug 2026): 50/50-betaalritme, twee revisierondes,
+   prijzen excl. btw, alleen zakelijke klanten. */
 
 const voorwaarden = {
   title: 'Algemene voorwaarden',
