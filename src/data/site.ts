@@ -13,6 +13,6 @@ export const site = {
   whatsappDisplay: '+31 6 19 90 04 44',
   /** Straat + huisnummer en postcode + plaats. Leeg = niet tonen;
       Scott levert het adres nog aan, daarna is dit de enige plek. */
-  addressStreet: '',
-  addressCity: '',
+  addressStreet: 'Orchideelaan 197',
+  addressCity: '1171 MG Badhoevedorp',
 } as const;

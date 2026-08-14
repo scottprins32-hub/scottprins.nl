@@ -29,6 +29,8 @@ const alternates = [
 ];
 
 // Structured data: wie ben ik (Person) + wat lever ik (ProfessionalService).
+/* '1171 MG Badhoevedorp' → postcode + plaats, voor het PostalAddress-blok. */
+const [, postcode, plaats] = site.addressCity.match(/^(\d{4}\s?[A-Z]{2})\s+(.+)$/) ?? [];
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -51,6 +53,17 @@ const jsonLd = {
       areaServed: 'Netherlands',
       priceRange: '€495 - €995',
       knowsLanguage: ['nl', 'en'],
+      ...(site.addressStreet && postcode
+        ? {
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: site.addressStreet,
+              postalCode: postcode,
+              addressLocality: plaats,
+              addressCountry: 'NL',
+            },
+          }
+        : {}),
     },
   ],
 };
