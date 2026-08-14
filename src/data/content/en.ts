@@ -12,7 +12,7 @@ const hero = {
   /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
   headline: 'Websites that work. Built in days, not months.',
   /** Vaste ondertitel onder de H1. */
-  sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Live in 5 days, always a fixed price.',
+  sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Live in 5 working days, always a fixed price.',
   actions: {
     primary: { label: 'Build your website', href: '#configurator' },
     secondary: { label: 'See the menu', href: '#menu' },
@@ -73,8 +73,8 @@ const howItWorks = {
       text: 'On this site you try every feature live: add what suits your business.',
     },
     {
-      title: 'Live in 5 days',
-      text: 'A quote plus a free demo proposal within 24 hours. Happy? Then I start building.',
+      title: 'Live in 5 working days',
+      text: 'A quote plus a free demo proposal within 48 hours. Happy? Then I start building.',
     },
   ],
 } as const;
@@ -105,7 +105,7 @@ const demoAgenda = {
   ],
   slots: ['09:00', '10:30', '11:45', '14:00', '15:30', '16:45'],
   confirmTitle: 'Appointment confirmed',
-  confirmText: 'That’s how easy it is for your customers. Confirmation and reminder go out automatically.',
+  confirmText: 'That’s how easy it is for your customers. The confirmation goes out automatically; SMS reminders are an optional extra.',
   restart: 'Try again',
   stepLabels: ['Treatment', 'Therapist', 'Time'],
 } as const;
@@ -427,7 +427,7 @@ const configurator = {
     message: 'Note (optional)',
     submit: 'Send my build',
     sending: 'Sending…',
-    success: 'Nice. You’ll have your quote within 24 hours, plus a free demo proposal for your business.',
+    success: 'Nice. You’ll have your quote within 48 hours, plus a free demo proposal for your business.',
     errorValidation: 'Have a look at the fields marked in red.',
     errorSend: 'That didn’t send. Use one of the buttons below — your build goes along automatically.',
     mailtoButton: 'Email your build',
@@ -454,7 +454,7 @@ const showcase = {
   lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
   contentsLabel: 'What’s in it',
   totalLabel: 'This site',
-  totalNote: 'Fixed price. Live in 5 working days.',
+  totalNote: 'Fixed price. Live in 5–7 working days.',
   presetCta: 'Load this build',
   openCta: 'Open the full site',
   liveBadge: 'View live',
@@ -765,7 +765,7 @@ const voorwaarden = {
 const meta = {
   title: 'Scott Prins — Websites that work. Built in days, not months.',
   description:
-    'Fast, modern websites and web apps for small business owners. Pick your base, pick your extras and see every option live on this site. Fixed prices, live in 5 days.',
+    'Fast, modern websites and web apps for small business owners. Pick your base, pick your extras and see every option live on this site. Fixed prices, live in 5 working days.',
 } as const;
 
 /* ------ Teksten in de mini-site die zichzelf bouwt (HeroScene) ------ */

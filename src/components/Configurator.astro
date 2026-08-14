@@ -17,7 +17,7 @@ import LeadForm from './LeadForm.astro';
   <div class="mx-auto max-w-6xl px-5">
     <header class="max-w-2xl" data-reveal>
       <p class="kicker">{configurator.kicker}</p>
-      <h2 class="font-display text-h2 mt-2 font-semibold">{configurator.title}</h2>
+      <h2 class="font-display text-h2 mt-2 font-semibold text-balance">{configurator.title}</h2>
       <p class="text-muted-dark text-lead mt-3">{configurator.lead}</p>
     </header>
 
@@ -143,7 +143,9 @@ import LeadForm from './LeadForm.astro';
       </div>
 
       {/* ---- Sticky offerte ---- */}
-      <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur lg:sticky lg:top-6" data-quote>
+      {/* top-24: de zwevende navigatiebalk is ±70px hoog; met top-6 schoof de
+          kop "Jouw samenstelling" er tijdens het scrollen achter. */}
+      <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur lg:sticky lg:top-24" data-quote>
         <h3 class="font-display text-xl font-semibold">{configurator.quoteTitle}</h3>
 
         <ul class="mt-4 grid gap-2 text-sm" data-quote-lines></ul>

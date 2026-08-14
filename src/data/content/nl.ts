@@ -456,7 +456,7 @@ const showcase = {
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',
-  totalNote: 'Vaste prijs. Live binnen 5â7 werkdagen.',
+  totalNote: 'Vaste prijs. Live binnen 5–7 werkdagen.',
   presetCta: 'Zet deze samenstelling klaar',
   openCta: 'Open de hele site',
   liveBadge: 'Bekijk live',
@@ -589,7 +589,7 @@ const faq = {
     },
     {
       q: 'Hoe zit het met de AVG en privacy?',
-      a: 'Standaard bouw ik zonder tracking-cookies, dus meestal is er geen cookiebanner nodig. Kies je statistieken of een Google-kaart, dan kijken we samen of een melding nodig is â cookieloze statistieken kunnen ook. Formulieren verlopen versleuteld en je krijgt een passende privacyverklaring bij je site.',
+      a: 'Standaard bouw ik zonder tracking-cookies, dus meestal is er geen cookiebanner nodig. Kies je statistieken of een Google-kaart, dan kijken we samen of een melding nodig is — cookieloze statistieken kunnen ook. Formulieren verlopen versleuteld en je krijgt een passende privacyverklaring bij je site.',
     },
     {
       q: 'Wat kost een wijziging na oplevering?',
