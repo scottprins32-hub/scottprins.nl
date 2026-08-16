@@ -31,12 +31,13 @@ import DemoPortaal from './demos/DemoPortaal.astro';
 import DemoMeertalig from './demos/DemoMeertalig.astro';
 import DemoScrollvideo from './demos/DemoScrollvideo.astro';
 import DemoCadeau from './demos/DemoCadeau.astro';
+import DemoTelefonist from './demos/DemoTelefonist.astro';
 
 import { content, toLocale } from '../data/content';
 import { basePackages } from '../data/pricing';
 import { eur, perMaand } from '../lib/format';
 const taal = toLocale(Astro.currentLocale);
-const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, demoChatbot, demoIntake, demoKaart, demoMeertalig, demoPortaal, demoReviews, demoScrollvideo, menuIntro } = content(taal);
+const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, demoChatbot, demoIntake, demoKaart, demoMeertalig, demoPortaal, demoReviews, demoScrollvideo, demoTelefonist, menuIntro } = content(taal);
 const { configurator, pricing } = content(taal);
 ---
 <SiteNav />
@@ -155,6 +156,10 @@ const { configurator, pricing } = content(taal);
 
     <MenuSection id="menu-giftcards" intrinsic={715} index={12} kicker={demoCadeau.kicker} title={demoCadeau.title} lead={demoCadeau.lead} addonIds={['cadeaubonnen']} pacing="parallax">
       <DemoCadeau />
+    </MenuSection>
+
+    <MenuSection id="menu-telefonist" index={13} intrinsic={780} kicker={demoTelefonist.kicker} title={demoTelefonist.title} lead={demoTelefonist.lead} addonIds={['ai-telefonist']} pacing="fade">
+      <DemoTelefonist />
     </MenuSection>
 
     <Showcase />

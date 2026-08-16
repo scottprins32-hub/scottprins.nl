@@ -1,0 +1,144 @@
+---
+/**
+ * Demo 13 — AI-telefonist. Een nagespeeld telefoongesprek dat in echte tijd
+ * afloopt: elke regel verschijnt na zijn eigen wachttijd, zodat het tempo
+ * van een gesprek voelbaar is in plaats van dat er een blok tekst staat.
+ *
+ * Bewust géén audio en géén echt nummer: dat zou een telefonieverbinding
+ * en een beltegoed vragen. Het label eronder zegt precies dat, want elke
+ * andere demo op deze pagina doet wél echt wat hij belooft.
+ */
+import { content } from '../../data/content';
+const { demoTelefonist } = content(Astro.currentLocale);
+---
+
+<div class="overflow-hidden rounded-2xl border border-line bg-white shadow-card" data-telefonist>
+  {/* Telefoonkop */}
+  <div class="flex items-center gap-3 border-b border-line bg-ink px-4 py-3 text-cream">
+    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-accent" aria-hidden="true">📞</span>
+    <div class="min-w-0">
+      <p class="text-sm leading-tight font-semibold">Salon Demo</p>
+      <p class="text-muted-dark text-xs" data-tel-status>{demoTelefonist.callButton}</p>
+    </div>
+    <button
+      type="button"
+      class="ml-auto inline-flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+      data-tel-start
+    >
+      {demoTelefonist.callButton}
+    </button>
+  </div>
+
+  {/* Transcript */}
+  <div class="grid min-h-[19rem] gap-3 p-4" data-tel-log aria-live="polite">
+    <p class="text-muted self-center text-center text-sm" data-tel-hint>{demoTelefonist.lead}</p>
+  </div>
+
+  {/* Wat de telefonist ondertussen deed */}
+  <div class="hidden border-t border-line bg-cream px-4 py-4" data-tel-result>
+    <p class="text-xs font-semibold tracking-wider text-muted uppercase">{demoTelefonist.resultTitle}</p>
+    <ul class="mt-2 grid gap-1.5 text-sm">
+      {
+        demoTelefonist.results.map((regel) => (
+          <li class="flex gap-2">
+            <span class="text-accent" aria-hidden="true">✓</span>
+            {regel}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<p class="text-muted mt-3 text-xs">{demoTelefonist.demoNote}</p>
+
+{/* is:global omdat de bubbels in JavaScript worden aangemaakt: die krijgen
+    het scope-attribuut van Astro niet, dus scoped CSS raakt ze nooit. Alles
+    hangt onder [data-telefonist], dus lekken kan het niet. */}
+<style is:global>
+  [data-telefonist] .tel-bubble {
+    max-width: 85%;
+    border-radius: 1rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  [data-telefonist] .tel-ai {
+    border-bottom-left-radius: 0.25rem;
+    background: var(--color-cream-dim);
+    color: var(--color-ink);
+  }
+  [data-telefonist] .tel-beller {
+    margin-left: auto;
+    border-bottom-right-radius: 0.25rem;
+    background: var(--accent);
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { content } from '../../data/content';
+
+  const root = document.querySelector<HTMLElement>('[data-telefonist]');
+  if (root) {
+    const t = content().demoTelefonist;
+    const log = root.querySelector<HTMLElement>('[data-tel-log]')!;
+    const hint = root.querySelector<HTMLElement>('[data-tel-hint]')!;
+    const status = root.querySelector<HTMLElement>('[data-tel-status]')!;
+    const knop = root.querySelector<HTMLButtonElement>('[data-tel-start]')!;
+    const resultaat = root.querySelector<HTMLElement>('[data-tel-result]')!;
+
+    /* prefers-reduced-motion: dan geen tempo naspelen, maar het hele
+       gesprek in één keer. De inhoud is het punt, niet de timing. */
+    const direct = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timers: number[] = [];
+    let bezig = false;
+
+    function bubbel(regel: (typeof t.script)[number]): void {
+      const p = document.createElement('p');
+      p.className = `tel-bubble ${regel.wie === 'ai' ? 'tel-ai' : 'tel-beller'}`;
+      p.textContent = regel.tekst;
+      log.append(p);
+    }
+
+    function speel(): void {
+      if (bezig) return;
+      bezig = true;
+      timers.forEach(clearTimeout);
+      timers = [];
+      log.querySelectorAll('.tel-bubble').forEach((el) => el.remove());
+      hint.classList.add('hidden');
+      resultaat.classList.add('hidden');
+      knop.disabled = true;
+      status.textContent = t.callingLabel;
+
+      if (direct) {
+        t.script.forEach(bubbel);
+        klaar();
+        return;
+      }
+
+      let tijd = 0;
+      t.script.forEach((regel, i) => {
+        tijd += regel.ms;
+        timers.push(
+          window.setTimeout(() => {
+            if (i === 0) status.textContent = t.connected;
+            bubbel(regel);
+          }, tijd),
+        );
+      });
+      timers.push(window.setTimeout(klaar, tijd + 900));
+    }
+
+    function klaar(): void {
+      status.textContent = t.ended;
+      resultaat.classList.remove('hidden');
+      knop.textContent = t.callAgain;
+      knop.disabled = false;
+      bezig = false;
+    }
+
+    knop.addEventListener('click', speel);
+  }
+</script>

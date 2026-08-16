@@ -50,7 +50,15 @@ const kaarten = showcase.sites.map((s) => {
       href: addon.demoSectionId ? `#${addon.demoSectionId}` : null,
     };
   });
-  return { ...s, regels, totaal: calcTotals({ base: s.base, addons: [...s.addons], care: 'basis' }) };
+  /* Eén demo draait op dit domein zelf, de andere twee bij base44. Dat
+     verschil bepaalt de notitie én of de link een nieuw tabblad opent. */
+  const extern = s.href.startsWith('http');
+  return {
+    ...s,
+    regels,
+    extern,
+    totaal: calcTotals({ base: s.base, addons: [...s.addons], care: 'basis' }),
+  };
 });
 ---
 
@@ -64,7 +72,7 @@ const kaarten = showcase.sites.map((s) => {
 
     {/* Geen items-start: zo worden beide kaarten even hoog en staan de twee
         knoppen op één lijn. */}
-    <div class="mt-10 grid gap-6 md:grid-cols-2">
+    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {
         kaarten.map((s) => (
           <article
@@ -78,8 +86,8 @@ const kaarten = showcase.sites.map((s) => {
                    met toetsenbord twee keer langs hetzelfde. */
                 <a
                   href={s.href}
-                  target="_blank"
-                  rel="noopener"
+                  target={s.extern ? '_blank' : undefined}
+                  rel={s.extern ? 'noopener' : undefined}
                   class="group/shot relative block border-b border-line bg-cream-dim"
                   tabindex="-1"
                   aria-hidden="true"
@@ -106,7 +114,7 @@ const kaarten = showcase.sites.map((s) => {
                   {/* Altijd zichtbaar, niet alleen bij hover: op een telefoon
                       bestaat hover niet en moet het beeld tóch als deur lezen. */}
                   <span class="absolute right-3 bottom-3 rounded-lg bg-white/95 px-2.5 py-1 text-xs font-semibold shadow-card">
-                    {showcase.liveBadge} ↗
+                    {showcase.liveBadge} {s.extern ? '↗' : '→'}
                   </span>
                 </a>
               )
@@ -163,17 +171,20 @@ const kaarten = showcase.sites.map((s) => {
                 <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
                   <a
                     href={s.href}
-                    target="_blank"
-                    rel="noopener"
+                    target={s.extern ? '_blank' : undefined}
+                    rel={s.extern ? 'noopener' : undefined}
                     class="inline-flex items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-accent"
                   >
                     {showcase.openCta}
-                    <span aria-hidden="true">↗</span>
-                    <span class="sr-only">— {s.name}, {showcase.newTab}</span>
+                    <span aria-hidden="true">{s.extern ? '↗' : '→'}</span>
+                    {s.extern && <span class="sr-only">— {s.name}, {showcase.newTab}</span>}
                   </a>
                   {/* De adresbalk laat straks een base44-adres zien; dat mag
-                      geen verrassing zijn op een pagina die op eerlijkheid drijft. */}
-                  <span class="text-muted w-full text-xs">{showcase.demoEnvNote}</span>
+                      geen verrassing zijn op een pagina die op eerlijkheid drijft.
+                      De salon draait hier zelf, dus daar staat een andere regel. */}
+                  <span class="text-muted w-full text-xs">
+                    {s.extern ? showcase.demoEnvNote : showcase.demoOwnNote}
+                  </span>
                   {/* Bewust een tekstknop en geen tweede vlak: hij mag de
                       zwarte knop niet beconcurreren. */}
                   <button

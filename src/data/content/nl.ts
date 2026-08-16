@@ -98,6 +98,7 @@ const menuIntro = {
     { id: 'menu-multilingual', label: 'Meertalig' },
     { id: 'menu-scrollvideo', label: 'Scroll-video' },
     { id: 'menu-giftcards', label: 'Cadeaubonnen' },
+    { id: 'menu-telefonist', label: 'AI-telefonist' },
   ],
   kicker: 'De menukaart',
   title: 'Niet lezen wat het doet. Gewoon proberen.',
@@ -420,6 +421,8 @@ const configurator = {
   lead: 'Kies een basis, zet je extra’s aan (wat je onderweg toevoegde staat al klaar) en zie meteen wat het kost.',
   presetTitle: 'Snel starten — wat voor zaak heb je?',
   presetLead: 'Eén tik en er staat een compleet voorstel klaar dat past bij jouw vak — inclusief prijs. Daarna pas je alles gewoon aan.',
+  /* Onder de snelstart-chips: naar de branchepagina van dat vak. */
+  brancheIntro: 'Uitgebreid, per vak:',
   baseTitle: 'Kies je basis',
   addonsTitle: 'Kies je extra’s',
   addonsNoDemoNote: 'Geen demo op deze pagina — vraag ernaar, dan laat ik ’m live zien.',
@@ -469,6 +472,11 @@ const configurator = {
     email: 'E-mail',
     message: 'Opmerking (optioneel)',
     submit: 'Ja, stuur mijn gratis proefpagina',
+    callTitle: 'Wanneer bel ik je even?',
+    callLead: 'Eén telefoontje van tien minuten scheelt drie mailtjes heen en weer. Kies wat jou uitkomt — of bel zelf.',
+    callOptions: ['Vandaag na 17:00', 'Morgenochtend', 'Morgenmiddag'],
+    callSelf: 'Ik bel liever zelf',
+    callDone: 'Genoteerd. Ik bel je dan.',
     selfCopy: 'Nog niet klaar? Mail mijn samenstelling naar mezelf',
     selfCopyError: 'Vul je e-mailadres in, dan stuur ik je samenstelling door.',
     sending: 'Versturen…',
@@ -495,7 +503,7 @@ const configurator = {
  */
 const showcase = {
   kicker: 'Voorbeelden',
-  title: 'Twee complete sites. Klik ze kapot.',
+  title: 'Drie complete sites. Klik ze kapot.',
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',
@@ -504,8 +512,29 @@ const showcase = {
   openCta: 'Open de hele site',
   liveBadge: 'Bekijk live',
   demoEnvNote: 'demo-omgeving — draait op een tijdelijk adres',
+  demoOwnNote: 'demo-omgeving — verzonnen zaak, draait op dit domein',
   newTab: 'opent in een nieuw tabblad',
   sites: [
+    {
+      name: 'Kapsalon Mera',
+      sector: 'Kapsalon · Haarlem',
+      domain: 'kapsalonmera.nl',
+      /* Draait op scottprins.nl zelf en niet bij een externe aanbieder:
+         geen derde partij, geen tijdelijk adres, en hij blijft staan. */
+      href: '/demo/kapsalon/',
+      image: '/voorbeeld-salon',
+      summary: 'Een complete salonsite: klanten boeken zelf, herinnering per sms, en een cadeaubon die zichzelf verkoopt.',
+      base: 'compleet',
+      /** Gelijk aan preset 'salon' in pricing.ts. */
+      addons: ['agenda', 'reviews', 'sms', 'cadeaubonnen'] as const,
+      does: {
+        agenda: 'behandeling, stylist en tijd in drie tikken',
+        reviews: 'de beoordelingen staan op de pagina zelf',
+        sms: 'herinnering een dag van tevoren, scheelt no-shows',
+        cadeaubonnen: 'bedrag kiezen, naam erop, klaar',
+      },
+      extra: '+ een prijslijst die de salon zelf bijwerkt.',
+    },
     {
       name: 'Fysio Vesting',
       sector: 'Fysiotherapiepraktijk · Naarden',
@@ -695,6 +724,52 @@ const footer = {
    prijzen excl. btw, alleen zakelijke klanten. */
 
 
+/* ------------------ Demo 13 — AI-telefonist ------------------------ */
+/* Geen echt telefoonnummer: dit is een nagespeeld gesprek dat in echte tijd
+   afloopt. Wél eerlijk gelabeld, want elke andere demo op deze pagina doet
+   écht wat hij belooft. */
+const demoTelefonist = {
+  kicker: 'Optie 13',
+  title: 'AI-telefonist die opneemt als jij bezig bent',
+  lead: 'De duurste optie op deze kaart, en tot nu toe de enige zonder demo. Druk op bellen: dit is een nagespeeld gesprek, precies zoals het bij Salon Demo zou lopen.',
+  callButton: 'Bel Salon Demo',
+  callAgain: 'Nog een keer',
+  callingLabel: 'Bellen…',
+  connected: 'Verbonden met de AI-telefonist',
+  ended: 'Gesprek beëindigd · 42 seconden',
+  demoNote: 'Nagespeeld gesprek. Op jouw nummer neemt de telefonist echt op, in jouw stem-instellingen en met jouw agenda.',
+  resultTitle: 'Wat er ondertussen gebeurde',
+  results: [
+    'Afspraak gezet: donderdag 14:30, knippen + föhnen',
+    'Bevestiging per sms naar de klant',
+    'In jouw agenda gezet, met naam en telefoonnummer',
+  ],
+  /* wie: 'ai' of 'beller'; ms = wachttijd vóór deze regel */
+  script: [
+    { wie: 'ai', ms: 900, tekst: 'Goedemiddag, u spreekt met de assistent van Salon Demo. Waarmee kan ik u helpen?' },
+    { wie: 'beller', ms: 2400, tekst: 'Ja hoi, ik wilde een afspraak maken voor knippen.' },
+    { wie: 'ai', ms: 1800, tekst: 'Dat kan. Heeft u een voorkeur voor een dag of dagdeel?' },
+    { wie: 'beller', ms: 2200, tekst: 'Donderdagmiddag zou fijn zijn.' },
+    { wie: 'ai', ms: 2000, tekst: 'Donderdag kan ik 14:30 of 16:00 aanbieden. Wat past het beste?' },
+    { wie: 'beller', ms: 1900, tekst: 'Half drie graag.' },
+    { wie: 'ai', ms: 1700, tekst: 'Genoteerd. Mag ik uw naam en mobiele nummer voor de bevestiging?' },
+    { wie: 'beller', ms: 2600, tekst: 'Anne de Wit, 06 12 34 56 78.' },
+    { wie: 'ai', ms: 2400, tekst: 'Dank u wel. Donderdag 14:30, knippen en föhnen, op naam van Anne de Wit. U krijgt zo een sms met de bevestiging. Fijne dag!' },
+  ],
+} as const;
+
+/* ------------------ Branchepagina's (losse landingspagina's) ------- */
+/* Alleen de terugkerende labels; de tekst per vak staat in branches.ts. */
+const branche = {
+  navDemos: 'Demo’s',
+  navPrice: 'Prijs',
+  navMenu: 'Alle opties',
+  heroDemoCta: 'Eerst de demo’s bekijken',
+  quoteTitle: 'Deze samenstelling',
+  breakdown: 'Zie de opbouw',
+  adjustNote: 'Hieronder pas je hem aan; de prijs rekent live mee.',
+} as const;
+
 const meta = {
   title: 'Website laten maken vanaf € 495 — Scott Prins Webdesign',
   description:
@@ -873,6 +948,8 @@ export const nl = {
   demoMeertalig,
   demoScrollvideo,
   demoCadeau,
+  demoTelefonist,
+  branche,
   configurator,
   showcase,
   proof,

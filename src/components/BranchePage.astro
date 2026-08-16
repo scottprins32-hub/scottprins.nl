@@ -1,0 +1,311 @@
+---
+/**
+ * Eén landingspagina per vak. Zelfde bouwstenen als de homepage, maar
+ * korter en toegespitst: kop → herkenbare ergernissen → wat ik ervoor bouw
+ * → de drie demo's die er voor dít vak toe doen → de prijs die daarbij hoort
+ * → de configurator, met die samenstelling al klaargezet.
+ *
+ * De tekst staat in src/data/content/branches.ts, de prijzen komen uit
+ * pricing.ts. Hier staat dus geen enkel bedrag en geen enkele zin.
+ */
+import type { Branche, BrancheDemoId } from '../data/content/branches';
+import { addons, basePackages, carePlans, presets } from '../data/pricing';
+import { addonCost, calcTotals, isIncluded } from '../lib/calc';
+import { content, toLocale, altPath } from '../data/content';
+import { eur, inbegrepen, perMaand } from '../lib/format';
+
+import SiteNav from './SiteNav.astro';
+import MenuSection from './MenuSection.astro';
+import Configurator from './Configurator.astro';
+import About from './About.astro';
+import Faq from './Faq.astro';
+import SiteFooter from './SiteFooter.astro';
+import CartPill from './CartPill.astro';
+
+import DemoAgenda from './demos/DemoAgenda.astro';
+import DemoIntake from './demos/DemoIntake.astro';
+import DemoPortaal from './demos/DemoPortaal.astro';
+
+interface Props {
+  branche: Branche;
+}
+const { branche } = Astro.props;
+
+const taal = toLocale(Astro.currentLocale);
+const t = content(taal);
+const { branche: label, configurator, quote, pricing } = t;
+
+/* Register van de demo's die een branchepagina kan tonen. De sectie-id's zijn
+   dezelfde als op de homepage, zodat de "bekijk de demo"-links van de
+   configurator hier gewoon op de pagina zelf landen. `index` is het nummer
+   van de menukaart — dan klopt het decoratieve cijfer met de kicker. */
+const demoRegister: Record<
+  BrancheDemoId,
+  { id: string; index: number; intrinsic: number; kicker: string; title: string; lead: string }
+> = {
+  agenda: {
+    id: 'menu-booking',
+    index: 1,
+    intrinsic: 666,
+    kicker: t.demoAgenda.kicker,
+    title: t.demoAgenda.title,
+    lead: t.demoAgenda.lead,
+  },
+  intake: {
+    id: 'menu-intake',
+    index: 8,
+    intrinsic: 736,
+    kicker: t.demoIntake.kicker,
+    title: t.demoIntake.title,
+    lead: t.demoIntake.lead,
+  },
+  portaal: {
+    id: 'menu-portal',
+    index: 9,
+    intrinsic: 760,
+    kicker: t.demoPortaal.kicker,
+    title: t.demoPortaal.title,
+    lead: t.demoPortaal.lead,
+  },
+};
+
+/* Zelfde regel als op de homepage: nooit twee keer achter elkaar hetzelfde
+   kunstje. Zie de pacing-map in scripts/motion.ts. */
+const pacings = ['fade', 'none', 'parallax'] as const;
+
+const preset = presets.find((p) => p.id === branche.preset)!;
+const gekozen = { base: preset.base, addons: [...preset.addons], care: 'basis' as const };
+const totalen = calcTotals(gekozen);
+
+/* De offerteregels: pakket → wat het pakket gratis meebrengt → wat er los
+   bij komt. Exact dezelfde volgorde en dezelfde rekensom als in de
+   configurator ernaast, anders staat er twee keer iets anders op één pagina. */
+const basis = basePackages.find((p) => p.id === preset.base)!;
+const zorg = carePlans.find((c) => c.id === 'basis')!;
+const inbegrepenAddons = addons.filter((a) => isIncluded(preset.base, a.id));
+const extraAddons = addons.filter(
+  (a) => preset.addons.includes(a.id) && !isIncluded(preset.base, a.id),
+);
+
+const home = altPath('/', taal);
+/* Eigen navigatie: de homepage-ankers (#examples, #results) bestaan hier
+   niet, en een balk vol dode links is erger dan een korte balk. */
+const navLinks = [
+  { label: label.navDemos, href: '#demos' },
+  { label: label.navPrice, href: '#prijs' },
+  { label: label.navMenu, href: `${home}#menu` },
+];
+---
+
+<SiteNav links={navLinks} />
+
+<main id="main">
+  {/* ---- Kop ---- */}
+  <section class="grain bg-ink pt-28 pb-16 text-cream sm:pt-32 sm:pb-24">
+    <div class="mx-auto max-w-6xl px-5">
+      <div class="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div class="max-w-2xl">
+          <p class="kicker">{branche.eyebrow}</p>
+          {/* Zelfde schaal als de H1 van de homepage; er bestaat geen
+              `text-h1`-token, alleen h2 en h3. */}
+          <h1
+            class="font-display mt-3 text-[clamp(1.95rem,4.4vw,3.9rem)] leading-[1.03] font-semibold tracking-[-0.02em] text-balance"
+          >
+            {branche.h1}
+          </h1>
+          <p class="text-muted-dark text-lead mt-5">{branche.intro}</p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#configurator"
+              class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              {branche.ctaButton}
+            </a>
+            <a
+              href="#demos"
+              class="rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold transition-colors hover:border-accent"
+            >
+              {label.heroDemoCta}
+            </a>
+          </div>
+        </div>
+
+        {/* Prijs meteen in beeld: wie hier binnenkomt via Google wil eerst
+            weten of het überhaupt in de buurt komt van zijn budget.
+            Bewust "deze samenstelling" en niet "vanaf": dit bedrag is de
+            volledige aanbeveling van deze pagina, geen instapprijs. */}
+        <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+          <p class="text-muted-dark text-xs tracking-wider uppercase">{label.quoteTitle}</p>
+          <p class="font-display mt-1 text-4xl font-semibold tabular-nums">{eur(totalen.upfront, taal)}</p>
+          <p class="text-muted-dark mt-1 text-sm">
+            + {eur(totalen.monthly, taal)}{perMaand(taal)} · {configurator.exVat}
+          </p>
+          <ul class="mt-4 grid gap-1.5 border-t border-white/15 pt-4 text-sm text-cream/85">
+            {branche.demos.map((id) => (
+              <li class="flex gap-2">
+                <span class="text-accent" aria-hidden="true">✓</span>
+                {pricing.addons[id].name}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#prijs"
+            class="text-accent-soft mt-4 inline-flex min-h-11 items-center text-sm font-medium underline-offset-2 hover:underline"
+          >
+            {label.breakdown} →
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- Ergernissen + wat ik ervoor bouw ---- */}
+  <section class="bg-cream py-16 text-ink sm:py-24" data-reveal-section>
+    <div class="mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-16">
+      <div data-reveal>
+        <h2 class="font-display text-h3 font-semibold">{branche.painTitle}</h2>
+        <ul class="mt-5 grid gap-3">
+          {branche.pain.map((regel) => (
+            <li class="text-muted flex gap-3 text-sm leading-relaxed">
+              <span class="text-accent shrink-0" aria-hidden="true">—</span>
+              {regel}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div data-reveal>
+        <h2 class="font-display text-h3 font-semibold">{branche.bodyTitle}</h2>
+        <div class="mt-5 grid gap-4">
+          {branche.body.map((alinea) => <p class="text-muted text-lead">{alinea}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- De drie demo's die er voor dit vak toe doen ---- */}
+  <section class="bg-cream pt-8 text-ink" id="demos" data-reveal-section>
+    <div class="mx-auto max-w-6xl px-5">
+      <header class="max-w-2xl" data-reveal>
+        <h2 class="font-display text-h2 font-semibold text-balance">{branche.demoTitle}</h2>
+        <p class="text-muted text-lead mt-3">{branche.demoLead}</p>
+      </header>
+    </div>
+  </section>
+
+  {branche.demos.map((id, i) => {
+    const demo = demoRegister[id];
+    return (
+      <MenuSection
+        id={demo.id}
+        index={demo.index}
+        intrinsic={demo.intrinsic}
+        kicker={demo.kicker}
+        title={demo.title}
+        lead={demo.lead}
+        addonIds={[id]}
+        pacing={pacings[i % pacings.length]}
+      >
+        {id === 'agenda' && <DemoAgenda />}
+        {id === 'intake' && <DemoIntake />}
+        {id === 'portaal' && <DemoPortaal />}
+      </MenuSection>
+    );
+  })}
+
+  {/* ---- De prijs van precies deze samenstelling ---- */}
+  <section class="bg-cream pb-16 text-ink sm:pb-24" id="prijs" data-reveal-section>
+    <div class="mx-auto max-w-6xl px-5">
+      <header class="max-w-2xl" data-reveal>
+        <h2 class="font-display text-h2 font-semibold text-balance">{branche.priceTitle}</h2>
+        <p class="text-muted text-lead mt-3">{branche.priceLead}</p>
+      </header>
+
+      <div class="mt-8 max-w-2xl rounded-2xl border border-line bg-white p-6 shadow-card" data-reveal>
+        <p class="font-display text-xl font-semibold">{label.quoteTitle}</p>
+        <ul class="mt-4 grid gap-2 text-sm">
+          <li class="flex justify-between gap-3">
+            <span class="text-muted min-w-0">{pricing.base[basis.id].name}</span>
+            <span class="tabular-nums whitespace-nowrap">
+              {eur(basis.upfront, taal)} + {eur(basis.monthly, taal)}{perMaand(taal)}
+            </span>
+          </li>
+          {inbegrepenAddons.map((a) => (
+            <li class="flex justify-between gap-3">
+              <span class="text-muted min-w-0">{pricing.addons[a.id].name}</span>
+              <span class="text-accent whitespace-nowrap">{quote.included}</span>
+            </li>
+          ))}
+          {extraAddons.map((a) => {
+            const kosten = addonCost(preset.base, a);
+            return (
+              <li class="flex justify-between gap-3">
+                <span class="text-muted min-w-0">{pricing.addons[a.id].name}</span>
+                <span class="tabular-nums whitespace-nowrap">
+                  {kosten.monthly > 0
+                    ? `${eur(kosten.upfront, taal)} + ${eur(kosten.monthly, taal)}${perMaand(taal)}`
+                    : eur(kosten.upfront, taal)}
+                </span>
+              </li>
+            );
+          })}
+          <li class="flex justify-between gap-3">
+            <span class="text-muted min-w-0">
+              {quote.care} {pricing.care[zorg.id].name}
+            </span>
+            <span class="text-accent whitespace-nowrap">{inbegrepen(taal)}</span>
+          </li>
+        </ul>
+
+        <div class="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-5">
+          <div>
+            <p class="text-muted text-xs tracking-wider uppercase">{configurator.upfrontLabel}</p>
+            <p class="font-display mt-1 text-3xl font-semibold tabular-nums">{eur(totalen.upfront, taal)}</p>
+          </div>
+          <div>
+            <p class="text-muted text-xs tracking-wider uppercase">{configurator.monthlyLabel}</p>
+            <p class="font-display mt-1 text-3xl font-semibold tabular-nums">
+              {eur(totalen.monthly, taal)}{perMaand(taal)}
+            </p>
+          </div>
+        </div>
+        <p class="text-muted mt-3 text-xs">{configurator.vatNote} {label.adjustNote}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* De configurator staat er met deze samenstelling al in — zie de
+      preset-prop. De demo-links van opties die hier níet staan wijzen naar
+      de menukaart op de homepage, zodat er geen dode ankers ontstaan. */}
+  <Configurator preset={branche.preset} demoHome={home} localDemos={branche.demos} />
+
+  <About />
+  <Faq />
+
+  {/* ---- Afsluitende uitnodiging ---- */}
+  <section class="bg-cream py-16 text-ink sm:py-20" data-reveal-section>
+    <div class="mx-auto max-w-6xl px-5">
+      <div class="rounded-2xl border border-line bg-white p-8 shadow-card sm:p-10" data-reveal>
+        <h2 class="font-display text-h3 font-semibold text-balance">{branche.ctaTitle}</h2>
+        <p class="text-muted text-lead mt-3 max-w-2xl">{branche.ctaLead}</p>
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <a
+            href="#configurator"
+            class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          >
+            {branche.ctaButton}
+          </a>
+          <a
+            href={`${home}#menu`}
+            class="text-muted text-sm underline-offset-4 hover:text-ink hover:underline"
+          >
+            {branche.backLink}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<SiteFooter />
+<CartPill />

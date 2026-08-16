@@ -10,6 +10,12 @@ import { site } from '../data/site';
 import { content } from '../data/content';
 const { nav } = content(Astro.currentLocale);
 import LangSwitch from './LangSwitch.astro';
+
+interface Props {
+  /** Andere sectielinks dan die van de homepage — zie BranchePage.astro. */
+  links?: readonly { label: string; href: string }[];
+}
+const { links = nav.links } = Astro.props;
 ---
 
 <header
@@ -26,7 +32,7 @@ import LangSwitch from './LangSwitch.astro';
 
     <ul class="ml-auto hidden items-center gap-1 md:flex">
       {
-        nav.links.map((link) => (
+        links.map((link) => (
           <li>
             <a
               href={link.href}
@@ -50,7 +56,7 @@ import LangSwitch from './LangSwitch.astro';
       </summary>
       <ul class="absolute right-0 z-50 mt-2 w-56 rounded-xl bg-ink/95 p-2 ring-1 ring-white/15 backdrop-blur-md">
         {
-          nav.links.map((link) => (
+          links.map((link) => (
             <li>
               <a href={link.href} class="block rounded-lg px-3 py-3 text-sm text-cream hover:bg-white/8">
                 {link.label}

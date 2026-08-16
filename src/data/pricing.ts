@@ -167,7 +167,7 @@ export const addons: Addon[] = [
     id: 'ai-telefonist',
     upfront: 345,
     monthly: 49,
-    demoSectionId: null,
+    demoSectionId: 'menu-telefonist',
   },
   {
     id: 'sms',

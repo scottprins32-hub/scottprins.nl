@@ -1,0 +1,22 @@
+---
+/**
+ * Nederlandse branchepagina's, één per vak: /website-laten-maken-…/
+ *
+ * De routes komen uit branchesNl, dus een nieuwe pagina toevoegen is één
+ * extra object in src/data/content/branches.ts. Statisch gegenereerd, dus
+ * deze catch-all vangt niets anders af dan precies die slugs.
+ */
+import Base from '../layouts/Base.astro';
+import BranchePage from '../components/BranchePage.astro';
+import { branchesNl, type Branche } from '../data/content/branches';
+
+export function getStaticPaths() {
+  return branchesNl.map((branche) => ({ params: { branche: branche.slug }, props: { branche } }));
+}
+
+const { branche } = Astro.props as { branche: Branche };
+---
+
+<Base title={branche.meta.title} description={branche.meta.description} path={`/${branche.slug}`}>
+  <BranchePage {branche} />
+</Base>

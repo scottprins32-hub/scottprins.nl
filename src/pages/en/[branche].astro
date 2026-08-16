@@ -1,0 +1,19 @@
+---
+/**
+ * Engelse branchepagina's. Zelfde slug als de Nederlandse — het is een
+ * Nederlandse zoekterm en zo blijft elk hreflang-paar één-op-één.
+ */
+import Base from '../../layouts/Base.astro';
+import BranchePage from '../../components/BranchePage.astro';
+import { branchesEn, type Branche } from '../../data/content/branches';
+
+export function getStaticPaths() {
+  return branchesEn.map((branche) => ({ params: { branche: branche.slug }, props: { branche } }));
+}
+
+const { branche } = Astro.props as { branche: Branche };
+---
+
+<Base title={branche.meta.title} description={branche.meta.description} path={`/${branche.slug}`}>
+  <BranchePage {branche} />
+</Base>

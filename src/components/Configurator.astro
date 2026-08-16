@@ -5,13 +5,32 @@
  * vooraf aangevinkt wat de bezoeker op de menukaart toevoegde) en het
  * onderhoudsplan. Rechts (sticky): live meerekenende offerte + leadformulier.
  */
-import { addons, basePackages, carePlans, presets } from '../data/pricing';
+import { addons, basePackages, carePlans, presets, type AddonId, type PresetId } from '../data/pricing';
 import { calcTotals } from '../lib/calc';
-import { content, toLocale } from '../data/content';
+import { content, toLocale, altPath } from '../data/content';
+import { branches } from '../data/content/branches';
 const taal = toLocale(Astro.currentLocale);
 const { configurator, pricing } = content(taal);
 import { eur, inbegrepen, perMaand, priceLine } from '../lib/format';
 import LeadForm from './LeadForm.astro';
+
+interface Props {
+  /** Zet deze samenstelling klaar bij het openen (branchepagina's). */
+  preset?: PresetId;
+  /** Pad naar de menukaart, voor demo's die niet op déze pagina staan. */
+  demoHome?: string;
+  /** Welke demo's hier wél staan. Weggelaten = allemaal (de homepage). */
+  localDemos?: readonly AddonId[];
+}
+const { preset, demoHome = '', localDemos } = Astro.props;
+
+/** Staat de demo van deze optie op deze pagina, of moet je ervoor terug? */
+const demoHref = (sectionId: string, addonId: AddonId) =>
+  !localDemos || localDemos.includes(addonId) ? `#${sectionId}` : `${demoHome}#${sectionId}`;
+
+/* Snelstarts met een eigen branchepagina krijgen er een link naartoe —
+   behalve als je al op die pagina staat. */
+const brancheLinks = branches(taal).filter((b) => !Astro.url.pathname.includes(b.slug));
 
 /* Prijs per snelstart, zodat de chip meteen laat zien waar je uitkomt. */
 const presetTotalen = new Map(
@@ -30,7 +49,12 @@ const inbegrepenWaarde = new Map(
 );
 ---
 
-<section id="configurator" class="grain bg-ink py-16 text-cream sm:py-24" data-configurator>
+<section
+  id="configurator"
+  class="grain bg-ink py-16 text-cream sm:py-24"
+  data-configurator
+  data-preset={preset}
+>
   <div class="mx-auto max-w-6xl px-5">
     <header class="max-w-2xl" data-reveal>
       <p class="kicker">{configurator.kicker}</p>
@@ -64,6 +88,25 @@ const inbegrepenWaarde = new Map(
             ))
           }
         </div>
+
+        {
+          brancheLinks.length > 0 && (
+            <p class="text-muted-dark mt-3 text-sm">
+              {configurator.brancheIntro}{' '}
+              {brancheLinks.map((b, i) => (
+                <>
+                  {i > 0 && ' · '}
+                  <a
+                    href={altPath(`/${b.slug}`, taal)}
+                    class="text-accent-soft font-medium underline-offset-2 hover:underline"
+                  >
+                    {b.linkLabel} →
+                  </a>
+                </>
+              ))}
+            </p>
+          )
+        }
 
         {/* ---- Basispakketten ---- */}
         <h3 class="font-display mt-10 text-xl font-semibold">{configurator.baseTitle}</h3>
@@ -133,7 +176,7 @@ const inbegrepenWaarde = new Map(
                   <span class="mt-1.5 block text-sm font-medium" data-addon-price>{priceLine(addon.upfront, addon.monthly, taal)}</span>
                   {addon.demoSectionId ? (
                     <a
-                      href={`#${addon.demoSectionId}`}
+                      href={demoHref(addon.demoSectionId, addon.id)}
                       class="mt-2 inline-flex min-h-11 items-center text-xs text-accent-soft underline-offset-2 hover:underline"
                     >
                       {configurator.seeDemo}
@@ -259,6 +302,26 @@ const inbegrepenWaarde = new Map(
     const quoteLines = root.querySelector<HTMLElement>('[data-quote-lines]')!;
     const quoteUpfront = root.querySelector<HTMLElement>('[data-quote-upfront]')!;
     const quoteMonthly = root.querySelector<HTMLElement>('[data-quote-monthly]')!;
+
+    /*
+     * Voorselectie op een branchepagina (data-preset) of via een gedeelde
+     * link (?preset=praktijk). Eén keer per sessie per pagina: de pagina
+     * belooft dat de samenstelling klaarstaat, maar wie daarna zelf iets
+     * aanpast mag dat niet kwijtraken bij een refresh of een terug-knop.
+     */
+    const gevraagd = new URLSearchParams(location.search).get('preset') ?? root.dataset.preset;
+    const vooraf = presets.find((p) => p.id === gevraagd);
+    if (vooraf) {
+      const sleutel = `sp:preset-toegepast:${location.pathname}:${vooraf.id}`;
+      let alGehad = false;
+      try {
+        alGehad = sessionStorage.getItem(sleutel) !== null;
+        sessionStorage.setItem(sleutel, '1');
+      } catch {
+        /* Geblokkeerde storage (private mode): dan gewoon elke keer toepassen. */
+      }
+      if (!alGehad) applyPreset(vooraf.base, [...vooraf.addons]);
+    }
 
     const presetButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-preset]')];
     presetButtons.forEach((button) =>

@@ -95,7 +95,9 @@ export const POST: APIRoute = async ({ request }) => {
   const subject =
     lead.intent === 'selfcopy'
       ? `Prijslijst opgevraagd: ${baseName} — ${bedrag}`
-      : `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${bedrag}`;
+      : lead.intent === 'call'
+        ? `BELAFSPRAAK: ${lead.name || lead.email} — ${bedrag}`
+        : `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${bedrag}`;
 
   /* De bezoeker krijgt zijn eigen samenstelling terug: bij een self-copy is
      dat het hele punt, en bij een gewone aanvraag is het een bevestiging. */
@@ -135,7 +137,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     /* De kopie naar de bezoeker mag de aanvraag nooit blokkeren: zolang het
        domein niet in Resend geverifieerd is, weigert die tweede mail. */
-    void verstuur(kopie).catch(() => {});
+    if (lead.intent !== 'call') void verstuur(kopie).catch(() => {});
 
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',

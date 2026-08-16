@@ -1,0 +1,1447 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kapsalon Mera — Haarlem</title>
+    <meta
+      name="description"
+      content="Kapsalon Mera in Haarlem. Knippen, kleuren en styling. Plan zelf je afspraak online."
+    />
+    <!-- Dit is een demo-site van scottprins.nl bij een verzonnen zaak. Niet
+         indexeren: hij hoort niet in Google te staan alsof het een echte
+         kapsalon is. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23253028'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='17' fill='%23f3ede4' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E"
+    />
+
+    <style>
+      /* ------------------------------------------------------------------
+         Kapsalon Mera — bewust een heel andere huisstijl dan scottprins.nl:
+         serif-koppen, olijf/terracotta, veel wit. Eén bestand, geen externe
+         requests, geen tracking. Werkt zonder JavaScript tot en met de
+         prijslijst; de agenda en de cadeaubon hebben JS nodig.
+         ------------------------------------------------------------------ */
+      :root {
+        --inkt: #253028;
+        --inkt-zacht: #55605a;
+        --room: #f7f3ec;
+        --room-diep: #efe7db;
+        --wit: #fffdfa;
+        --olijf: #4a5d43;
+        --terra: #b4674a;
+        --lijn: #e0d7c9;
+        --radius: 14px;
+        --schaduw:
+          0 1px 2px rgba(37, 48, 40, 0.06),
+          0 12px 28px -18px rgba(37, 48, 40, 0.4);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--room);
+        color: var(--inkt);
+        font:
+          16px/1.6 ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,
+      h2,
+      h3,
+      .serif {
+        font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        line-height: 1.12;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(2.5rem, 6vw, 4.25rem);
+      }
+      h2 {
+        font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+      }
+      h3 {
+        font-size: 1.2rem;
+      }
+      p {
+        margin: 0;
+      }
+      a {
+        color: inherit;
+      }
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+      .wrap {
+        width: min(100% - 2.5rem, 68rem);
+        margin-inline: auto;
+      }
+      .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--terra);
+        font-weight: 600;
+      }
+      .lead {
+        color: var(--inkt-zacht);
+        font-size: 1.06rem;
+      }
+      section {
+        padding: clamp(3.5rem, 8vw, 6.5rem) 0;
+      }
+
+      /* ---------- knoppen ---------- */
+      .knop,
+      .knop-licht {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 46px;
+        padding: 0 1.4rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font: inherit;
+        font-size: 0.94rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background-color 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .knop {
+        background: var(--inkt);
+        color: var(--room);
+      }
+      .knop:hover {
+        background: var(--olijf);
+      }
+      .knop-licht {
+        background: transparent;
+        color: var(--inkt);
+        border-color: var(--lijn);
+      }
+      .knop-licht:hover {
+        border-color: var(--inkt);
+      }
+      :focus-visible {
+        outline: 2px solid var(--terra);
+        outline-offset: 3px;
+      }
+
+      /* ---------- kop ---------- */
+      header.balk {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: color-mix(in srgb, var(--room) 88%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--lijn);
+      }
+      .balk-inner {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 0.85rem 0;
+      }
+      .merk {
+        font-family: Georgia, serif;
+        font-size: 1.35rem;
+        letter-spacing: 0.32em;
+        text-decoration: none;
+        padding-left: 0.32em;
+      }
+      .balk nav {
+        margin-left: auto;
+        display: none;
+        gap: 1.4rem;
+      }
+      .balk nav a {
+        text-decoration: none;
+        font-size: 0.92rem;
+        color: var(--inkt-zacht);
+      }
+      .balk nav a:hover {
+        color: var(--inkt);
+      }
+      @media (min-width: 800px) {
+        .balk nav {
+          display: flex;
+        }
+      }
+      .balk .knop {
+        margin-left: auto;
+      }
+      @media (min-width: 800px) {
+        .balk .knop {
+          margin-left: 0;
+        }
+      }
+
+      /* ---------- hero ---------- */
+      .hero {
+        padding-top: clamp(2rem, 4vw, 3rem);
+        padding-bottom: clamp(3rem, 6vw, 4.5rem);
+      }
+      .hero-grid {
+        display: grid;
+        gap: 2.5rem;
+        align-items: start;
+      }
+      @media (min-width: 900px) {
+        .hero-grid {
+          grid-template-columns: 1.1fr 0.9fr;
+          gap: 3.5rem;
+        }
+      }
+      .hero p.lead {
+        margin-top: 1.4rem;
+        max-width: 34rem;
+      }
+      .hero-acties {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      /* Beeldvlak zonder foto: een opgebouwd kleurvlak in plaats van een
+         stockbeeld dat toch niet van deze verzonnen salon is. De bogen geven
+         het vlak richting, zodat het als ontwerp leest en niet als een
+         plaatje dat nog moest komen. */
+      .kunst {
+        position: relative;
+        aspect-ratio: 5 / 4;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background:
+          radial-gradient(85% 60% at 20% 8%, rgba(233, 205, 178, 0.95) 0%, transparent 62%),
+          radial-gradient(70% 55% at 95% 30%, rgba(154, 168, 143, 0.7) 0%, transparent 65%),
+          linear-gradient(158deg, #46583f 0%, #2c3a2e 55%, #1e2620 100%);
+      }
+      /* Bogen: één herhalend patroon, van boven naar beneden uitdovend. */
+      .kunst::before {
+        content: "";
+        position: absolute;
+        inset: -25% -30% auto -30%;
+        height: 150%;
+        background-image:
+          repeating-radial-gradient(
+            circle at 50% 100%,
+            transparent 0 62px,
+            rgba(247, 243, 236, 0.3) 54px 55px
+          );
+        -webkit-mask-image: linear-gradient(to bottom, #000 5%, transparent 78%);
+        mask-image: linear-gradient(to bottom, #000 5%, transparent 78%);
+      }
+      .kunst::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+          rgba(255, 255, 255, 0.11) 1px,
+          transparent 1px
+        );
+        background-size: 4px 4px;
+        mix-blend-mode: overlay;
+      }
+      .kunst span {
+        position: absolute;
+        left: 1.6rem;
+        bottom: 1.5rem;
+        right: 1.6rem;
+        color: var(--room);
+        font-family: Georgia, serif;
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        line-height: 1.25;
+        z-index: 1;
+      }
+      .uren {
+        margin-top: 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 2rem;
+        border-top: 1px solid var(--lijn);
+        padding-top: 1rem;
+        font-size: 0.9rem;
+        color: var(--inkt-zacht);
+      }
+      .uren b {
+        color: var(--inkt);
+        font-weight: 600;
+      }
+
+      /* ---------- prijslijst ---------- */
+      .prijzen {
+        background: var(--wit);
+        border-block: 1px solid var(--lijn);
+      }
+      .prijs-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        gap: 2.5rem;
+      }
+      @media (min-width: 760px) {
+        .prijs-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 2.5rem 4rem;
+        }
+      }
+      .prijs-groep h3 {
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--inkt);
+      }
+      .prijs-groep ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .prijs-groep li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--lijn);
+      }
+      .prijs-groep li span:first-child {
+        flex: 1;
+      }
+      .prijs-groep small {
+        display: block;
+        color: var(--inkt-zacht);
+        font-size: 0.82rem;
+      }
+      .prijs-groep b {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+      }
+
+      /* ---------- agenda ---------- */
+      .agenda-kaart {
+        margin-top: 2.5rem;
+        background: var(--wit);
+        border: 1px solid var(--lijn);
+        border-radius: var(--radius);
+        box-shadow: var(--schaduw);
+        overflow: hidden;
+      }
+      .stappen {
+        display: flex;
+        gap: 0.25rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--lijn);
+        background: var(--room-diep);
+        font-size: 0.78rem;
+        color: var(--inkt-zacht);
+        flex-wrap: wrap;
+      }
+      .stappen span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .stappen span + span::before {
+        content: "›";
+        opacity: 0.5;
+        margin-right: 0.15rem;
+      }
+      .stappen span[aria-current="step"] {
+        color: var(--inkt);
+        font-weight: 600;
+      }
+      .agenda-body {
+        padding: 1.5rem 1.25rem;
+      }
+      @media (min-width: 620px) {
+        .agenda-body {
+          padding: 1.75rem;
+        }
+      }
+      .keuzes {
+        display: grid;
+        gap: 0.65rem;
+        margin-top: 1.1rem;
+      }
+      @media (min-width: 620px) {
+        .keuzes {
+          grid-template-columns: 1fr 1fr;
+        }
+        .keuzes.tijden {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .keuze {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 54px;
+        width: 100%;
+        padding: 0.6rem 1rem;
+        text-align: left;
+        background: var(--wit);
+        border: 1px solid var(--lijn);
+        border-radius: 10px;
+        font: inherit;
+        font-size: 0.92rem;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background-color 0.15s;
+      }
+      .keuze:hover {
+        border-color: var(--olijf);
+        background: #f8faf6;
+      }
+      .keuze b {
+        display: block;
+        font-weight: 600;
+      }
+      .keuze small {
+        color: var(--inkt-zacht);
+      }
+      .keuze .rechts {
+        margin-left: auto;
+        font-variant-numeric: tabular-nums;
+        color: var(--inkt-zacht);
+        font-size: 0.85rem;
+      }
+      .keuzes.tijden .keuze {
+        justify-content: center;
+        min-height: 46px;
+        font-variant-numeric: tabular-nums;
+      }
+      .bol {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        flex: none;
+        border-radius: 999px;
+        background: var(--room-diep);
+        font-family: Georgia, serif;
+        font-size: 0.95rem;
+      }
+      .terug {
+        margin-top: 1.25rem;
+        background: none;
+        border: 0;
+        padding: 0.5rem 0;
+        font: inherit;
+        font-size: 0.88rem;
+        color: var(--inkt-zacht);
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .veld {
+        display: block;
+        margin-top: 0.9rem;
+      }
+      .veld span {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+      }
+      .veld input {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 0.9rem;
+        font: inherit;
+        border: 1px solid var(--lijn);
+        border-radius: 10px;
+        background: var(--wit);
+      }
+      .samenvatting {
+        margin-top: 1.25rem;
+        padding: 1rem 1.1rem;
+        background: var(--room-diep);
+        border-radius: 10px;
+        font-size: 0.92rem;
+      }
+      .samenvatting dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.35rem 1rem;
+      }
+      .samenvatting dt {
+        color: var(--inkt-zacht);
+      }
+      .samenvatting dd {
+        margin: 0;
+        text-align: right;
+        font-weight: 600;
+      }
+      .klaar {
+        text-align: center;
+        padding: 1rem 0 0.5rem;
+      }
+      .vink {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 1rem;
+        border-radius: 999px;
+        background: var(--olijf);
+        color: var(--room);
+        font-size: 1.5rem;
+      }
+      .sms {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 999px;
+        background: var(--room-diep);
+        font-size: 0.85rem;
+      }
+      [hidden] {
+        display: none !important;
+      }
+
+      /* ---------- reviews ---------- */
+      .reviews {
+        background: var(--olijf);
+        color: var(--room);
+      }
+      .reviews .eyebrow {
+        color: #d9c3ae;
+      }
+      .review-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        gap: 1rem;
+      }
+      @media (min-width: 720px) {
+        .review-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .review {
+        background: rgba(255, 253, 250, 0.07);
+        border: 1px solid rgba(255, 253, 250, 0.16);
+        border-radius: var(--radius);
+        padding: 1.4rem;
+      }
+      .sterren {
+        color: #e8c88d;
+        letter-spacing: 0.15em;
+        font-size: 0.9rem;
+      }
+      .review p {
+        margin-top: 0.7rem;
+        font-size: 0.96rem;
+      }
+      .review footer {
+        margin-top: 0.9rem;
+        font-size: 0.85rem;
+        opacity: 0.75;
+      }
+      .cijfer {
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+        margin-top: 1.2rem;
+      }
+      .cijfer b {
+        font-family: Georgia, serif;
+        font-size: 2.6rem;
+        font-weight: 400;
+      }
+
+      /* ---------- cadeaubon ---------- */
+      .bon-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (min-width: 860px) {
+        .bon-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 3rem;
+        }
+      }
+      .bedragen {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1.2rem;
+      }
+      .bedrag {
+        min-width: 82px;
+        min-height: 46px;
+        padding: 0 1rem;
+        border: 1px solid var(--lijn);
+        background: var(--wit);
+        border-radius: 999px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        font-variant-numeric: tabular-nums;
+      }
+      .bedrag[aria-pressed="true"] {
+        background: var(--inkt);
+        color: var(--room);
+        border-color: var(--inkt);
+      }
+      .bon {
+        position: relative;
+        border-radius: var(--radius);
+        padding: 1.75rem;
+        color: var(--room);
+        background: linear-gradient(
+          145deg,
+          #3d4c3d 0%,
+          #253028 60%,
+          #4a3a30 100%
+        );
+        box-shadow: var(--schaduw);
+        overflow: hidden;
+      }
+      .bon::before {
+        content: "";
+        position: absolute;
+        inset: 0.6rem;
+        border: 1px solid rgba(247, 243, 236, 0.25);
+        border-radius: 9px;
+        pointer-events: none;
+      }
+      .bon .waarde {
+        font-family: Georgia, serif;
+        font-size: 3rem;
+        line-height: 1;
+        margin: 1.2rem 0 0.4rem;
+      }
+      .bon .code {
+        margin-top: 1.5rem;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        letter-spacing: 0.16em;
+        font-size: 0.9rem;
+      }
+      .bon .voor {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        min-height: 1.4em;
+      }
+
+      /* ---------- team ---------- */
+      .team-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        gap: 1.25rem;
+      }
+      @media (min-width: 700px) {
+        .team-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .persoon {
+        background: var(--wit);
+        border: 1px solid var(--lijn);
+        border-radius: var(--radius);
+        padding: 1.4rem;
+      }
+      .initiaal {
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 999px;
+        background: var(--room-diep);
+        font-family: Georgia, serif;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+      }
+      .persoon small {
+        color: var(--inkt-zacht);
+      }
+
+      /* ---------- voet ---------- */
+      footer.voet {
+        background: var(--inkt);
+        color: var(--room);
+        padding: clamp(3rem, 6vw, 4.5rem) 0 2rem;
+      }
+      .voet-grid {
+        display: grid;
+        gap: 2rem;
+      }
+      @media (min-width: 760px) {
+        .voet-grid {
+          grid-template-columns: 1.2fr 1fr 1fr;
+        }
+      }
+      .voet a {
+        color: inherit;
+      }
+      .voet p,
+      .voet li {
+        color: rgba(247, 243, 236, 0.72);
+        font-size: 0.92rem;
+      }
+      .voet ul {
+        list-style: none;
+        margin: 0.6rem 0 0;
+        padding: 0;
+        display: grid;
+        gap: 0.35rem;
+      }
+      .voet h3 {
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-family: inherit;
+        font-weight: 600;
+      }
+      .streep {
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(247, 243, 236, 0.16);
+        font-size: 0.82rem;
+        color: rgba(247, 243, 236, 0.55);
+      }
+      /* Losstaande links (dus geen link midden in een zin) krijgen een
+         raakvlak van 44px — op een telefoon staan ze anders te dicht op
+         elkaar om betrouwbaar te raken. */
+      .voet ul a,
+      .voet a[href^="tel"],
+      .voet a[href^="mailto"],
+      .merk,
+      .balk nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+      }
+      .voet ul {
+        gap: 0;
+      }
+
+      /* ---------- demolabel ---------- */
+      /* Blijft altijd staan. Iemand die hier via een gedeelde link binnenvalt
+         moet binnen één seconde zien dat deze zaak niet bestaat. */
+      .demolabel {
+        position: fixed;
+        left: 50%;
+        bottom: 0.9rem;
+        transform: translateX(-50%);
+        z-index: 60;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        min-height: 40px;
+        max-width: calc(100vw - 1.5rem);
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        background: rgba(37, 48, 40, 0.94);
+        color: var(--room);
+        font-size: 0.78rem;
+        line-height: 1.3;
+        text-decoration: none;
+        box-shadow: var(--schaduw);
+      }
+      .demolabel b {
+        font-weight: 600;
+      }
+      .demolabel span {
+        opacity: 0.75;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="balk">
+      <div class="wrap balk-inner">
+        <a href="#top" class="merk">MERA</a>
+        <nav aria-label="Hoofdmenu">
+          <a href="#behandelingen">Behandelingen</a>
+          <a href="#afspraak">Afspraak</a>
+          <a href="#ervaringen">Ervaringen</a>
+          <a href="#cadeaubon">Cadeaubon</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <a href="#afspraak" class="knop">Afspraak maken</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ---------------- Hero ---------------- -->
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <p class="eyebrow">Kapsalon · Haarlem centrum</p>
+            <h1>Haar dat<br />bij je past.</h1>
+            <p class="lead">
+              Geen standaardmodel van een poster. We kijken naar je haar, je
+              hoofdvorm en hoeveel tijd je er ’s ochtends écht in wilt steken —
+              en knippen daarnaar.
+            </p>
+            <div class="hero-acties">
+              <a href="#afspraak" class="knop">Plan je afspraak</a>
+              <a href="#behandelingen" class="knop-licht">Bekijk de prijzen</a>
+            </div>
+            <p class="uren">
+              <span><b>Di – vr</b> 09:00 – 18:00</span>
+              <span><b>Za</b> 09:00 – 16:00</span>
+              <span><b>Zo &amp; ma</b> gesloten</span>
+            </p>
+          </div>
+          <div
+            class="kunst"
+            role="img"
+            aria-label="Sfeerbeeld van de salon: warme kleurvlakken"
+          >
+            <span>Sinds 2016<br />aan de Gedempte<br />Oude Gracht.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Prijzen ---------------- -->
+      <section class="prijzen" id="behandelingen">
+        <div class="wrap">
+          <p class="eyebrow">Behandelingen</p>
+          <h2>Wat het kost, voordat je binnenkomt.</h2>
+          <p class="lead" style="margin-top: 1rem; max-width: 40rem">
+            Wassen, knippen en föhnen zit altijd bij de prijs in.
+            Kleurbehandelingen hangen af van je haarlengte — bij twijfel krijg
+            je vooraf een indicatie.
+          </p>
+
+          <div class="prijs-grid">
+            <div class="prijs-groep">
+              <h3>Knippen</h3>
+              <ul>
+                <li>
+                  <span>Knippen <small>wassen, knippen, föhnen</small></span
+                  ><b>€ 42</b>
+                </li>
+                <li>
+                  <span>Knippen kort <small>tondeuse en schaar</small></span
+                  ><b>€ 32</b>
+                </li>
+                <li>
+                  <span
+                    >Pony bijknippen <small>tussendoor, 10 minuten</small></span
+                  ><b>€ 12</b>
+                </li>
+                <li><span>Kind t/m 12 jaar</span><b>€ 24</b></li>
+              </ul>
+            </div>
+
+            <div class="prijs-groep">
+              <h3>Kleur</h3>
+              <ul>
+                <li>
+                  <span>Uitgroei bijwerken <small>inclusief föhnen</small></span
+                  ><b>€ 68</b>
+                </li>
+                <li><span>Volledige kleur</span><b>vanaf € 84</b></li>
+                <li>
+                  <span
+                    >Highlights / balayage <small>reken op 2,5 uur</small></span
+                  ><b>vanaf € 115</b>
+                </li>
+                <li><span>Toner / glossing</span><b>€ 35</b></li>
+              </ul>
+            </div>
+
+            <div class="prijs-groep">
+              <h3>Styling</h3>
+              <ul>
+                <li>
+                  <span>Föhnen <small>wassen en stylen</small></span
+                  ><b>€ 29</b>
+                </li>
+                <li>
+                  <span>Opsteken <small>bruiloft, feest</small></span
+                  ><b>vanaf € 65</b>
+                </li>
+                <li><span>Krullen of steilen</span><b>€ 18</b></li>
+              </ul>
+            </div>
+
+            <div class="prijs-groep">
+              <h3>Verzorging</h3>
+              <ul>
+                <li>
+                  <span>Intensieve kuur <small>bij een behandeling</small></span
+                  ><b>€ 15</b>
+                </li>
+                <li>
+                  <span>Hoofdhuidbehandeling <small>20 minuten</small></span
+                  ><b>€ 28</b>
+                </li>
+                <li><span>Baard bijwerken</span><b>€ 18</b></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Afspraak ---------------- -->
+      <section id="afspraak">
+        <div class="wrap">
+          <p class="eyebrow">Online agenda</p>
+          <h2>Plan zelf, ook om elf uur ’s avonds.</h2>
+          <p class="lead" style="margin-top: 1rem; max-width: 40rem">
+            Kies je behandeling, je stylist en een tijd die past. Je krijgt
+            meteen een bevestiging en een dag van tevoren een herinnering per
+            sms.
+          </p>
+
+          <div class="agenda-kaart">
+            <p class="stappen" id="stappen">
+              <span data-stap="1">Behandeling</span>
+              <span data-stap="2">Stylist</span>
+              <span data-stap="3">Tijd</span>
+              <span data-stap="4">Gegevens</span>
+            </p>
+
+            <div class="agenda-body">
+              <!-- stap 1 -->
+              <div data-paneel="1">
+                <h3 class="serif">Wat komt je doen?</h3>
+                <div class="keuzes" id="behandelingKeuzes"></div>
+              </div>
+
+              <!-- stap 2 -->
+              <div data-paneel="2" hidden>
+                <h3 class="serif">Bij wie wil je zitten?</h3>
+                <div class="keuzes" id="stylistKeuzes"></div>
+                <button class="terug" type="button" data-terug="1">
+                  ← Andere behandeling
+                </button>
+              </div>
+
+              <!-- stap 3 -->
+              <div data-paneel="3" hidden>
+                <h3 class="serif">Wanneer schikt het?</h3>
+                <div
+                  class="keuzes"
+                  id="dagKeuzes"
+                  style="margin-bottom: 1.25rem"
+                ></div>
+                <div class="keuzes tijden" id="tijdKeuzes"></div>
+                <button class="terug" type="button" data-terug="2">
+                  ← Andere stylist
+                </button>
+              </div>
+
+              <!-- stap 4 -->
+              <div data-paneel="4" hidden>
+                <h3 class="serif">Bijna klaar</h3>
+                <div class="samenvatting">
+                  <dl>
+                    <dt>Behandeling</dt>
+                    <dd data-sam="behandeling"></dd>
+                    <dt>Stylist</dt>
+                    <dd data-sam="stylist"></dd>
+                    <dt>Wanneer</dt>
+                    <dd data-sam="wanneer"></dd>
+                    <dt>Prijs</dt>
+                    <dd data-sam="prijs"></dd>
+                  </dl>
+                </div>
+                <form id="gegevens" novalidate>
+                  <label class="veld"
+                    ><span>Je naam</span
+                    ><input name="naam" required autocomplete="name"
+                  /></label>
+                  <label class="veld"
+                    ><span>Mobiel nummer</span
+                    ><input
+                      name="tel"
+                      required
+                      inputmode="tel"
+                      autocomplete="tel"
+                  /></label>
+                  <button
+                    class="knop"
+                    type="submit"
+                    style="margin-top: 1.25rem"
+                  >
+                    Afspraak bevestigen
+                  </button>
+                </form>
+                <button class="terug" type="button" data-terug="3">
+                  ← Ander tijdstip
+                </button>
+              </div>
+
+              <!-- klaar -->
+              <div data-paneel="5" hidden>
+                <div class="klaar">
+                  <p class="vink" aria-hidden="true">✓</p>
+                  <h3 class="serif">Tot dan!</h3>
+                  <p
+                    class="lead"
+                    style="margin-top: 0.6rem"
+                    id="klaarTekst"
+                  ></p>
+                  <p class="sms">📱 <span id="smsTekst"></span></p>
+                  <br />
+                  <button class="knop-licht" type="button" data-terug="1">
+                    Nog een afspraak maken
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Reviews ---------------- -->
+      <section class="reviews" id="ervaringen">
+        <div class="wrap">
+          <p class="eyebrow">Ervaringen</p>
+          <h2>Wat klanten zeggen.</h2>
+          <p class="cijfer">
+            <b>4,8</b>
+            <span class="sterren" aria-hidden="true">★★★★★</span>
+            <span style="opacity: 0.75">gemiddeld uit 213 beoordelingen</span>
+          </p>
+
+          <div class="review-grid">
+            <blockquote class="review">
+              <p class="sterren" aria-label="5 van de 5 sterren">★★★★★</p>
+              <p>
+                Eindelijk iemand die niet meteen naar de schaar grijpt maar
+                eerst vraagt wat ik er zelf mee doe. Zit nu al drie maanden goed
+                zonder gedoe.
+              </p>
+              <footer>Marieke — klant sinds 2021</footer>
+            </blockquote>
+            <blockquote class="review">
+              <p class="sterren" aria-label="5 van de 5 sterren">★★★★★</p>
+              <p>
+                Online geboekt op zondagavond, zaterdag geknipt. Zo simpel zou
+                het overal moeten zijn. De sms-herinnering is fijn, ik vergeet
+                alles.
+              </p>
+              <footer>Joost — Haarlem</footer>
+            </blockquote>
+            <blockquote class="review">
+              <p class="sterren" aria-label="4 van de 5 sterren">★★★★☆</p>
+              <p>
+                Balayage precies zoals besproken en netjes uitgelegd hoe ik het
+                thuis bijhoud. Een half sterretje eraf omdat het iets uitliep.
+              </p>
+              <footer>Sanne — klant sinds 2023</footer>
+            </blockquote>
+            <blockquote class="review">
+              <p class="sterren" aria-label="5 van de 5 sterren">★★★★★</p>
+              <p>
+                Ik kwam binnen met een mislukte thuiskleuring en liep er blij
+                weer uit. Geen oordeel, gewoon opgelost.
+              </p>
+              <footer>Nadia — Heemstede</footer>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Cadeaubon ---------------- -->
+      <section id="cadeaubon">
+        <div class="wrap">
+          <p class="eyebrow">Cadeaubon</p>
+          <h2>Een knipbeurt cadeau doen.</h2>
+
+          <div class="bon-grid">
+            <div>
+              <p class="lead">
+                Kies een bedrag, vul in voor wie hij is en je krijgt de bon
+                direct in je mail — als pdf om te printen of om door te sturen.
+                Twee jaar geldig, ook los te besteden aan producten.
+              </p>
+
+              <div class="bedragen" role="group" aria-label="Bedrag kiezen">
+                <button class="bedrag" type="button" data-bedrag="25">
+                  € 25
+                </button>
+                <button
+                  class="bedrag"
+                  type="button"
+                  data-bedrag="50"
+                  aria-pressed="true"
+                >
+                  € 50
+                </button>
+                <button class="bedrag" type="button" data-bedrag="75">
+                  € 75
+                </button>
+                <button class="bedrag" type="button" data-bedrag="100">
+                  € 100
+                </button>
+              </div>
+
+              <label class="veld" style="max-width: 22rem"
+                ><span>Voor wie is de bon?</span
+                ><input id="bonVoor" placeholder="Bijv. Els" autocomplete="off"
+              /></label>
+
+              <button
+                class="knop"
+                type="button"
+                id="bonBestel"
+                style="margin-top: 1.25rem"
+              >
+                Bestel de cadeaubon
+              </button>
+              <p
+                class="lead"
+                id="bonStatus"
+                style="margin-top: 0.9rem; font-size: 0.9rem"
+              ></p>
+            </div>
+
+            <div class="bon">
+              <p class="eyebrow" style="color: #d9c3ae">Kapsalon Mera</p>
+              <p class="waarde" id="bonWaarde">€ 50</p>
+              <p class="voor" id="bonNaam">Cadeaubon</p>
+              <p class="code" id="bonCode">MERA-•••• - ••••</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Team ---------------- -->
+      <section class="prijzen" id="team">
+        <div class="wrap">
+          <p class="eyebrow">Het team</p>
+          <h2>Drie paar handen.</h2>
+          <div class="team-grid">
+            <article class="persoon">
+              <p class="initiaal" aria-hidden="true">R</p>
+              <h3 class="serif">Roos</h3>
+              <small>Eigenaar · kleurspecialist</small>
+              <p class="lead" style="margin-top: 0.7rem; font-size: 0.92rem">
+                Begon Mera in 2016. Kan uren praten over de opbouw van een
+                balayage en doet dat ook.
+              </p>
+            </article>
+            <article class="persoon">
+              <p class="initiaal" aria-hidden="true">T</p>
+              <h3 class="serif">Timo</h3>
+              <small>Stylist · krullen en kort werk</small>
+              <p class="lead" style="margin-top: 0.7rem; font-size: 0.92rem">
+                Gespecialiseerd in krullend haar. Knipt droog, zodat je meteen
+                ziet wat je krijgt.
+              </p>
+            </article>
+            <article class="persoon">
+              <p class="initiaal" aria-hidden="true">F</p>
+              <h3 class="serif">Fenna</h3>
+              <small>Stylist · opsteken en bruiloften</small>
+              <p class="lead" style="margin-top: 0.7rem; font-size: 0.92rem">
+                Doet de meeste bruiloften. Boek ruim van tevoren, haar
+                zaterdagen lopen vol.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ---------------- Voet ---------------- -->
+    <footer class="voet" id="contact">
+      <div class="wrap voet-grid">
+        <div>
+          <p class="merk" style="display: block; margin-bottom: 1rem">MERA</p>
+          <p>
+            Gedempte Oude Gracht 88<br />
+            2011 GS Haarlem
+          </p>
+          <p style="margin-top: 0.8rem">
+            <a href="tel:+31235550188">023 555 01 88</a><br />
+            <a href="mailto:hallo@kapsalonmera.nl">hallo@kapsalonmera.nl</a>
+          </p>
+        </div>
+        <div>
+          <h3>Openingstijden</h3>
+          <ul>
+            <li>Dinsdag – vrijdag · 09:00 – 18:00</li>
+            <li>Zaterdag · 09:00 – 16:00</li>
+            <li>Zondag &amp; maandag · gesloten</li>
+            <li>Donderdag koopavond tot 21:00</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Snel naar</h3>
+          <ul>
+            <li><a href="#behandelingen">Behandelingen &amp; prijzen</a></li>
+            <li><a href="#afspraak">Afspraak maken</a></li>
+            <li><a href="#cadeaubon">Cadeaubon</a></li>
+            <li><a href="#team">Het team</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap streep">
+        <p>
+          Kapsalon Mera is een verzonnen zaak. Deze site is een demo van
+          <a href="https://scottprins.nl/" style="text-decoration: underline"
+            >scottprins.nl</a
+          >.
+        </p>
+      </div>
+    </footer>
+
+    <a class="demolabel" href="https://scottprins.nl/#examples">
+      <b>Demo-site</b>
+      <span>· verzonnen kapsalon · gebouwd door scottprins.nl ↗</span>
+    </a>
+
+    <script>
+      /* ------------------------------------------------------------------
+         Alles hieronder draait in de browser en stuurt niets weg. Het is een
+         demo: de afspraak en de cadeaubon bestaan alleen in dit tabblad.
+         ------------------------------------------------------------------ */
+      const BEHANDELINGEN = [
+        { id: "knippen", naam: "Knippen", duur: "45 min", prijs: 42 },
+        { id: "kort", naam: "Knippen kort", duur: "30 min", prijs: 32 },
+        { id: "kleur", naam: "Kleur bijwerken", duur: "90 min", prijs: 68 },
+        {
+          id: "balayage",
+          naam: "Highlights / balayage",
+          duur: "150 min",
+          prijs: 115,
+        },
+        { id: "fohnen", naam: "Föhnen", duur: "30 min", prijs: 29 },
+        { id: "opsteken", naam: "Opsteken", duur: "60 min", prijs: 65 },
+      ];
+      const STYLISTEN = [
+        { id: "roos", naam: "Roos", rol: "kleurspecialist", letter: "R" },
+        { id: "timo", naam: "Timo", rol: "krullen en kort werk", letter: "T" },
+        { id: "fenna", naam: "Fenna", rol: "opsteken en styling", letter: "F" },
+        {
+          id: "geen",
+          naam: "Maakt me niet uit",
+          rol: "wie er ruimte heeft",
+          letter: "?",
+        },
+      ];
+      const TIJDEN = [
+        "09:15",
+        "10:30",
+        "11:45",
+        "13:15",
+        "14:30",
+        "15:45",
+        "17:00",
+        "18:15",
+      ];
+      const DAGNAMEN = [
+        "zondag",
+        "maandag",
+        "dinsdag",
+        "woensdag",
+        "donderdag",
+        "vrijdag",
+        "zaterdag",
+      ];
+
+      /* De eerstvolgende vier openingsdagen, gerekend vanaf vandaag. Zo staat
+         er nooit een datum uit het verleden in de agenda. */
+      function komendeDagen(aantal) {
+        const dagen = [];
+        const d = new Date();
+        while (dagen.length < aantal) {
+          d.setDate(d.getDate() + 1);
+          const dag = d.getDay();
+          if (dag === 0 || dag === 1) continue; // zondag en maandag dicht
+          dagen.push({
+            label: `${DAGNAMEN[dag]} ${d.getDate()}/${d.getMonth() + 1}`,
+            kort: `${DAGNAMEN[dag]} ${d.getDate()} ${["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"][d.getMonth()]}`,
+          });
+        }
+        return dagen;
+      }
+
+      const keuze = { behandeling: null, stylist: null, dag: null, tijd: null };
+      const $ = (s) => document.querySelector(s);
+      const panelen = [...document.querySelectorAll("[data-paneel]")];
+
+      function toon(nummer) {
+        panelen.forEach(
+          (p) => (p.hidden = p.dataset.paneel !== String(nummer)),
+        );
+        document.querySelectorAll("#stappen span").forEach((s) => {
+          if (Number(s.dataset.stap) === Math.min(nummer, 4))
+            s.setAttribute("aria-current", "step");
+          else s.removeAttribute("aria-current");
+        });
+      }
+
+      function knop(inhoud, bijKlik) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "keuze";
+        b.innerHTML = inhoud;
+        b.addEventListener("click", bijKlik);
+        return b;
+      }
+
+      // stap 1 — behandeling
+      const lijst1 = $("#behandelingKeuzes");
+      BEHANDELINGEN.forEach((b) => {
+        lijst1.append(
+          knop(
+            `<span><b>${b.naam}</b><small>${b.duur}</small></span><span class="rechts">€ ${b.prijs}</span>`,
+            () => {
+              keuze.behandeling = b;
+              vulStylisten();
+              toon(2);
+            },
+          ),
+        );
+      });
+
+      // stap 2 — stylist
+      function vulStylisten() {
+        const lijst = $("#stylistKeuzes");
+        lijst.textContent = "";
+        STYLISTEN.forEach((s) => {
+          lijst.append(
+            knop(
+              `<span class="bol" aria-hidden="true">${s.letter}</span><span><b>${s.naam}</b><small>${s.rol}</small></span>`,
+              () => {
+                keuze.stylist = s;
+                vulDagen();
+                toon(3);
+              },
+            ),
+          );
+        });
+      }
+
+      // stap 3 — dag en tijd
+      function vulDagen() {
+        const dagen = komendeDagen(4);
+        const lijstD = $("#dagKeuzes");
+        const lijstT = $("#tijdKeuzes");
+        lijstD.textContent = "";
+        lijstT.textContent = "";
+        keuze.dag = dagen[0];
+
+        const tekenTijden = () => {
+          lijstT.textContent = "";
+          /* Niet elke dag dezelfde rij: een agenda die altijd helemaal leeg is
+             oogt nep. Een vaste, per dag verschillende bezetting doet dat niet. */
+          const bezet = (keuze.dag.label.length + TIJDEN.length) % 3;
+          TIJDEN.forEach((t, i) => {
+            if (i % 4 === bezet) return;
+            lijstT.append(
+              knop(t, () => {
+                keuze.tijd = t;
+                vulSamenvatting();
+                toon(4);
+              }),
+            );
+          });
+        };
+
+        dagen.forEach((d) => {
+          const b = knop(`<span><b>${d.kort}</b></span>`, () => {
+            keuze.dag = d;
+            [...lijstD.children].forEach((k) => (k.style.borderColor = ""));
+            b.style.borderColor = "var(--inkt)";
+            tekenTijden();
+          });
+          lijstD.append(b);
+        });
+        lijstD.firstChild.style.borderColor = "var(--inkt)";
+        tekenTijden();
+      }
+
+      function vulSamenvatting() {
+        $('[data-sam="behandeling"]').textContent =
+          `${keuze.behandeling.naam} · ${keuze.behandeling.duur}`;
+        $('[data-sam="stylist"]').textContent = keuze.stylist.naam;
+        $('[data-sam="wanneer"]').textContent =
+          `${keuze.dag.kort}, ${keuze.tijd}`;
+        $('[data-sam="prijs"]').textContent = `€ ${keuze.behandeling.prijs}`;
+      }
+
+      // stap 4 — bevestigen
+      $("#gegevens").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const naam = e.target.naam.value.trim() || "je";
+        const tel = e.target.tel.value.trim();
+        $("#klaarTekst").textContent =
+          `${keuze.behandeling.naam} bij ${keuze.stylist.naam === "Maakt me niet uit" ? "een van ons" : keuze.stylist.naam}, ${keuze.dag.kort} om ${keuze.tijd}. De bevestiging staat ${naam === "je" ? "in je mail" : `op naam van ${naam}`}.`;
+        $("#smsTekst").textContent = tel
+          ? `Een dag van tevoren krijg je een sms op ${tel}.`
+          : "Een dag van tevoren krijg je een herinnering per sms.";
+        toon(5);
+      });
+
+      document
+        .querySelectorAll("[data-terug]")
+        .forEach((b) =>
+          b.addEventListener("click", () => toon(Number(b.dataset.terug))),
+        );
+
+      toon(1);
+
+      /* ---------------- cadeaubon ---------------- */
+      const bedragKnoppen = [...document.querySelectorAll(".bedrag")];
+      let bedrag = 50;
+
+      function tekenBon() {
+        $("#bonWaarde").textContent = `€ ${bedrag}`;
+        const voor = $("#bonVoor").value.trim();
+        $("#bonNaam").textContent = voor ? `Voor ${voor}` : "Cadeaubon";
+      }
+
+      bedragKnoppen.forEach((b) =>
+        b.addEventListener("click", () => {
+          bedrag = Number(b.dataset.bedrag);
+          bedragKnoppen.forEach((k) =>
+            k.setAttribute("aria-pressed", String(k === b)),
+          );
+          tekenBon();
+        }),
+      );
+      $("#bonVoor").addEventListener("input", tekenBon);
+
+      $("#bonBestel").addEventListener("click", () => {
+        const blok = () => Math.random().toString(36).slice(2, 6).toUpperCase();
+        $("#bonCode").textContent = `MERA-${blok()}-${blok()}`;
+        const voor = $("#bonVoor").value.trim();
+        $("#bonStatus").textContent =
+          `Bon van € ${bedrag}${voor ? ` voor ${voor}` : ""} klaargezet. In het echt volgt nu de betaling en valt de pdf in je mailbox.`;
+        tekenBon();
+      });
+
+      tekenBon();
+    </script>
+  </body>
+</html>

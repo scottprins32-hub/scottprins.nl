@@ -96,6 +96,7 @@ const menuIntro = {
     { id: 'menu-multilingual', label: 'Multilingual' },
     { id: 'menu-scrollvideo', label: 'Scroll video' },
     { id: 'menu-giftcards', label: 'Gift cards' },
+    { id: 'menu-telefonist', label: 'AI phone assistant' },
   ],
   kicker: 'The menu',
   title: 'Don’t read what it does. Just try it.',
@@ -418,6 +419,8 @@ const configurator = {
   lead: 'Pick a base, switch on your extras (whatever you added along the way is already here) and see what it costs.',
   presetTitle: 'Quick start — what kind of business do you have?',
   presetLead: 'One tap and a complete setup that fits your trade is ready, price included. After that you just change what you like.',
+  /* Below the quick-start chips: through to that trade's own page. */
+  brancheIntro: 'In depth, per trade:',
   baseTitle: 'Pick your base',
   addonsTitle: 'Pick your extras',
   addonsNoDemoNote: 'No demo on this page — ask, and I’ll show it live.',
@@ -467,6 +470,11 @@ const configurator = {
     email: 'Email',
     message: 'Note (optional)',
     submit: 'Yes, send my free sample page',
+    callTitle: 'When shall I give you a call?',
+    callLead: 'One ten-minute call saves three emails back and forth. Pick whatever suits you — or call me yourself.',
+    callOptions: ['Today after 17:00', 'Tomorrow morning', 'Tomorrow afternoon'],
+    callSelf: 'I’d rather call you',
+    callDone: 'Noted. I’ll call you then.',
     selfCopy: 'Not ready yet? Email my build to myself',
     selfCopyError: 'Fill in your email address and I’ll send your build over.',
     sending: 'Sending…',
@@ -493,7 +501,7 @@ const configurator = {
  */
 const showcase = {
   kicker: 'Examples',
-  title: 'Two complete sites. Try to break them.',
+  title: 'Three complete sites. Try to break them.',
   lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
   contentsLabel: 'What’s in it',
   totalLabel: 'This site',
@@ -502,8 +510,28 @@ const showcase = {
   openCta: 'Open the full site',
   liveBadge: 'View live',
   demoEnvNote: 'demo environment — running on a temporary address',
+  demoOwnNote: 'demo environment — invented business, running on this domain',
   newTab: 'opens in a new tab',
   sites: [
+    {
+      name: 'Kapsalon Mera',
+      sector: 'Hair salon · Haarlem',
+      domain: 'kapsalonmera.nl',
+      /* Draait op scottprins.nl zelf — zie de notitie in nl.ts. */
+      href: '/demo/kapsalon/',
+      image: '/voorbeeld-salon',
+      summary: 'A complete salon site: customers book themselves, get a text reminder, and the gift card sells itself.',
+      base: 'compleet',
+      /** Gelijk aan preset 'salon' in pricing.ts. */
+      addons: ['agenda', 'reviews', 'sms', 'cadeaubonnen'] as const,
+      does: {
+        agenda: 'treatment, stylist and time in three taps',
+        reviews: 'the ratings sit on the page itself',
+        sms: 'reminder a day ahead, fewer no-shows',
+        cadeaubonnen: 'pick an amount, add a name, done',
+      },
+      extra: '+ a price list the salon updates itself.',
+    },
     {
       name: 'Fysio Vesting',
       sector: 'Physiotherapy practice · Naarden',
@@ -692,6 +720,49 @@ const footer = {
 /* Door Scott bevestigd — zie de notitie in nl.ts. */
 
 
+/* ------------------ Demo 13 — AI phone assistant ------------------- */
+/* Nagespeeld gesprek — zie de notitie in nl.ts. */
+const demoTelefonist = {
+  kicker: 'Option 13',
+  title: 'AI phone assistant that picks up when you can’t',
+  lead: 'The most expensive option on this menu, and until now the only one without a demo. Press call: this is a re-enacted conversation, exactly how it would run at Salon Demo.',
+  callButton: 'Call Salon Demo',
+  callAgain: 'Play again',
+  callingLabel: 'Calling…',
+  connected: 'Connected to the AI phone assistant',
+  ended: 'Call ended · 42 seconds',
+  demoNote: 'Re-enacted conversation. On your number the assistant really answers, with your voice settings and your calendar.',
+  resultTitle: 'What happened in the meantime',
+  results: [
+    'Appointment booked: Thursday 14:30, cut + blow-dry',
+    'Confirmation sent to the caller by text',
+    'Added to your calendar, with name and phone number',
+  ],
+  script: [
+    { wie: 'ai', ms: 900, tekst: 'Good afternoon, you’re through to the assistant at Salon Demo. How can I help?' },
+    { wie: 'beller', ms: 2400, tekst: 'Hi, I wanted to book an appointment for a haircut.' },
+    { wie: 'ai', ms: 1800, tekst: 'Of course. Do you have a preferred day or time of day?' },
+    { wie: 'beller', ms: 2200, tekst: 'Thursday afternoon would be great.' },
+    { wie: 'ai', ms: 2000, tekst: 'On Thursday I can offer 14:30 or 16:00. Which suits you best?' },
+    { wie: 'beller', ms: 1900, tekst: 'Half past two, please.' },
+    { wie: 'ai', ms: 1700, tekst: 'Noted. Could I take your name and mobile number for the confirmation?' },
+    { wie: 'beller', ms: 2600, tekst: 'Anne de Wit, 06 12 34 56 78.' },
+    { wie: 'ai', ms: 2400, tekst: 'Thank you. Thursday 14:30, cut and blow-dry, under the name Anne de Wit. You’ll get a text confirmation shortly. Have a good day!' },
+  ],
+} as const;
+
+/* ------------------ Trade landing pages ---------------------------- */
+/* Only the recurring labels; the copy per trade lives in branches.ts. */
+const branche = {
+  navDemos: 'Demos',
+  navPrice: 'Price',
+  navMenu: 'All options',
+  heroDemoCta: 'See the demos first',
+  quoteTitle: 'This build',
+  breakdown: 'See the breakdown',
+  adjustNote: 'Adjust it below; the price recalculates live.',
+} as const;
+
 const meta = {
   title: 'Website design from €495 — Scott Prins Webdesign',
   description:
@@ -870,6 +941,8 @@ export const en = {
   demoMeertalig,
   demoScrollvideo,
   demoCadeau,
+  demoTelefonist,
+  branche,
   configurator,
   showcase,
   proof,

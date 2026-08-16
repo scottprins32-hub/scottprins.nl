@@ -19,8 +19,9 @@ export interface LeadPayload {
    * 'quote'    — de gewone aanvraag: Scott krijgt een lead.
    * 'selfcopy' — de bezoeker wil alleen zijn eigen samenstelling mailen;
    *              dan is alleen het e-mailadres verplicht.
+   * 'call'     — hij koos ná verzenden een belmoment.
    */
-  intent: 'quote' | 'selfcopy';
+  intent: 'quote' | 'selfcopy' | 'call';
 }
 
 export type LeadValidation =
@@ -45,7 +46,7 @@ export function validateLead(input: unknown): LeadValidation {
     website: str(raw.website, 200),
     selection: sanitizeSelection(raw.selection),
     locale: raw.locale === 'en' ? 'en' : 'nl',
-    intent: raw.intent === 'selfcopy' ? 'selfcopy' : 'quote',
+    intent: raw.intent === 'selfcopy' || raw.intent === 'call' ? raw.intent : 'quote',
   };
 
   const fields: string[] = [];
