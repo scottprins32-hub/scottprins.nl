@@ -2,9 +2,9 @@
 /** Nederlandse privacypagina. De inhoud staat in PrivacyPage.astro. */
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
-import { content } from '../data/content';
+import { content, legal } from '../data/content';
 import PrivacyPage from '../components/PrivacyPage.astro';
-const { privacy } = content(Astro.currentLocale);
+const { privacy } = legal(Astro.currentLocale);
 ---
 
 <Base title={`${privacy.title} — ${site.legalName}`} description={privacy.metaDescription} path="/privacy">

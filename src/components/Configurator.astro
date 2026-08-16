@@ -134,7 +134,7 @@ const inbegrepenWaarde = new Map(
                   {addon.demoSectionId ? (
                     <a
                       href={`#${addon.demoSectionId}`}
-                      class="mt-1 inline-block text-xs text-accent-soft underline-offset-2 hover:underline"
+                      class="mt-2 inline-flex min-h-11 items-center text-xs text-accent-soft underline-offset-2 hover:underline"
                     >
                       {configurator.seeDemo}
                     </a>
@@ -169,8 +169,27 @@ const inbegrepenWaarde = new Map(
           }
         </div>
 
-        {/* Hoort bij de onderhoudsplannen hierboven — en houdt de sticky
-            offerte kort genoeg om binnen het scherm te passen. */}
+        {/* Zekerheden en garantie: hier, niet in het plakkende paneel. Dat
+            paneel moet binnen één scherm passen, anders schuift de kop erin
+            achter de navigatiebalk. */}
+        <div class="mt-8 rounded-2xl border border-accent/30 bg-accent/5 p-5">
+          <p class="text-accent-soft text-sm font-semibold">{configurator.guarantee}</p>
+          <ul class="mt-3 grid gap-1.5 text-sm text-cream/85">
+            {configurator.assurances.map((regel) => (
+              <li class="flex gap-2">
+                <span class="text-accent" aria-hidden="true">✓</span>
+                {regel}
+              </li>
+            ))}
+            <li class="flex gap-2">
+              <span class="text-accent" aria-hidden="true">✓</span>
+              {configurator.revisionNote}
+            </li>
+          </ul>
+          <p class="text-muted-dark mt-3 text-xs">{configurator.vatNote}</p>
+        </div>
+
+        {/* Hoort bij de onderhoudsplannen hierboven. */}
         <details class="mt-4 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm">
           <summary class="cursor-pointer font-medium">{configurator.monthlyTitle}</summary>
           <ul class="text-muted-dark mt-3 grid gap-1.5 text-xs">
@@ -185,9 +204,9 @@ const inbegrepenWaarde = new Map(
       </div>
 
       {/* ---- Sticky offerte ---- */}
-      {/* top-24: de zwevende navigatiebalk is ±70px hoog; met top-6 schoof de
-          kop "Jouw samenstelling" er tijdens het scrollen achter. */}
-      <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur lg:sticky lg:top-24" data-quote>
+      {/* Plakt alleen op een scherm dat het paneel helemaal kan tonen — zie
+          .quote-sticky in global.css. */}
+      <aside class="quote-sticky rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur" data-quote>
         <h3 class="font-display text-xl font-semibold">{configurator.quoteTitle}</h3>
 
         <ul class="mt-4 grid gap-2 text-sm" data-quote-lines></ul>
@@ -203,17 +222,6 @@ const inbegrepenWaarde = new Map(
           </div>
         </div>
         <p class="text-muted-dark mt-3 text-xs">{configurator.disclaimer}</p>
-
-        {/* Staat allemaal al in de voorwaarden; hier zichtbaar op het moment
-            dat de bezoeker naar het bedrag kijkt. */}
-        <ul class="mt-4 grid gap-1.5 text-xs text-cream/85">
-          {configurator.assurances.map((regel) => (
-            <li class="flex gap-2">
-              <span class="text-accent" aria-hidden="true">✓</span>
-              {regel}
-            </li>
-          ))}
-        </ul>
 
 
         <LeadForm />

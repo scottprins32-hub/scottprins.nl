@@ -314,6 +314,17 @@ section[id],
   outline-offset: 2px;
 }
 
+/* Het offertepaneel plakt alléén als het compleet binnen het scherm past.
+   Past het niet, dan schuift de kop "Jouw samenstelling" tijdens het
+   scrollen achter de navigatiebalk — precies de bug die het paneel moest
+   oplossen. Op een korter scherm scrolt de kolom dus gewoon mee. */
+@media (min-width: 1024px) and (min-height: 1200px) {
+  .quote-sticky {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
 /* De cart-pill wijkt zodra de configurator zelf in beeld staat. */
 .cart-pill-off {
   opacity: 0;

@@ -39,7 +39,29 @@ import LangSwitch from './LangSwitch.astro';
       }
     </ul>
 
-    <LangSwitch class="ml-auto md:ml-0" />
+    {/* Sectiemenu voor mobiel. Een <details> werkt zonder JavaScript en
+        houdt de 33 schermen navigeerbaar. */}
+    <details class="relative ml-auto md:hidden" data-nav-menu>
+      <summary
+        class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-lg text-cream [&::-webkit-details-marker]:hidden"
+        aria-label={nav.menuLabel}
+      >
+        <span aria-hidden="true">☰</span>
+      </summary>
+      <ul class="absolute right-0 z-50 mt-2 w-56 rounded-xl bg-ink/95 p-2 ring-1 ring-white/15 backdrop-blur-md">
+        {
+          nav.links.map((link) => (
+            <li>
+              <a href={link.href} class="block rounded-lg px-3 py-3 text-sm text-cream hover:bg-white/8">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </details>
+
+    <LangSwitch class="md:ml-0" />
     <a
       href={`https://wa.me/${site.whatsapp}`}
       target="_blank"
@@ -91,4 +113,12 @@ import LangSwitch from './LangSwitch.astro';
   } else {
     navEl?.setAttribute('data-visible', '');
   }
+
+  /* Menu dichtklappen zodra er een sectie gekozen is. */
+  const menu = document.querySelector<HTMLDetailsElement>('[data-nav-menu]');
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.open = false;
+    }),
+  );
 </script>

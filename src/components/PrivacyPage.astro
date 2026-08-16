@@ -5,11 +5,11 @@
  * bestand; alleen de taal verschilt.
  */
 import { site } from '../data/site';
-import { content, toLocale, altPath } from '../data/content';
+import { content, legal, toLocale, altPath } from '../data/content';
 import LangSwitch from './LangSwitch.astro';
 
 const locale = toLocale(Astro.currentLocale);
-const { privacy } = content(locale);
+const { privacy } = legal(locale);
 /* De weg terug moet in dezelfde taal blijven als de pagina zelf. */
 const thuis = altPath('/', locale);
 ---

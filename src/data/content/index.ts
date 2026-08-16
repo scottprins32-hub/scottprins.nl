@@ -9,6 +9,8 @@
  */
 import { nl } from './nl';
 import { en } from './en';
+import { nlLegal } from './nl-legal';
+import { enLegal } from './en-legal';
 
 export type Locale = 'nl' | 'en';
 /** Nederlands is de standaard; /en/ is de vertaling. */
@@ -36,4 +38,15 @@ export function altPath(path: string, naar: Locale): string {
   const kaal = path.replace(/^\/en(?=\/|$)/, '') || '/';
   const met = kaal.endsWith('/') ? kaal : `${kaal}/`;
   return naar === 'en' ? (met === '/' ? '/en/' : `/en${met}`) : met;
+}
+
+/**
+ * Juridische teksten, apart opvraagbaar. Alleen aanroepen vanuit Astro-
+ * frontmatter (server-side) — niet vanuit een client-script, anders komen
+ * de volledige voorwaarden alsnog in de browserbundle terecht.
+ */
+const juridisch = { nl: nlLegal, en: enLegal } as const;
+
+export function legal(locale?: string | null) {
+  return juridisch[toLocale(locale)];
 }

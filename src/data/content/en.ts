@@ -51,7 +51,7 @@ const nav = {
     { label: 'About Scott', href: '#about' },
     { label: 'FAQ', href: '#faq' },
   ],
-  cta: 'Quote',
+  cta: 'Free sample page',
   skipToContent: 'Skip to content',
   menuLabel: 'Main menu',
   langLabel: 'Language',
@@ -73,8 +73,8 @@ const howItWorks = {
       text: 'On this site you try every feature live: add what suits your business.',
     },
     {
-      title: 'Live in 5 working days',
-      text: 'A quote plus a free demo proposal within 48 hours. Happy? Then I start building.',
+      title: 'A price and a sample page within 48 hours',
+      text: 'You get a fixed price and a free sample page: one real page of your site, with your name, colours and copy. Like it? Then I build on. If not, it costs you nothing.',
     },
   ],
 } as const;
@@ -82,6 +82,21 @@ const howItWorks = {
 /* ------------------------- De menukaart ---------------------------- */
 
 const menuIntro = {
+  indexLabel: 'Jump to an option',
+  index: [
+    { id: 'menu-booking', label: 'Online booking' },
+    { id: 'menu-chatbot', label: 'AI chatbot' },
+    { id: 'menu-map', label: 'Map' },
+    { id: 'menu-calculator', label: 'Price calculator' },
+    { id: 'menu-ordering', label: 'Online ordering' },
+    { id: 'menu-reviews', label: 'Reviews' },
+    { id: 'menu-beforeafter', label: 'Before/after' },
+    { id: 'menu-intake', label: 'Intake' },
+    { id: 'menu-portal', label: 'Customer portal' },
+    { id: 'menu-multilingual', label: 'Multilingual' },
+    { id: 'menu-scrollvideo', label: 'Scroll video' },
+    { id: 'menu-giftcards', label: 'Gift cards' },
+  ],
   kicker: 'The menu',
   title: 'Don’t read what it does. Just try it.',
   lead: 'Every option below is a real, working demo. Like it? Tap “Add to my site” and it’s in your quote.',
@@ -90,7 +105,7 @@ const menuIntro = {
 /* Demo 1 — Online agenda (fictieve massagepraktijk) */
 const demoAgenda = {
   kicker: 'Option 1',
-  title: 'Online booking',
+  title: 'Let customers book online',
   lead: 'Your customers book themselves, day and night. Try it — this one’s real.',
   businessName: 'Demo Practice',
   treatments: [
@@ -113,7 +128,7 @@ const demoAgenda = {
 /* Demo 2 — AI-chatbot (fictieve kapsalon) */
 const demoChatbot = {
   kicker: 'Option 2',
-  title: 'AI chatbot',
+  title: 'AI chatbot answering questions 24/7',
   lead: 'Trained on your business: opening hours, prices, appointments. Ask it something.',
   botName: 'Salon Demo',
   status: 'replies instantly',
@@ -170,7 +185,7 @@ const demoChatbot = {
 /* Demo 3 — Interactieve kaart (fictieve fietsenwinkel-keten) */
 const demoKaart = {
   kicker: 'Option 3',
-  title: 'Interactive map',
+  title: 'All your locations on one map',
   lead: 'More than one location? One map, always up to date. Switch between them.',
   locations: [
     {
@@ -200,7 +215,7 @@ const demoKaart = {
 /* Demo 4 — Prijscalculator (fictief klusbedrijf) */
 const demoCalculator = {
   kicker: 'Option 4',
-  title: 'Price calculator',
+  title: 'Price calculator for quote requests',
   lead: 'Let visitors work it out themselves — you get enquiries from people who already know the price.',
   heading: 'What will your bathroom renovation cost?',
   sliders: [
@@ -217,7 +232,7 @@ const demoCalculator = {
 /* Demo 5 — Eigen online bestellen (fictieve pizzeria) */
 const demoBestellen = {
   kicker: 'Option 5',
-  title: 'Your own online ordering',
+  title: 'Online ordering without platform commission',
   lead: 'Orders through your own site instead of a delivery platform. Work out what that saves you.',
   restaurantName: 'Pizzeria La Vera (demo)',
   items: [
@@ -245,7 +260,7 @@ const demoBestellen = {
 const demoReviews = {
   kicker: 'Option 6',
   ariaLabel: 'Made-up example reviews for this demo',
-  title: 'Reviews wall',
+  title: 'Your Google reviews on your own site',
   lead: 'Your real Google reviews, always fresh and nicely presented. Swipe through them — on desktop it scrolls by itself.',
   demoNote: 'Made-up reviews for a salon that does not exist. On your site these are your real Google reviews.',
   reviews: [
@@ -263,7 +278,7 @@ const demoReviews = {
 /* Demo 7 — Before/after-slider (fictieve bakkerij) */
 const demoBeforeAfter = {
   kicker: 'Option 7',
-  title: 'Before/after slider',
+  title: 'Before and after, side by side',
   lead: 'Perfect for hairdressers, builders, landscapers — or, as here, for the difference a new website makes. Drag it.',
   beforeLabel: 'Old site (2010)',
   afterLabel: 'New site',
@@ -295,7 +310,7 @@ const demoIntake = {
   kicker: 'Option 8',
   /** {n} en {totaal} worden vervangen door de cijfers. */
   stepCounter: 'Step {n} of {totaal}',
-  title: 'Digital intake form',
+  title: 'Digital intake form for new customers',
   lead: 'New clients fill in their details up front. You start every appointment prepared.',
   steps: [
     {
@@ -329,7 +344,7 @@ const demoIntake = {
 /* Demo 9 — Klantenportaal */
 const demoPortaal = {
   kicker: 'Option 9',
-  title: 'Customer portal',
+  title: 'Customer portal with its own login',
   lead: 'Documents, appointments and invoices behind one login of your own. Go ahead and log in (anything goes).',
   loginTitle: 'Log in to Demo & Co',
   emailLabel: 'Email address',
@@ -373,7 +388,7 @@ const demoMeertalig = {
 /* Demo 11 — Scroll-video / animaties */
 const demoScrollvideo = {
   kicker: 'Option 11',
-  title: 'Scroll video & animation',
+  title: 'Scroll animation that tells your story',
   lead: 'That opening you just saw, the site building itself while you scroll? That’s this option. It plays once more below.',
   replay: 'Play again',
 } as const;
@@ -381,7 +396,7 @@ const demoScrollvideo = {
 /* Demo 12 — Cadeaubonnen & stempelkaart */
 const demoCadeau = {
   kicker: 'Option 12',
-  title: 'Gift cards & loyalty card',
+  title: 'Sell gift cards straight from your site',
   lead: 'Digital gift cards and a loyalty card in the phone — no hassle with paper. Go on, flip the card over.',
   cardBrand: 'Salon Demo',
   cardValue: '€25',
@@ -415,6 +430,8 @@ const configurator = {
   cartMany: 'options',
   popularBadge: 'Popular',
   /* 13 — allemaal al in de voorwaarden; hier alleen zichtbaar gemaakt. */
+  guarantee: 'Delivery guarantee: 5 working days after your copy and photos are in, your site is live. Later? Then €50 per working day comes off the final invoice.',
+  revisionNote: 'Two rounds of adjustments are included in the price.',
   assurances: [
     'Domain in your name — from day one',
     'Cancel monthly — no minimum term',
@@ -429,7 +446,12 @@ const configurator = {
   ],
   includedWorth: 'Together worth',
   cartTotal: 'total',
+  exVat: 'ex VAT',
+  vatNote: 'All prices exclude VAT. As a VAT-registered business you reclaim it from the tax office. If you fall under the small-business scheme or are VAT-exempt (healthcare), the amount including VAT is your final price.',
   presetFrom: 'from',
+  stripTitle: 'Three starting points',
+  stripNote: 'Every option below is added on top — you always see exactly what.',
+  stripCta: 'See what each package includes',
   includedBadge: 'Included',
   freeLabel: 'free',
   seeDemo: 'See the demo ↑',
@@ -437,13 +459,16 @@ const configurator = {
   addedButton: '✓ In your site',
   includedButton: '✓ Free with your package',
   form: {
-  title: 'Request your quote',
+  title: 'Free: a sample page of your own site',
+    lead: 'Within 48 hours you get a fixed price and a real sample page for your business. No obligations, no cost — nothing happens until you say yes.',
     name: 'Name',
     company: 'Company',
     phone: 'Phone / WhatsApp',
     email: 'Email',
     message: 'Note (optional)',
-    submit: 'Send my build',
+    submit: 'Yes, send my free sample page',
+    selfCopy: 'Not ready yet? Email my build to myself',
+    selfCopyError: 'Fill in your email address and I’ll send your build over.',
     sending: 'Sending…',
     success: 'Nice. You’ll have your quote within 48 hours, plus a free demo proposal for your business.',
     errorValidation: 'Have a look at the fields marked in red.',
@@ -472,7 +497,7 @@ const showcase = {
   lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
   contentsLabel: 'What’s in it',
   totalLabel: 'This site',
-  totalNote: 'Fixed price. A complete site like this goes live in 7 working days, counted from your material.',
+  totalNote: 'Fixed price, ex VAT. A complete site like this goes live in 7 working days, counted from your material.',
   presetCta: 'Load this build',
   openCta: 'Open the full site',
   liveBadge: 'View live',
@@ -601,6 +626,26 @@ const faq = {
       a: 'Most sites are live in 5 working days, counted from the moment your texts and photos are in. More complex modules (customer portal, ordering) can take a few days extra.',
     },
     {
+      q: 'I don’t have good copy or photos. Can it still work?',
+      a: 'Yes, and that is the rule rather than the exception. I write the copy based on one half-hour phone call: you tell me about your business, I turn it into the page, you read it back. Photos from a modern phone are often good enough; otherwise I find decent royalty-free images or recommend a photographer near you.',
+    },
+    {
+      q: 'I already have a site and a domain. What happens to those?',
+      a: 'You keep your own domain name — we transfer it, so your signage and business cards stay correct. Your email addresses move across before the new site goes live, so you miss nothing. And your place in Google comes along: every old address redirects neatly to the new page.',
+    },
+    {
+      q: 'What if the site isn’t ready within 5 working days?',
+      a: 'Then it costs money — mine. The clock starts once your copy and photos are in. If you are not live within 5 working days after that, €50 per working day comes off the final invoice. More complex modules such as a customer portal or online ordering are agreed at 7 working days up front.',
+    },
+    {
+      q: 'What happens if you stop doing this?',
+      a: 'Your site stays yours, and that is not just a promise: the domain is in your name and the site is technically yours once the one-off amount is paid. On request you get all files and logins, so any other web builder can pick it up. You are tied to nothing — you can cancel any month.',
+    },
+    {
+      q: 'Why are there no clients or reviews on this site?',
+      a: 'Because I have just started as a web designer and I am not going to invent quotes. What I do have: this site, with twelve options you can try yourself, and modernpitching.nl — my own company’s site, which I built from front to back. Click through it; that says more than a wall of logos.',
+    },
+    {
       q: 'Does my site work well on mobile?',
       a: 'Mobile is the starting point, not an afterthought — most of your visitors arrive on their phone (probably like you right now). I test every site on real phones.',
     },
@@ -642,144 +687,10 @@ const footer = {
 
 /* --------------------------- Privacy-pagina ------------------------- */
 
-const privacy = {
-  title: 'Privacy policy',
-  metaDescription: `Privacy policy for ${site.legalName}: what data the quote form processes, why, and what your rights are.`,
-  updated: 'Last updated: July 2026',
-  intro: `${site.legalName} (“I” below) builds websites for small business owners. This page explains how I handle the personal data you share with me through ${site.url}. In short: I only collect what you fill in yourself in the quote form, I use it only to get in touch with you, and I sell or share nothing with third parties for marketing.`,
-  sections: [
-    {
-      title: 'What data do I process?',
-      body: [
-        'If you fill in the quote form, I process: your name, business name (optional), phone number (optional), email address, any comment you left and the combination you chose in the configurator (package, add-ons and indicative price).',
-        'This website uses no tracking cookies and no analytics. So there’s no cookie banner either.',
-      ],
-    },
-    {
-      title: 'What do I use your data for?',
-      body: [
-        'Only to answer your request: I send you a quote and possibly a demo proposal, and contact you about it by email, phone or WhatsApp — depending on what you filled in.',
-        'The legal basis for this is “performance of a contract” (art. 6(1)(b) GDPR): you ask for a quote, I deliver it.',
-      ],
-    },
-    {
-      title: 'How long do I keep your data?',
-      body: [
-        'If you become a client, I keep your data for as long as we work together and after that for as long as the law requires (the 7-year tax retention period for invoices, for example).',
-        'If you don’t become a client, I delete your request no later than 12 months after our last contact.',
-      ],
-    },
-    {
-      title: 'Who has access to your data?',
-      body: [
-        'Only me. On the technical side I work with two processors: Vercel (hosting of this website, with servers in the EU where possible) and Resend (sending the quote form to my mailbox). Data processing agreements under the GDPR are in place with both.',
-        'The “Interactive map” section contains an embedded Google Maps map. It only loads once you scroll it into view; from that moment Google can place cookies under Google’s own privacy policy. Don’t want that? Scroll past that demo without loading the map.',
-        'I never sell data and I share nothing with third parties for marketing purposes.',
-      ],
-    },
-    {
-      title: 'Your rights',
-      body: [
-        'You can always view your data, have it corrected or have it deleted. You can also object to processing or ask for your data to be transferred (data portability).',
-        `Email ${site.email} for that — I reply within a few working days, at the latest within the legal term of one month.`,
-        'Not happy with how I handle your data? You can file a complaint with the Dutch data protection authority, the Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).',
-      ],
-    },
-    {
-      title: 'Security',
-      body: [
-        'This site runs entirely over an encrypted connection (HTTPS). Form data is sent encrypted and stored only in my secured mailbox.',
-      ],
-    },
-    {
-      title: 'Contact',
-      body: [
-        `${site.legalName} · Dutch Chamber of Commerce ${footer.kvk} · ${site.email}`,
-        'Questions about this privacy policy? Just email or message me.',
-      ],
-    },
-  ],
-  backLink: '← Back to the site',
-} as const;
 
 /* ----------------------- Algemene voorwaarden ----------------------- */
 /* Door Scott bevestigd — zie de notitie in nl.ts. */
 
-const voorwaarden = {
-  title: 'Terms & conditions',
-  updated: 'Version August 2026',
-  metaDescription: `The terms and conditions of ${site.legalName}, in plain language: how a project starts, what you get, how payment works and how you cancel monthly.`,
-  intro: `No small print: these are the terms I work under, in plain language. They apply to everything you buy from ${site.legalName} (Dutch Chamber of Commerce 89874994). Anything unclear? Just email or message me — we’ll put it in writing before we start.`,
-  sections: [
-    {
-      title: 'How a project starts',
-      body: [
-        'My offer is for business customers: entrepreneurs, practices and associations. You build your website on this site, or we talk it through by email, phone or WhatsApp. You then get one clear quote with a fixed price: a one-off amount and — depending on your choices — a monthly amount. All prices exclude VAT.',
-        'The quote is valid for 30 days. Say yes in writing (an email or a WhatsApp message counts) and that’s the starting gun — these terms apply from then on.',
-      ],
-    },
-    {
-      title: 'What I deliver, and when',
-      body: [
-        'You get exactly what the quote says: the chosen base package plus the chosen options. Most sites go live within 5 working days, counted from the moment all your material (copy, photos, logins) is in. More complex modules, such as a portal or online ordering, can take a few days extra.',
-        'Before going live we review the result together. Two rounds of adjustments are part of the price. After that, changes — big and small — fall under maintenance or under extra work, with a fixed price first.',
-      ],
-    },
-    {
-      title: 'Payment',
-      body: [
-        'You pay the one-off amount in two halves. I send the first invoice when you agree and start building right away; the site goes live once that first half is in. The second invoice follows after go-live. Both invoices have a 14-day payment term.',
-        'The monthly amount starts at go-live and is billed per month, by invoice or direct debit — whatever we agree.',
-        'If you pay late, I first send a normal reminder. If payment still doesn’t come, statutory interest and collection costs apply, and I may pause running services until payment is in — always announced first.',
-        'If, after agreeing, you don’t supply material for more than three months despite a reminder, I may wrap up the project based on what’s there; the first half remains due.',
-      ],
-    },
-    {
-      title: 'Monthly services and cancelling',
-      body: [
-        'The monthly amount covers hosting, updates and security, plus the modules with running costs (such as online booking or the chatbot). The occasional small change — a price, a photo, your opening hours — is simply part of it.',
-        'You can cancel any month, by email or message, effective at the end of the current month; there is no minimum term. Your site and your domain are and remain yours: I hand over all files neatly and transfer your domain free of charge. Only the running services stop.',
-        'If I ever need to change the monthly amount or these running services — for instance because hosting or AI providers change their costs — you’ll hear at least a month in advance. Don’t agree? Then you simply cancel.',
-      ],
-    },
-    {
-      title: 'Your material',
-      body: [
-        'You supply the copy, photos and other content, or we agree that I help with that. You guarantee that this material may be used — so no photos or texts that belong to someone else without permission.',
-        'Personal data is handled as described in the privacy policy. If your site runs modules that process your own customers’ data (such as online booking, intake or the portal), I process that data only on your instructions and we record this in a short data processing agreement. If you cancel, you get an export of that data and I delete it within 30 days.',
-      ],
-    },
-    {
-      title: 'Who owns the site?',
-      body: [
-        'I register the domain in your name — so that’s yours from day one. The site itself (the design, the copy, the code and the structure) is entirely yours once the one-off amount is paid in full; on request I confirm that transfer with a signed document. The monthly amount is separate from this. Open-source components remain under their own licences — that’s normal and costs you nothing.',
-        'I may show the site in my portfolio and refer to it in my own communication, unless you tell me you’d rather I didn’t.',
-      ],
-    },
-    {
-      title: 'AI modules',
-      body: [
-        'The chatbot and the AI phone assistant give automated answers. We set them up carefully together, but systems like these can misunderstand a question or give an answer that isn’t right. So double-check important information (prices, opening hours, appointments) in the first weeks, and report mistakes straight away — I’ll adjust them.',
-        'What these modules communicate on behalf of your business remains your responsibility. Don’t let them give medical, legal or financial advice.',
-      ],
-    },
-    {
-      title: 'If something goes wrong',
-      body: [
-        'I work carefully and use reliable parties for hosting and email, but nobody can promise 100% uptime. If there’s an outage, I get on it straight away.',
-        'If despite everything something goes wrong and you suffer damages, my liability is limited to the amount you paid me in the three months before — or the one-off amount of your quote, if that is higher. Indirect damages, such as lost revenue, are excluded. None of this limits liability that cannot legally be limited.',
-      ],
-    },
-    {
-      title: 'Finally',
-      body: [
-        'Dutch law applies to our agreements. If I change these terms, an ongoing build keeps the version you agreed to; for running services the announcement rule above applies.',
-        `Questions? Email ${site.email} or send a message.`,
-      ],
-    },
-  ],
-  backLink: '← Back to the site',
-} as const;
 
 const meta = {
   title: 'Website design from €495 — Scott Prins Webdesign',
@@ -965,6 +876,4 @@ export const en = {
   about,
   faq,
   footer,
-  privacy,
-  voorwaarden,
 } as const;

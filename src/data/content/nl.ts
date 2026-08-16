@@ -53,7 +53,7 @@ const nav = {
     { label: 'Over Scott', href: '#about' },
     { label: 'FAQ', href: '#faq' },
   ],
-  cta: 'Offerte',
+  cta: 'Gratis proefpagina',
   skipToContent: 'Naar inhoud',
   menuLabel: 'Hoofdmenu',
   langLabel: 'Taal',
@@ -75,8 +75,8 @@ const howItWorks = {
       text: 'Op deze site probeer je elke functie live: voeg toe wat bij jouw zaak past.',
     },
     {
-      title: 'Live binnen 5 werkdagen',
-      text: 'Binnen 48 uur een offerte + gratis demo-voorstel. Akkoord? Dan bouw ik direct.',
+      title: 'Binnen 48 uur een prijs én een proefpagina',
+      text: 'Je krijgt een vaste prijs én een gratis proefpagina: één echte pagina van jouw site, met jouw naam, kleuren en teksten. Bevalt het, dan bouw ik door. Zo niet, dan kost het je niets.',
     },
   ],
 } as const;
@@ -84,6 +84,21 @@ const howItWorks = {
 /* ------------------------- De menukaart ---------------------------- */
 
 const menuIntro = {
+  indexLabel: 'Spring naar een optie',
+  index: [
+    { id: 'menu-booking', label: 'Online agenda' },
+    { id: 'menu-chatbot', label: 'AI-chatbot' },
+    { id: 'menu-map', label: 'Kaart' },
+    { id: 'menu-calculator', label: 'Prijscalculator' },
+    { id: 'menu-ordering', label: 'Online bestellen' },
+    { id: 'menu-reviews', label: 'Reviews' },
+    { id: 'menu-beforeafter', label: 'Voor/na' },
+    { id: 'menu-intake', label: 'Intake' },
+    { id: 'menu-portal', label: 'Klantenportaal' },
+    { id: 'menu-multilingual', label: 'Meertalig' },
+    { id: 'menu-scrollvideo', label: 'Scroll-video' },
+    { id: 'menu-giftcards', label: 'Cadeaubonnen' },
+  ],
   kicker: 'De menukaart',
   title: 'Niet lezen wat het doet. Gewoon proberen.',
   lead: 'Elke optie hieronder is een échte, werkende demo. Bevalt het? Tik op “In mijn website” en hij staat in je offerte.',
@@ -92,7 +107,7 @@ const menuIntro = {
 /* Demo 1 — Online agenda (fictieve massagepraktijk) */
 const demoAgenda = {
   kicker: 'Optie 1',
-  title: 'Online agenda',
+  title: 'Online afspraken maken op je website',
   lead: 'Je klant boekt zelf, dag en nacht. Probeer maar — dit is ’m echt.',
   businessName: 'Praktijk Demo',
   treatments: [
@@ -115,7 +130,7 @@ const demoAgenda = {
 /* Demo 2 — AI-chatbot (fictieve kapsalon) */
 const demoChatbot = {
   kicker: 'Optie 2',
-  title: 'AI-chatbot',
+  title: 'AI-chatbot die klantvragen 24/7 beantwoordt',
   lead: 'Getraind op jouw zaak: openingstijden, prijzen, afspraken. Stel ’m een vraag.',
   botName: 'Salon Demo',
   status: 'reageert direct',
@@ -172,7 +187,7 @@ const demoChatbot = {
 /* Demo 3 — Interactieve kaart (fictieve fietsenwinkel-keten) */
 const demoKaart = {
   kicker: 'Optie 3',
-  title: 'Interactieve kaart',
+  title: 'Al je vestigingen op één kaart',
   lead: 'Meerdere vestigingen? Eén kaart, altijd actueel. Wissel maar van locatie.',
   locations: [
     {
@@ -202,7 +217,7 @@ const demoKaart = {
 /* Demo 4 — Prijscalculator (fictief klusbedrijf) */
 const demoCalculator = {
   kicker: 'Optie 4',
-  title: 'Prijscalculator',
+  title: 'Prijscalculator voor offerteaanvragen',
   lead: 'Laat bezoekers zelf rekenen — jij krijgt aanvragen van mensen die al weten wat het kost.',
   heading: 'Wat kost jouw badkamer-renovatie?',
   sliders: [
@@ -219,7 +234,7 @@ const demoCalculator = {
 /* Demo 5 — Eigen online bestellen (fictieve pizzeria) */
 const demoBestellen = {
   kicker: 'Optie 5',
-  title: 'Eigen online bestellen',
+  title: 'Online bestellen zonder platform-commissie',
   lead: 'Bestellen via je eigen site in plaats van een bezorgplatform. Reken zelf uit wat dat scheelt.',
   restaurantName: 'Pizzeria La Vera (demo)',
   items: [
@@ -247,7 +262,7 @@ const demoBestellen = {
 const demoReviews = {
   kicker: 'Optie 6',
   ariaLabel: 'Verzonnen voorbeeld-reviews voor deze demo',
-  title: 'Reviews-wall',
+  title: 'Je Google-reviews op je eigen site',
   lead: 'Je échte Google-reviews, automatisch vers en stijlvol in beeld. Veeg erdoorheen — op desktop scrolt hij vanzelf.',
   demoNote: 'Verzonnen reviews van een niet-bestaande salon. Op jouw site staan hier je échte Google-reviews.',
   reviews: [
@@ -265,7 +280,7 @@ const demoReviews = {
 /* Demo 7 — Before/after-slider (fictieve bakkerij) */
 const demoBeforeAfter = {
   kicker: 'Optie 7',
-  title: 'Before/after-slider',
+  title: 'Voor en na naast elkaar, met één schuif',
   lead: 'Perfect voor kappers, klussers, hoveniers — of, zoals hier, voor het verschil dat een nieuwe website maakt. Sleep maar.',
   beforeLabel: 'Oude site (2010)',
   afterLabel: 'Nieuwe site',
@@ -297,7 +312,7 @@ const demoIntake = {
   kicker: 'Optie 8',
   /** {n} en {totaal} worden vervangen door de cijfers. */
   stepCounter: 'Stap {n} van {totaal}',
-  title: 'Digitale intake',
+  title: 'Digitaal intakeformulier voor nieuwe klanten',
   lead: 'Nieuwe klanten vullen hun gegevens vooraf in. Jij begint elk gesprek voorbereid.',
   steps: [
     {
@@ -331,7 +346,7 @@ const demoIntake = {
 /* Demo 9 — Klantenportaal */
 const demoPortaal = {
   kicker: 'Optie 9',
-  title: 'Klantenportaal',
+  title: 'Klantenportaal met eigen inlog',
   lead: 'Documenten, afspraken en facturen achter één eigen login. Log maar in (alles mag).',
   loginTitle: 'Inloggen bij Demo & Co',
   emailLabel: 'E-mailadres',
@@ -375,7 +390,7 @@ const demoMeertalig = {
 /* Demo 11 — Scroll-video / animaties */
 const demoScrollvideo = {
   kicker: 'Optie 11',
-  title: 'Scroll-video / animaties',
+  title: 'Scroll-animatie die je verhaal vertelt',
   lead: 'Die opening die je net zag, de site die zichzelf opbouwt terwijl je scrolt? Dat is deze optie. Hieronder speelt hij nog een keer af.',
   replay: 'Speel opnieuw af',
 } as const;
@@ -383,7 +398,7 @@ const demoScrollvideo = {
 /* Demo 12 — Cadeaubonnen & stempelkaart */
 const demoCadeau = {
   kicker: 'Optie 12',
-  title: 'Cadeaubonnen & stempelkaart',
+  title: 'Cadeaubonnen verkopen vanaf je site',
   lead: 'Digitale cadeaubonnen en een stempelkaart in de telefoon — zonder gedoe met papier. Draai de bon maar om.',
   cardBrand: 'Salon Demo',
   cardValue: '€ 25',
@@ -417,6 +432,8 @@ const configurator = {
   cartMany: 'opties',
   popularBadge: 'Populair',
   /* 13 — staan alle drie al in de voorwaarden; hier alleen zichtbaar gemaakt. */
+  guarantee: 'Oplevergarantie: 5 werkdagen nadat jouw teksten en foto’s binnen zijn, staat je site live. Later? Dan gaat er € 50 per werkdag van de eindfactuur af.',
+  revisionNote: 'Twee rondes met aanpassingen zitten bij de prijs in.',
   assurances: [
     'Domein op jouw naam — vanaf dag één',
     'Maandelijks opzegbaar — geen minimumlooptijd',
@@ -431,7 +448,12 @@ const configurator = {
   ],
   includedWorth: 'Samen t.w.v.',
   cartTotal: 'totaal',
+  exVat: 'excl. btw',
+  vatNote: 'Alle prijzen zijn excl. btw. Als btw-plichtige ondernemer krijg je die terug van de Belastingdienst. Val je onder de KOR of ben je btw-vrijgesteld (zorg), dan is het bedrag inclusief btw je eindprijs.',
   presetFrom: 'vanaf',
+  stripTitle: 'Drie startpunten',
+  stripNote: 'Elke optie hieronder komt daar bovenop — je ziet steeds precies wat.',
+  stripCta: 'Zie wat er in elk pakket zit',
   includedBadge: 'Inbegrepen',
   freeLabel: 'gratis',
   seeDemo: 'Bekijk de demo ↑',
@@ -439,13 +461,16 @@ const configurator = {
   addedButton: '✓ In je website',
   includedButton: '✓ Gratis bij je pakket',
   form: {
-  title: 'Vraag je offerte aan',
+  title: 'Gratis: een proefpagina van jouw eigen site',
+    lead: 'Binnen 48 uur krijg je een vaste prijs én een echte proefpagina voor jouw zaak. Geen verplichtingen, geen kosten — er gebeurt pas iets als jij ja zegt.',
     name: 'Naam',
     company: 'Bedrijf',
     phone: 'Telefoon / WhatsApp',
     email: 'E-mail',
     message: 'Opmerking (optioneel)',
-    submit: 'Stuur mijn samenstelling',
+    submit: 'Ja, stuur mijn gratis proefpagina',
+    selfCopy: 'Nog niet klaar? Mail mijn samenstelling naar mezelf',
+    selfCopyError: 'Vul je e-mailadres in, dan stuur ik je samenstelling door.',
     sending: 'Versturen…',
     success: 'Top! Je ontvangt binnen 48 uur je offerte + een gratis demo-voorstel voor jouw zaak.',
     errorValidation: 'Check even de rood gemarkeerde velden.',
@@ -474,7 +499,7 @@ const showcase = {
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',
-  totalNote: 'Vaste prijs. Zo’n complete site staat in 7 werkdagen live, gerekend vanaf jouw materiaal.',
+  totalNote: 'Vaste prijs, excl. btw. Zo’n complete site staat in 7 werkdagen live, gerekend vanaf jouw materiaal.',
   presetCta: 'Zet deze samenstelling klaar',
   openCta: 'Open de hele site',
   liveBadge: 'Bekijk live',
@@ -603,6 +628,26 @@ const faq = {
       a: 'De meeste sites staan binnen 5 werkdagen live, gerekend vanaf het moment dat jouw teksten en foto’s binnen zijn. Complexere modules (portaal, bestellen) kunnen een paar dagen extra vragen.',
     },
     {
+      q: 'Ik heb geen goede teksten of foto’s. Kan het dan wel?',
+      a: 'Ja, en dat is eerder regel dan uitzondering. De teksten schrijf ik op basis van één telefoongesprek van een half uur: jij vertelt over je zaak, ik maak er de pagina van, jij leest hem na. Foto’s met een moderne telefoon zijn vaak goed genoeg; anders zoek ik nette rechtenvrije beelden of raad ik een fotograaf bij jou in de buurt aan.',
+    },
+    {
+      q: 'Ik heb al een site en een domein. Wat gebeurt daarmee?',
+      a: 'Je houdt je eigen domeinnaam — die verhuizen we, dus je gevelbord en je visitekaartjes blijven kloppen. Je e-mailadressen zetten we over vóórdat de nieuwe site live gaat, zodat je geen mail mist. En je plek in Google gaat mee: elk oud adres wijst netjes door naar de nieuwe pagina.',
+    },
+    {
+      q: 'Wat als de site niet af is binnen 5 werkdagen?',
+      a: 'Dan kost het je geld — mij. De klok start zodra jouw teksten en foto’s binnen zijn. Sta je daarna niet binnen 5 werkdagen live, dan gaat er € 50 per werkdag van de eindfactuur af. Complexere modules zoals een klantenportaal of online bestellen spreken we vooraf op 7 werkdagen af.',
+    },
+    {
+      q: 'Wat gebeurt er als jij ermee stopt?',
+      a: 'Je site blijft van jou, en dat is niet alleen een belofte: het domein staat op jouw naam en de site is technisch van jou zodra het eenmalige bedrag betaald is. Op verzoek krijg je alle bestanden en toegangen, zodat elke andere webbouwer er verder mee kan. Je zit nergens aan vast — opzeggen kan elke maand.',
+    },
+    {
+      q: 'Waarom zie ik geen klanten of reviews op deze site?',
+      a: 'Omdat ik net begonnen ben als webdesigner en ik geen quotes ga verzinnen. Wat ik wel heb: deze site, met twaalf opties die je zelf kunt uitproberen, en modernpitching.nl — de site van mijn eigen bedrijf, die ik van voor tot achter gebouwd heb. Klik er gerust doorheen; dat zegt meer dan een logo-muur.',
+    },
+    {
       q: 'Werkt mijn site goed op mobiel?',
       a: 'Mobiel is het uitgangspunt, niet een bijzaak — de meeste van jouw bezoekers komen via hun telefoon binnen (net als jij waarschijnlijk nu). Elke site test ik op echte telefoons.',
     },
@@ -644,145 +689,11 @@ const footer = {
 
 /* --------------------------- Privacy-pagina ------------------------- */
 
-const privacy = {
-  title: 'Privacyverklaring',
-  metaDescription: `Privacyverklaring van ${site.legalName}: welke gegevens het offerteformulier verwerkt, waarom, en welke rechten je hebt.`,
-  updated: 'Laatst bijgewerkt: juli 2026',
-  intro: `${site.legalName} (hierna: “ik”) bouwt websites voor kleine ondernemers. Op deze pagina lees je hoe ik omga met de persoonsgegevens die je via ${site.url} met mij deelt. Kort samengevat: ik verzamel alleen wat jij zelf invult in het offerteformulier, ik gebruik dat uitsluitend om contact met je op te nemen, en ik verkoop of deel niets met derden voor marketing.`,
-  sections: [
-    {
-      title: 'Welke gegevens verwerk ik?',
-      body: [
-        'Vul je het offerteformulier in, dan verwerk ik: je naam, bedrijfsnaam (optioneel), telefoonnummer (optioneel), e-mailadres, je eventuele opmerking en de samenstelling die je in de configurator koos (pakket, extra’s en richtprijs).',
-        'Deze website gebruikt géén tracking-cookies en géén analytics. Er is daarom ook geen cookiebanner.',
-      ],
-    },
-    {
-      title: 'Waarvoor gebruik ik je gegevens?',
-      body: [
-        'Uitsluitend om je aanvraag te beantwoorden: ik stuur je een offerte en eventueel een demo-voorstel, en neem daarover contact met je op via e-mail, telefoon of WhatsApp — afhankelijk van wat jij invulde.',
-        'De grondslag hiervoor is “uitvoering van een overeenkomst” (art. 6 lid 1 sub b AVG): jij vraagt een offerte aan, ik lever die.',
-      ],
-    },
-    {
-      title: 'Hoe lang bewaar ik je gegevens?',
-      body: [
-        'Word je klant, dan bewaar ik je gegevens zolang we samenwerken en daarna zolang de wet dat vereist (bijvoorbeeld de fiscale bewaarplicht van 7 jaar voor facturen).',
-        'Word je geen klant, dan verwijder ik je aanvraag uiterlijk 12 maanden na het laatste contact.',
-      ],
-    },
-    {
-      title: 'Wie hebben er toegang tot je gegevens?',
-      body: [
-        'Alleen ik. Voor de techniek werk ik met twee verwerkers: Vercel (hosting van deze website, met servers in de EU waar mogelijk) en Resend (het versturen van het offerteformulier naar mijn mailbox). Met beide partijen gelden verwerkersovereenkomsten volgens de AVG.',
-        'De sectie “Interactieve kaart” bevat een ingesloten Google Maps-kaart. Die laadt pas zodra je hem in beeld scrolt; vanaf dat moment kan Google cookies plaatsen volgens het privacybeleid van Google. Wil je dat niet, scroll die demo dan voorbij zonder de kaart te laden.',
-        'Ik verkoop nooit gegevens en deel niets met derden voor marketingdoeleinden.',
-      ],
-    },
-    {
-      title: 'Jouw rechten',
-      body: [
-        'Je mag je gegevens altijd inzien, laten corrigeren of laten verwijderen. Ook kun je bezwaar maken tegen verwerking of vragen om overdracht van je gegevens (dataportabiliteit).',
-        `Mail daarvoor naar ${site.email} — ik reageer binnen enkele werkdagen, uiterlijk binnen de wettelijke termijn van één maand.`,
-        'Ben je het niet eens met hoe ik met je gegevens omga? Dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).',
-      ],
-    },
-    {
-      title: 'Beveiliging',
-      body: [
-        'Deze site draait volledig via een versleutelde verbinding (HTTPS). Formuliergegevens worden versleuteld verstuurd en alleen opgeslagen in mijn beveiligde mailbox.',
-      ],
-    },
-    {
-      title: 'Contact',
-      body: [
-        `${site.legalName} · KVK ${footer.kvk} · ${site.email}`,
-        'Vragen over deze privacyverklaring? Mail of app me gerust.',
-      ],
-    },
-  ],
-  backLink: '← Terug naar de site',
-} as const;
 
 /* ----------------------- Algemene voorwaarden ----------------------- */
 /* Door Scott bevestigd (aug 2026): 50/50-betaalritme, twee revisierondes,
    prijzen excl. btw, alleen zakelijke klanten. */
 
-const voorwaarden = {
-  title: 'Algemene voorwaarden',
-  updated: 'Versie augustus 2026',
-  metaDescription: `Algemene voorwaarden van ${site.legalName}, in gewone taal: hoe een opdracht start, wat je krijgt, hoe betalen werkt en hoe je maandelijks opzegt.`,
-  intro: `Geen kleine lettertjes: dit zijn de afspraken waaronder ik werk, in gewone taal. Ze gelden voor alles wat je bij ${site.legalName} (KVK 89874994) afneemt. Staat er iets tussen dat niet duidelijk is? Mail of app me gewoon — dan leggen we het vast voordat we beginnen.`,
-  sections: [
-    {
-      title: 'Zo start een opdracht',
-      body: [
-        'Mijn aanbod is voor zakelijke klanten: ondernemers, praktijken en verenigingen. Je stelt op deze site je website samen, of we overleggen via mail, telefoon of WhatsApp. Daarna krijg je één duidelijke offerte met een vaste prijs: een eenmalig bedrag en — afhankelijk van je keuzes — een maandbedrag. Alle prijzen zijn exclusief btw.',
-        'De offerte is 30 dagen geldig. Zeg je schriftelijk ja (een mailtje of appje telt ook), dan is dat het startschot en gelden deze voorwaarden.',
-      ],
-    },
-    {
-      title: 'Wat ik lever, en wanneer',
-      body: [
-        'Je krijgt precies wat er in de offerte staat: het gekozen basispakket plus de gekozen opties. De meeste sites staan binnen 5 werkdagen live, gerekend vanaf het moment dat al jouw materiaal (teksten, foto’s, toegangen) binnen is. Complexere modules, zoals een portaal of online bestellen, kunnen een paar dagen extra vragen.',
-        'Vóór de livegang kijken we samen naar het resultaat. Twee rondes met aanpassingen horen bij de prijs. Daarna vallen wijzigingen — groot en klein — onder het onderhoud of onder meerwerk, met eerst een vaste prijs.',
-      ],
-    },
-    {
-      title: 'Betalen',
-      body: [
-        'Het eenmalige bedrag betaal je in twee helften. De eerste factuur stuur ik bij akkoord en de bouw start meteen; de site gaat live zodra die eerste helft binnen is. De tweede factuur volgt na de livegang. Voor beide facturen geldt een betaaltermijn van 14 dagen.',
-        'Het maandbedrag loopt vanaf de livegang en betaal je per maand, op factuur of via automatische incasso — wat we afspreken.',
-        'Betaal je te laat, dan stuur ik eerst een gewone herinnering. Blijft betalen uit, dan gelden de wettelijke rente en incassokosten, en mag ik doorlopende diensten pauzeren tot de betaling binnen is — dat kondig ik altijd eerst aan.',
-        'Lever je na akkoord langer dan drie maanden geen materiaal aan, ondanks een herinnering, dan mag ik het project afronden op basis van wat er ligt; de eerste helft blijft dan verschuldigd.',
-      ],
-    },
-    {
-      title: 'Maandelijkse diensten en opzeggen',
-      body: [
-        'Het maandbedrag dekt hosting, updates en beveiliging, plus de modules met doorlopende kosten (zoals de agenda of de chatbot). Af en toe een kleine wijziging — een prijs, een foto, je openingstijden — hoort daar gewoon bij.',
-        'Opzeggen kan elke maand, per mail of app, en gaat in aan het einde van de lopende maand; er is geen minimumlooptijd. Je site en je domein zijn en blijven van jou: ik lever alle bestanden netjes aan en verhuis je domein kosteloos. Alleen de doorlopende diensten stoppen dan.',
-        'Moet ik het maandbedrag of deze doorlopende diensten ooit aanpassen — bijvoorbeeld omdat kosten van hosting- of AI-partijen veranderen — dan hoor je dat minimaal een maand van tevoren. Ben je het er niet mee eens, dan zeg je gewoon op.',
-      ],
-    },
-    {
-      title: 'Jouw materiaal',
-      body: [
-        'Jij levert de teksten, foto’s en andere content aan, of we spreken af dat ik daarbij help. Jij staat ervoor in dat dat materiaal gebruikt mag worden — dus geen foto’s of teksten van iemand anders zonder toestemming.',
-        'Met persoonsgegevens ga ik om zoals in de privacyverklaring staat. Draaien er op jouw site modules die gegevens van jóuw klanten verwerken (zoals de agenda, intake of het portaal), dan verwerk ik die alleen in jouw opdracht en leggen we dat vast in een korte verwerkersovereenkomst. Zeg je op, dan krijg je een export van die gegevens en verwijder ik ze daarna binnen 30 dagen.',
-      ],
-    },
-    {
-      title: 'Van wie is de site?',
-      body: [
-        'Het domein registreer ik op jouw naam — dat is dus vanaf dag één van jou. De site zelf (het ontwerp, de teksten, de code en de opbouw) is helemaal van jou zodra het eenmalige bedrag volledig is betaald; op verzoek bevestig ik die overdracht met een ondertekend document. Het maandbedrag staat hier los van. Open-source onderdelen blijven onder hun eigen licentie — dat is normaal en kost je niets.',
-        'Ik mag de site in mijn portfolio tonen en er in mijn eigen communicatie naar verwijzen, tenzij jij aangeeft dat liever niet te willen.',
-      ],
-    },
-    {
-      title: 'AI-modules',
-      body: [
-        'De chatbot en de AI-telefonist geven automatische antwoorden. We stellen ze samen zorgvuldig in, maar zulke systemen kunnen een vraag verkeerd begrijpen of een antwoord geven dat niet klopt. Controleer belangrijke informatie (prijzen, openingstijden, afspraken) in de eerste weken dus extra, en geef fouten meteen door — dan stel ik ze bij.',
-        'Wat deze modules namens jouw zaak communiceren, blijft jouw verantwoordelijkheid. Laat ze geen medisch, juridisch of financieel advies geven.',
-      ],
-    },
-    {
-      title: 'Als er iets misgaat',
-      body: [
-        'Ik werk zorgvuldig en gebruik betrouwbare partijen voor hosting en e-mail, maar 100% bereikbaarheid kan niemand beloven. Is er een storing, dan ga ik er direct mee aan de slag.',
-        'Gaat er ondanks alles iets mis waardoor je schade hebt, dan is mijn aansprakelijkheid beperkt tot het bedrag dat je mij in de drie maanden ervoor betaalde — of het eenmalige bedrag van jouw offerte, als dat hoger is. Indirecte schade, zoals gemiste omzet, valt daarbuiten. Niets hiervan beperkt aansprakelijkheid die volgens de wet niet beperkt mag worden.',
-      ],
-    },
-    {
-      title: 'Tot slot',
-      body: [
-        'Op onze afspraken is Nederlands recht van toepassing. Wijzig ik deze voorwaarden, dan blijft voor een lopende bouwopdracht de versie gelden waarmee je akkoord ging; voor doorlopende diensten geldt de aankondigingsregel hierboven.',
-        `Vragen? Mail naar ${site.email} of stuur een appje.`,
-      ],
-    },
-  ],
-  backLink: '← Terug naar de site',
-} as const;
 
 const meta = {
   title: 'Website laten maken vanaf € 495 — Scott Prins Webdesign',
@@ -968,6 +879,4 @@ export const nl = {
   about,
   faq,
   footer,
-  privacy,
-  voorwaarden,
 } as const;

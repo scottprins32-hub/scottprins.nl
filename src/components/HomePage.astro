@@ -33,13 +33,51 @@ import DemoScrollvideo from './demos/DemoScrollvideo.astro';
 import DemoCadeau from './demos/DemoCadeau.astro';
 
 import { content, toLocale } from '../data/content';
+import { basePackages } from '../data/pricing';
+import { eur, perMaand } from '../lib/format';
 const taal = toLocale(Astro.currentLocale);
 const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, demoChatbot, demoIntake, demoKaart, demoMeertalig, demoPortaal, demoReviews, demoScrollvideo, menuIntro } = content(taal);
+const { configurator, pricing } = content(taal);
 ---
 <SiteNav />
   <main id="main">
     <Hero />
     <HowItWorks />
+
+    {/* Pakketstrip: de bezoeker weet nu wat de basis kost vóórdat hij twaalf
+        opties doorloopt. Prijzen komen uit pricing.ts, nooit ingetypt. */}
+    <section class="bg-cream pt-16 text-ink sm:pt-24" data-reveal-section>
+      <div class="mx-auto max-w-6xl px-5">
+        <h2 class="font-display text-h3 font-semibold" data-reveal>{configurator.stripTitle}</h2>
+        <div class="mt-5 grid gap-4 sm:grid-cols-3" data-reveal>
+          {
+            basePackages.map((pkg) => (
+              <a
+                href="#configurator"
+                class="group relative rounded-2xl border border-line bg-white p-5 shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/50 hover:shadow-card-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              >
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-display text-lg font-semibold">{pricing.base[pkg.id].name}</span>
+                  {pkg.popular && <span class="badge-populair">{configurator.popularBadge}</span>}
+                </span>
+                <span class="text-muted mt-1 block text-sm leading-snug">{pricing.base[pkg.id].description}</span>
+                <span class="mt-3 block font-semibold">
+                  {eur(pkg.upfront, taal)}
+                  <span class="text-muted font-normal"> + {eur(pkg.monthly, taal)}{perMaand(taal)}</span>
+                  <span class="text-muted block text-xs font-normal">{configurator.exVat}</span>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+        <p class="text-muted mt-4 text-sm" data-reveal>
+          {configurator.stripNote}{' '}
+          <a href="#configurator" class="text-accent font-medium underline-offset-2 hover:underline">
+            {configurator.stripCta} →
+          </a>
+        </p>
+      </div>
+    </section>
 
     {/* Intro van de menukaart */}
     <section class="bg-cream pt-16 text-ink sm:pt-24" id="menu" data-reveal-section>
@@ -49,54 +87,73 @@ const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, 
           <h2 class="font-display text-h2 mt-2 font-semibold text-balance">{menuIntro.title}</h2>
           <p class="text-muted text-lead mt-3">{menuIntro.lead}</p>
         </header>
+
+        {/* Sprongen naar de twaalf secties: zonder deze index is de menukaart
+            veertien schermen scrollen zonder houvast. */}
+        <nav class="mt-6" aria-label={menuIntro.indexLabel} data-reveal>
+          <ul class="flex flex-wrap gap-2">
+            {
+              menuIntro.index.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="text-ink/80 hover:border-accent hover:text-accent inline-flex min-h-11 items-center rounded-full border border-line bg-white px-4 text-sm font-medium transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
       </div>
     </section>
 
-    <MenuSection id="menu-booking" index={1} kicker={demoAgenda.kicker} title={demoAgenda.title} lead={demoAgenda.lead} addonIds={['agenda']} pacing="fade">
+    <MenuSection id="menu-booking" intrinsic={666} index={1} kicker={demoAgenda.kicker} title={demoAgenda.title} lead={demoAgenda.lead} addonIds={['agenda']} pacing="fade">
       <DemoAgenda />
     </MenuSection>
 
-    <MenuSection id="menu-chatbot" index={2} kicker={demoChatbot.kicker} title={demoChatbot.title} lead={demoChatbot.lead} addonIds={['chatbot']} pacing="none">
+    <MenuSection id="menu-chatbot" intrinsic={886} index={2} kicker={demoChatbot.kicker} title={demoChatbot.title} lead={demoChatbot.lead} addonIds={['chatbot']} pacing="none">
       <DemoChatbot />
     </MenuSection>
 
-    <MenuSection id="menu-map" index={3} kicker={demoKaart.kicker} title={demoKaart.title} lead={demoKaart.lead} addonIds={['kaart']} pacing="parallax">
+    <MenuSection id="menu-map" intrinsic={980} index={3} kicker={demoKaart.kicker} title={demoKaart.title} lead={demoKaart.lead} addonIds={['kaart']} pacing="parallax">
       <DemoKaart />
     </MenuSection>
 
-    <MenuSection id="menu-calculator" index={4} kicker={demoCalculator.kicker} title={demoCalculator.title} lead={demoCalculator.lead} addonIds={['calculator']} pacing="fade">
+    <MenuSection id="menu-calculator" intrinsic={854} index={4} kicker={demoCalculator.kicker} title={demoCalculator.title} lead={demoCalculator.lead} addonIds={['calculator']} pacing="fade">
       <DemoCalculator />
     </MenuSection>
 
-    <MenuSection id="menu-ordering" index={5} kicker={demoBestellen.kicker} title={demoBestellen.title} lead={demoBestellen.lead} addonIds={['bestellen']} pacing="none">
+    <MenuSection id="menu-ordering" intrinsic={920} index={5} kicker={demoBestellen.kicker} title={demoBestellen.title} lead={demoBestellen.lead} addonIds={['bestellen']} pacing="none">
       <DemoBestellen />
     </MenuSection>
 
-    <MenuSection id="menu-reviews" index={6} kicker={demoReviews.kicker} title={demoReviews.title} lead={demoReviews.lead} addonIds={['reviews']} pacing="none">
+    <MenuSection id="menu-reviews" intrinsic={605} index={6} kicker={demoReviews.kicker} title={demoReviews.title} lead={demoReviews.lead} addonIds={['reviews']} pacing="none">
       <DemoReviews />
     </MenuSection>
 
-    <MenuSection id="menu-beforeafter" index={7} kicker={demoBeforeAfter.kicker} title={demoBeforeAfter.title} lead={demoBeforeAfter.lead} addonIds={['beforeafter']} pacing="parallax">
+    <MenuSection id="menu-beforeafter" intrinsic={816} index={7} kicker={demoBeforeAfter.kicker} title={demoBeforeAfter.title} lead={demoBeforeAfter.lead} addonIds={['beforeafter']} pacing="parallax">
       <DemoBeforeAfter />
     </MenuSection>
 
-    <MenuSection id="menu-intake" index={8} kicker={demoIntake.kicker} title={demoIntake.title} lead={demoIntake.lead} addonIds={['intake']} pacing="fade">
+    <MenuSection id="menu-intake" intrinsic={736} index={8} kicker={demoIntake.kicker} title={demoIntake.title} lead={demoIntake.lead} addonIds={['intake']} pacing="fade">
       <DemoIntake />
     </MenuSection>
 
-    <MenuSection id="menu-portal" index={9} kicker={demoPortaal.kicker} title={demoPortaal.title} lead={demoPortaal.lead} addonIds={['portaal']} pacing="parallax">
+    <MenuSection id="menu-portal" intrinsic={760} index={9} kicker={demoPortaal.kicker} title={demoPortaal.title} lead={demoPortaal.lead} addonIds={['portaal']} pacing="parallax">
       <DemoPortaal />
     </MenuSection>
 
-    <MenuSection id="menu-multilingual" index={10} kicker={demoMeertalig.kicker} title={demoMeertalig[taal].title} lead={demoMeertalig[taal].lead} addonIds={['meertalig']} pacing="fade">
+    <MenuSection id="menu-multilingual" intrinsic={700} index={10} kicker={demoMeertalig.kicker} title={demoMeertalig[taal].title} lead={demoMeertalig[taal].lead} addonIds={['meertalig']} pacing="fade">
       <DemoMeertalig />
     </MenuSection>
 
-    <MenuSection id="menu-scrollvideo" index={11} kicker={demoScrollvideo.kicker} title={demoScrollvideo.title} lead={demoScrollvideo.lead} addonIds={['scrollvideo']} pacing="none">
+    <MenuSection id="menu-scrollvideo" intrinsic={982} index={11} kicker={demoScrollvideo.kicker} title={demoScrollvideo.title} lead={demoScrollvideo.lead} addonIds={['scrollvideo']} pacing="none">
       <DemoScrollvideo />
     </MenuSection>
 
-    <MenuSection id="menu-giftcards" index={12} kicker={demoCadeau.kicker} title={demoCadeau.title} lead={demoCadeau.lead} addonIds={['cadeaubonnen']} pacing="parallax">
+    <MenuSection id="menu-giftcards" intrinsic={715} index={12} kicker={demoCadeau.kicker} title={demoCadeau.title} lead={demoCadeau.lead} addonIds={['cadeaubonnen']} pacing="parallax">
       <DemoCadeau />
     </MenuSection>
 

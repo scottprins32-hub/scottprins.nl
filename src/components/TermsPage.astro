@@ -5,11 +5,11 @@
  * renderen dit bestand; alleen de taal verschilt.
  */
 import { site } from '../data/site';
-import { content, toLocale, altPath } from '../data/content';
+import { content, legal, toLocale, altPath } from '../data/content';
 import LangSwitch from './LangSwitch.astro';
 
 const locale = toLocale(Astro.currentLocale);
-const { voorwaarden } = content(locale);
+const { voorwaarden } = legal(locale);
 const thuis = altPath('/', locale);
 ---
 

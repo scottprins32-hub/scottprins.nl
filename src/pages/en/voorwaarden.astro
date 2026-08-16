@@ -2,9 +2,9 @@
 /** Engelse algemene voorwaarden. Zelfde inhoud als /voorwaarden, andere taal. */
 import Base from '../../layouts/Base.astro';
 import { site } from '../../data/site';
-import { content } from '../../data/content';
+import { content, legal } from '../../data/content';
 import TermsPage from '../../components/TermsPage.astro';
-const { voorwaarden } = content(Astro.currentLocale);
+const { voorwaarden } = legal(Astro.currentLocale);
 ---
 
 <Base

@@ -8,6 +8,8 @@ import type { AddonId } from '../data/pricing';
 import PriceCard from './PriceCard.astro';
 
 interface Props {
+  /** Gemeten hoogte op 1440x900; scheelt drift bij het springen naar een anker. */
+  intrinsic?: number;
   id: string;
   index: number;
   kicker: string;
@@ -18,7 +20,7 @@ interface Props {
   pacing?: 'fade' | 'parallax' | 'none';
 }
 
-const { id, index, kicker, title, lead, addonIds, pacing = 'none' } = Astro.props;
+const { id, index, kicker, title, lead, addonIds, pacing = 'none', intrinsic = 900 } = Astro.props;
 const number = String(index).padStart(2, '0');
 ---
 
@@ -31,6 +33,7 @@ const number = String(index).padStart(2, '0');
 <section
   {id}
   class="menu-section defer-render relative overflow-hidden bg-cream py-16 text-ink sm:py-24"
+  style={`contain-intrinsic-size: auto ${intrinsic}px`}
   data-menu-section
   data-pacing={pacing}
 >

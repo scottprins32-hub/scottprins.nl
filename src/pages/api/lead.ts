@@ -10,6 +10,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
+import { site } from '../../data/site';
 import { calcTotals } from '../../lib/calc';
 import { validateLead, type LeadPayload } from '../../lib/lead';
 import { summarizeSelection } from '../../lib/quote';
@@ -90,9 +91,52 @@ export const POST: APIRoute = async ({ request }) => {
 
   const totals = calcTotals(lead.selection);
   const baseName = nl.pricing.base[lead.selection.base]?.name ?? 'Onbekend';
-  const subject = `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${eur(totals.upfront, 'nl')} + ${eur(totals.monthly, 'nl')}${perMaand('nl')}`;
+  const bedrag = `${eur(totals.upfront, 'nl')} + ${eur(totals.monthly, 'nl')}${perMaand('nl')}`;
+  const subject =
+    lead.intent === 'selfcopy'
+      ? `Prijslijst opgevraagd: ${baseName} — ${bedrag}`
+      : `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${bedrag}`;
+
+  /* De bezoeker krijgt zijn eigen samenstelling terug: bij een self-copy is
+     dat het hele punt, en bij een gewone aanvraag is het een bevestiging. */
+  const kopieTaal = lead.locale;
+  const kopie = {
+    from: FROM_ADDRESS,
+    to: [lead.email],
+    reply_to: TO_ADDRESS,
+    subject:
+      kopieTaal === 'en'
+        ? `Your build via scottprins.nl — ${eur(totals.upfront, 'en')} + ${eur(totals.monthly, 'en')}${perMaand('en')}`
+        : `Jouw samenstelling via scottprins.nl — ${bedrag}`,
+    text: [
+      summarizeSelection(lead.selection, kopieTaal),
+      '',
+      kopieTaal === 'en'
+        ? `Questions? Call or message Scott on ${site.whatsappDisplay}.`
+        : `Vragen? Bel of app Scott op ${site.whatsappDisplay}.`,
+      lead.intent === 'selfcopy'
+        ? ''
+        : kopieTaal === 'en'
+          ? 'Within 48 hours you get a fixed price and a free sample page for your business.'
+          : 'Binnen 48 uur krijg je een vaste prijs en een gratis proefpagina voor jouw zaak.',
+    ]
+      .join('\n')
+      .trim(),
+  };
 
   try {
+    const verstuur = (body: unknown) =>
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(8000),
+      });
+
+    /* De kopie naar de bezoeker mag de aanvraag nooit blokkeren: zolang het
+       domein niet in Resend geverifieerd is, weigert die tweede mail. */
+    void verstuur(kopie).catch(() => {});
+
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {

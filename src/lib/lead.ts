@@ -15,6 +15,12 @@ export interface LeadPayload {
   selection: Selection;
   /** Taal waarin de bezoeker de site gebruikte; bepaalt hoe Scott terugmailt. */
   locale: 'nl' | 'en';
+  /**
+   * 'quote'    — de gewone aanvraag: Scott krijgt een lead.
+   * 'selfcopy' — de bezoeker wil alleen zijn eigen samenstelling mailen;
+   *              dan is alleen het e-mailadres verplicht.
+   */
+  intent: 'quote' | 'selfcopy';
 }
 
 export type LeadValidation =
@@ -39,10 +45,13 @@ export function validateLead(input: unknown): LeadValidation {
     website: str(raw.website, 200),
     selection: sanitizeSelection(raw.selection),
     locale: raw.locale === 'en' ? 'en' : 'nl',
+    intent: raw.intent === 'selfcopy' ? 'selfcopy' : 'quote',
   };
 
   const fields: string[] = [];
-  if (lead.name.length === 0) fields.push('name');
+  /* Bij een self-copy hoeft de bezoeker alleen zijn e-mailadres te geven:
+     hij vraagt niets aan, hij wil alleen zijn eigen lijstje terugzien. */
+  if (lead.intent !== 'selfcopy' && lead.name.length === 0) fields.push('name');
   if (!EMAIL_RE.test(lead.email)) fields.push('email');
 
   return fields.length > 0 ? { ok: false, fields } : { ok: true, lead };

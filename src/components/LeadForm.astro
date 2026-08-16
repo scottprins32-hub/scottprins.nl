@@ -17,9 +17,11 @@ const f = configurator.form;
   data-lead-form
   data-msg-validation={f.errorValidation}
   data-msg-sending={f.sending}
+  data-msg-selfcopy={f.selfCopyError}
   novalidate
 >
   <p class="font-display text-lg font-semibold">{f.title}</p>
+  <p class="text-muted-dark -mt-1 text-sm leading-snug">{f.lead}</p>
 
   <div>
     <label class="text-sm font-medium" for="lead-name">{f.name} *</label>
@@ -85,6 +87,15 @@ const f = configurator.form;
     data-lead-submit
   >
     {f.submit}
+  </button>
+
+  {/* Lage drempel: wie nog niet wil aanvragen, kan zijn lijstje mailen. */}
+  <button
+    type="button"
+    class="text-muted-dark text-sm underline underline-offset-4 hover:text-cream"
+    data-lead-selfcopy
+  >
+    {f.selfCopy}
   </button>
 
   <a
@@ -215,6 +226,42 @@ const f = configurator.form;
       fallback.classList.remove('hidden');
     }
 
+    /* Zelfde endpoint, andere intent: alleen het e-mailadres is verplicht. */
+    form.querySelector<HTMLButtonElement>('[data-lead-selfcopy]')?.addEventListener('click', async () => {
+      const email = fieldValue('email');
+      if (!email) {
+        markInvalid(['email']);
+        errorEl.textContent = form.dataset.msgSelfcopy!;
+        errorEl.classList.remove('hidden');
+        (form.elements.namedItem('email') as HTMLElement | null)?.focus();
+        return;
+      }
+      markInvalid([]);
+      errorEl.classList.add('hidden');
+      try {
+        await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fieldValue('name'),
+            company: fieldValue('company'),
+            phone: fieldValue('phone'),
+            email,
+            message: fieldValue('message'),
+            website: fieldValue('website'),
+            selection: getSelection(),
+            locale: document.documentElement.lang === 'en' ? 'en' : 'nl',
+            intent: 'selfcopy',
+          }),
+        });
+        successEl.classList.remove('hidden');
+        successEl.focus();
+        form.classList.add('hidden');
+      } catch {
+        showFallback();
+      }
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       errorEl.classList.add('hidden');
@@ -228,6 +275,7 @@ const f = configurator.form;
         website: fieldValue('website'),
         selection: getSelection(),
         locale: document.documentElement.lang === 'en' ? 'en' : 'nl',
+        intent: 'quote' as const,
       };
 
       // Zelfde validatie als de server → directe feedback zonder roundtrip.
