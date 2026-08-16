@@ -32,8 +32,9 @@ import DemoMeertalig from './demos/DemoMeertalig.astro';
 import DemoScrollvideo from './demos/DemoScrollvideo.astro';
 import DemoCadeau from './demos/DemoCadeau.astro';
 
-import { content } from '../data/content';
-const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, demoChatbot, demoIntake, demoKaart, demoMeertalig, demoPortaal, demoReviews, demoScrollvideo, menuIntro } = content(Astro.currentLocale);
+import { content, toLocale } from '../data/content';
+const taal = toLocale(Astro.currentLocale);
+const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, demoChatbot, demoIntake, demoKaart, demoMeertalig, demoPortaal, demoReviews, demoScrollvideo, menuIntro } = content(taal);
 ---
 <SiteNav />
   <main id="main">
@@ -87,7 +88,7 @@ const { demoAgenda, demoBeforeAfter, demoBestellen, demoCadeau, demoCalculator, 
       <DemoPortaal />
     </MenuSection>
 
-    <MenuSection id="menu-multilingual" index={10} kicker={demoMeertalig.kicker} title={demoMeertalig.en.title} lead={demoMeertalig.en.lead} addonIds={['meertalig']} pacing="fade">
+    <MenuSection id="menu-multilingual" index={10} kicker={demoMeertalig.kicker} title={demoMeertalig[taal].title} lead={demoMeertalig[taal].lead} addonIds={['meertalig']} pacing="fade">
       <DemoMeertalig />
     </MenuSection>
 

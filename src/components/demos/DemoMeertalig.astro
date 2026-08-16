@@ -5,15 +5,19 @@
  * class-toggle regelen de wissel (soepel, en hoogte-stabiel doordat
  * beide versies in dezelfde grid-cel gestapeld staan).
  */
-import { content } from '../../data/content';
-const { demoMeertalig } = content(Astro.currentLocale);
+import { content, toLocale } from '../../data/content';
+const taal = toLocale(Astro.currentLocale);
+const { demoMeertalig } = content(taal);
+/* De demo begint bewust in de ándere taal dan de pagina: dan laat de knop
+   ook echt iets zien als je hem indrukt. */
+const start = taal === 'en' ? 'nl' : 'en';
 const languages = [
   { code: 'nl', label: 'NL', flag: '🇳🇱', copy: demoMeertalig.nl },
   { code: 'en', label: 'EN', flag: '🇬🇧', copy: demoMeertalig.en },
 ];
 ---
 
-<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang="en">
+<div class="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-7" data-meertalig data-lang={start}>
   <div class="flex justify-end">
     <div class="flex gap-1 rounded-full border border-line p-1" role="group" aria-label={demoMeertalig.ariaLabel}>
       {
@@ -22,7 +26,7 @@ const languages = [
             type="button"
             class="rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors aria-pressed:bg-accent aria-pressed:text-white"
             data-lang-btn={lang.code}
-            aria-pressed={lang.code === 'en' ? 'true' : 'false'}
+            aria-pressed={lang.code === start ? 'true' : 'false'}
           >
             <span aria-hidden="true">{lang.flag}</span> {lang.label}
           </button>
@@ -39,7 +43,7 @@ const languages = [
           class="lang-panel col-start-1 row-start-1"
           data-lang-panel={lang.code}
           lang={lang.code}
-          aria-hidden={lang.code === 'nl' ? undefined : 'true'}
+          aria-hidden={lang.code === start ? undefined : 'true'}
         >
           <h3 class="font-display text-2xl font-semibold">{lang.copy.title}</h3>
           <p class="text-muted mt-2 leading-relaxed">{lang.copy.lead}</p>

@@ -6,11 +6,28 @@
  * onderhoudsplan. Rechts (sticky): live meerekenende offerte + leadformulier.
  */
 import { addons, basePackages, carePlans, presets } from '../data/pricing';
+import { calcTotals } from '../lib/calc';
 import { content, toLocale } from '../data/content';
 const taal = toLocale(Astro.currentLocale);
 const { configurator, pricing } = content(taal);
 import { eur, inbegrepen, perMaand, priceLine } from '../lib/format';
 import LeadForm from './LeadForm.astro';
+
+/* Prijs per snelstart, zodat de chip meteen laat zien waar je uitkomt. */
+const presetTotalen = new Map(
+  presets.map((preset) => [
+    preset.id,
+    calcTotals({ base: preset.base, addons: [...preset.addons], care: 'basis' }),
+  ]),
+);
+/* Waarde van wat een pakket gratis meebrengt — uit pricing.ts, dus nooit
+   uit de pas met de echte bedragen. */
+const inbegrepenWaarde = new Map(
+  basePackages.map((pkg) => [
+    pkg.id,
+    pkg.includedAddons.reduce((som, id) => som + (addons.find((a) => a.id === id)?.upfront ?? 0), 0),
+  ]),
+);
 ---
 
 <section id="configurator" class="grain bg-ink py-16 text-cream sm:py-24" data-configurator>
@@ -36,7 +53,13 @@ import LeadForm from './LeadForm.astro';
                 aria-pressed="false"
               >
                 <span aria-hidden="true">{preset.icon}</span>
-                {pricing.presets[preset.id].label}
+                <span class="flex flex-col items-start leading-tight">
+                  {pricing.presets[preset.id].label}
+                  <span class="text-muted-dark text-xs font-normal">
+                    {configurator.presetFrom} {eur(presetTotalen.get(preset.id)!.upfront, taal)} +{' '}
+                    {eur(presetTotalen.get(preset.id)!.monthly, taal)}{perMaand(taal)}
+                  </span>
+                </span>
               </button>
             ))
           }
@@ -73,6 +96,11 @@ import LeadForm from './LeadForm.astro';
                       {pricing.addons[id].name} <span class="text-accent-soft">{configurator.freeLabel}</span>
                     </li>
                   ))}
+                  {inbegrepenWaarde.get(pkg.id)! > 0 && (
+                    <li class="text-accent-soft pt-1 font-medium">
+                      {configurator.includedWorth} {eur(inbegrepenWaarde.get(pkg.id)!, taal)}
+                    </li>
+                  )}
                 </ul>
               </label>
             ))
@@ -140,6 +168,20 @@ import LeadForm from './LeadForm.astro';
             ))
           }
         </div>
+
+        {/* Hoort bij de onderhoudsplannen hierboven — en houdt de sticky
+            offerte kort genoeg om binnen het scherm te passen. */}
+        <details class="mt-4 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm">
+          <summary class="cursor-pointer font-medium">{configurator.monthlyTitle}</summary>
+          <ul class="text-muted-dark mt-3 grid gap-1.5 text-xs">
+            {configurator.monthlyItems.map((regel) => (
+              <li class="flex gap-2">
+                <span class="text-accent" aria-hidden="true">·</span>
+                {regel}
+              </li>
+            ))}
+          </ul>
+        </details>
       </div>
 
       {/* ---- Sticky offerte ---- */}
@@ -161,6 +203,18 @@ import LeadForm from './LeadForm.astro';
           </div>
         </div>
         <p class="text-muted-dark mt-3 text-xs">{configurator.disclaimer}</p>
+
+        {/* Staat allemaal al in de voorwaarden; hier zichtbaar op het moment
+            dat de bezoeker naar het bedrag kijkt. */}
+        <ul class="mt-4 grid gap-1.5 text-xs text-cream/85">
+          {configurator.assurances.map((regel) => (
+            <li class="flex gap-2">
+              <span class="text-accent" aria-hidden="true">✓</span>
+              {regel}
+            </li>
+          ))}
+        </ul>
+
 
         <LeadForm />
       </aside>

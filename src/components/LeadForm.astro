@@ -58,7 +58,8 @@ const f = configurator.form;
       <input
         id="lead-email"
         name="email"
-        type="email"
+          type="email"
+        inputmode="email"
         required
         autocomplete="email"
         class="lead-input mt-1 w-full"
@@ -76,7 +77,7 @@ const f = configurator.form;
     <input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off" />
   </div>
 
-  <p class="hidden text-sm font-medium text-red-300" data-lead-error aria-live="assertive"></p>
+  <p id="lead-error" class="hidden text-sm font-medium text-red-300" data-lead-error role="alert"></p>
 
   <button
     type="submit"
@@ -115,7 +116,7 @@ const f = configurator.form;
 </form>
 
 {/* Succes-paneel vervangt het formulier na verzending */}
-<div class="mt-6 hidden rounded-xl border border-green-300/40 bg-green-300/10 p-5" data-lead-success aria-live="polite">
+<div class="mt-6 hidden rounded-xl border border-green-300/40 bg-green-300/10 p-5" data-lead-success role="status" tabindex="-1">
   <p class="text-2xl" aria-hidden="true">🎉</p>
   <p class="mt-2 font-medium">{f.success}</p>
 </div>
@@ -126,10 +127,15 @@ const f = configurator.form;
     border: 1px solid rgb(255 255 255 / 0.2);
     background: rgb(255 255 255 / 0.06);
     padding: 0.65rem 1rem;
-    font-size: 0.9rem;
+    /* 16px: onder die grens zoomt iOS Safari bij focus automatisch in. */
+    font-size: 1rem;
     color: var(--color-cream);
-    outline: none;
     transition: border-color 0.15s ease;
+  }
+  @media (min-width: 640px) {
+    .lead-input {
+      font-size: 0.9rem;
+    }
   }
   .lead-input:focus {
     border-color: var(--accent);
@@ -178,9 +184,16 @@ const f = configurator.form;
     });
 
     const markInvalid = (names: string[]) => {
-      for (const el of form.querySelectorAll('.lead-input')) el.removeAttribute('data-invalid');
+      for (const el of form.querySelectorAll('.lead-input')) {
+        el.removeAttribute('data-invalid');
+        el.removeAttribute('aria-invalid');
+        el.removeAttribute('aria-describedby');
+      }
       for (const name of names) {
-        (form.elements.namedItem(name) as HTMLElement | null)?.setAttribute('data-invalid', '');
+        const el = form.elements.namedItem(name) as HTMLElement | null;
+        el?.setAttribute('data-invalid', '');
+        el?.setAttribute('aria-invalid', 'true');
+        el?.setAttribute('aria-describedby', 'lead-error');
       }
     };
 

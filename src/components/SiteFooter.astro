@@ -49,7 +49,12 @@ import Logo from './Logo.astro';
         </p>
         {site.addressStreet && <p class="mt-2">{site.addressStreet}</p>}
         {site.addressCity && <p>{site.addressCity}</p>}
-        <p class="mt-2">{footer.kvkLabel}: {footer.kvk} · {footer.btwLabel}: {footer.btw}</p>
+        {/* De btw-regel verschijnt pas als er een echt nummer staat; een
+            zichtbare {BTW}-placeholder is erger dan geen btw-regel. */}
+        <p class="mt-2">
+          {footer.kvkLabel}: {footer.kvk}
+          {!footer.btw.startsWith('{') && ` · ${footer.btwLabel}: ${footer.btw}`}
+        </p>
       </div>
     </div>
 

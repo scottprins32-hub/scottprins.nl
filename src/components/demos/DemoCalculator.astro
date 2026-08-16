@@ -23,7 +23,7 @@ const { demoCalculator } = content(Astro.currentLocale);
           <input
             type="range"
             id={`calc-${slider.id}`}
-            class="calc-range mt-2 w-full accent-[var(--accent)]"
+            class="calc-range mt-2 w-full"
             data-calc-slider={slider.id}
             min={slider.min}
             max={slider.max}
@@ -81,3 +81,39 @@ const { demoCalculator } = content(Astro.currentLocale);
     update();
   }
 </script>
+
+<style>
+  /* 44px raakvlak met een visueel dunne schuif: de duim heeft ruimte,
+     het ontwerp verandert niet. */
+  .calc-range {
+    height: 44px;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .calc-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-line);
+  }
+  .calc-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    margin-top: -11px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .calc-range::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-line);
+  }
+  .calc-range::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+</style>

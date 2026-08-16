@@ -83,7 +83,7 @@ export const basePackages: BasePackage[] = [
     id: 'interactief',
     upfront: 995,
     monthly: 25,
-    includedAddons: ['meertalig', 'beforeafter', 'kaart', 'intake', 'reviews'],
+    includedAddons: ['beforeafter', 'kaart', 'intake', 'reviews', 'agenda'],
   },
 ];
 
@@ -101,12 +101,6 @@ export const addons: Addon[] = [
     monthly: 15,
     demoSectionId: 'menu-chatbot',
     popular: true,
-  },
-  {
-    id: 'ai-telefonist',
-    upfront: 345,
-    monthly: 49,
-    demoSectionId: null,
   },
   {
     id: 'bestellen',
@@ -168,6 +162,12 @@ export const addons: Addon[] = [
     upfront: 195,
     monthly: 0,
     demoSectionId: 'menu-giftcards',
+  },
+  {
+    id: 'ai-telefonist',
+    upfront: 345,
+    monthly: 49,
+    demoSectionId: null,
   },
   {
     id: 'sms',

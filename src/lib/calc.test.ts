@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addons } from '../data/pricing';
+import { addons, basePackages } from '../data/pricing';
 import { calcTotals, isIncluded, sanitizeSelection, type Selection } from './calc';
 
 const sel = (partial: Partial<Selection>): Selection => ({
@@ -85,8 +85,10 @@ describe('calcTotals — inbegrepen add-ons per pakket', () => {
     });
   });
 
-  it('alle vijf inbegrepen extra’s van Interactief samen kosten niets extra', () => {
-    const included: Selection['addons'] = ['meertalig', 'beforeafter', 'kaart', 'intake', 'reviews'];
+  it('de inbegrepen extra’s van Interactief samen kosten niets extra', () => {
+    // Uit pricing.ts halen, niet overtypen: anders breekt deze test elke
+    // keer dat de samenstelling van een pakket wijzigt.
+    const included = [...basePackages.find((p) => p.id === 'interactief')!.includedAddons];
     expect(calcTotals(sel({ base: 'interactief', addons: included }))).toEqual({
       upfront: 995,
       monthly: 25,
@@ -101,12 +103,16 @@ describe('calcTotals — inbegrepen add-ons per pakket', () => {
   });
 
   it('kitchen sink: interactief + alle 15 add-ons + premium', () => {
-    // Handmatig narekenen als integriteitscheck op pricing.ts:
-    // som add-ons 2255/78; Interactief includeert 355 eenmalig en 5 p/m.
+    // Integriteitscheck op pricing.ts: alles bij elkaar, min wat het pakket
+    // al gratis meebrengt, plus de premium-opslag.
     const all = addons.map((a) => a.id);
+    const inter = basePackages.find((p) => p.id === 'interactief')!;
+    const gratis = inter.includedAddons.map((id) => addons.find((a) => a.id === id)!);
+    const somUpfront = addons.reduce((s, a) => s + a.upfront, 0);
+    const somMonthly = addons.reduce((s, a) => s + a.monthly, 0);
     expect(calcTotals(sel({ base: 'interactief', addons: all, care: 'premium' }))).toEqual({
-      upfront: 995 + 2255 - 355,
-      monthly: 25 + (78 - 5) + 39,
+      upfront: inter.upfront + somUpfront - gratis.reduce((s, a) => s + a.upfront, 0),
+      monthly: inter.monthly + (somMonthly - gratis.reduce((s, a) => s + a.monthly, 0)) + 39,
     });
   });
 });

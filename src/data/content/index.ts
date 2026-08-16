@@ -30,6 +30,10 @@ export function content(locale?: string | null) {
 
 /** Pad naar dezelfde pagina in de andere taal. */
 export function altPath(path: string, naar: Locale): string {
+  /* Altijd mét afsluitende slash: de server 301't /voorwaarden naar
+     /voorwaarden/, en een canonical die naar een redirect wijst kost
+     crawlbudget en verwatert het signaal. */
   const kaal = path.replace(/^\/en(?=\/|$)/, '') || '/';
-  return naar === 'en' ? `/en${kaal === '/' ? '' : kaal}` || '/en' : kaal;
+  const met = kaal.endsWith('/') ? kaal : `${kaal}/`;
+  return naar === 'en' ? (met === '/' ? '/en/' : `/en${met}`) : met;
 }

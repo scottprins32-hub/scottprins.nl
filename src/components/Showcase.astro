@@ -94,7 +94,7 @@ const kaarten = showcase.sites.map((s) => {
                     <img
                       src={`${s.image}-1200.webp`}
                       srcset={`${s.image}-600.webp 600w, ${s.image}-1200.webp 1200w`}
-                      sizes="(min-width: 768px) 45vw, 90vw"
+                      sizes="(min-width: 1192px) 544px, (min-width: 768px) 45vw, 90vw"
                       width="1200"
                       height="687"
                       alt=""
@@ -171,6 +171,9 @@ const kaarten = showcase.sites.map((s) => {
                     <span aria-hidden="true">↗</span>
                     <span class="sr-only">— {s.name}, {showcase.newTab}</span>
                   </a>
+                  {/* De adresbalk laat straks een base44-adres zien; dat mag
+                      geen verrassing zijn op een pagina die op eerlijkheid drijft. */}
+                  <span class="text-muted w-full text-xs">{showcase.demoEnvNote}</span>
                   {/* Bewust een tekstknop en geen tweede vlak: hij mag de
                       zwarte knop niet beconcurreren. */}
                   <button

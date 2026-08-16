@@ -59,9 +59,11 @@ import Logo from './Logo.astro';
           data-hero-headline
         >
           {hero.headline.split(' ').map((word, i) => (
-            <span class="hero-word">
-              <span style={`--i:${i}`}>{word}</span>
-            </span>
+            <>
+              <span class="hero-word">
+                <span style={`--i:${i}`}>{word}</span>
+              </span>{' '}
+            </>
           ))}
         </h1>
 
@@ -224,6 +226,9 @@ import Logo from './Logo.astro';
      elke gewonnen pixel breedte maakt de opbouw letterlijk beter leesbaar. */
   @media (max-width: 1023px) {
     .area-scene {
+      /* clip: de gekantelde scène is hoger dan zijn grid-rij en schilderde
+         anders dwars over de prijsteller en de knoppen heen (320x568). */
+      overflow: clip;
       margin-inline: -1.25rem;
       /* Lucht boven en onder: de gekantelde scène steekt iets buiten zijn
          eigen kader uit en raakte anders de kopregel. */
@@ -233,6 +238,19 @@ import Logo from './Logo.astro';
        naar buiten, en die marge vangt dat op. */
     .area-scene :global(.scene) {
       width: 92%;
+    }
+  }
+
+  /* Op een kort scherm is er simpelweg geen ruimte voor de scène; dan gaat
+     de hoogte naar de kop, de prijs en de knoppen. Het scène-JS blijft
+     gewoon draaien, het element is alleen niet zichtbaar. */
+  @media (max-width: 1023px) and (max-height: 660px) {
+    .area-scene {
+      display: none;
+    }
+    .hero-layout {
+      grid-template-areas: 'head' 'meta';
+      grid-template-rows: auto auto;
     }
   }
 
@@ -255,7 +273,6 @@ import Logo from './Logo.astro';
   }
   .hero-word > span {
     display: inline-block;
-    padding-right: 0.22em;
   }
   .hero-hint {
     display: none;
@@ -323,7 +340,10 @@ import Logo from './Logo.astro';
 
     ledgerCta.addEventListener('click', () => {
       applyPreset(DEMO_BASE, shownAddons);
-      document.querySelector('#configurator')?.scrollIntoView({ behavior: 'smooth' });
+      /* Niet zelf scrollen: een echte anker-klik laat Base.astro eerst alle
+         deferred secties openklappen, anders landt de sprong duizenden
+         pixels te vroeg. Showcase.astro doet het net zo. */
+      document.querySelector<HTMLAnchorElement>('a[href="#configurator"]')?.click();
     });
 
     // Beginstand: het kale basispakket staat er al.
@@ -368,7 +388,10 @@ import Logo from './Logo.astro';
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=300%',
+          /* Op een telefoon kostte '+=300%' vier volle schermen scroll
+             voordat sectie 2 begon; op desktop mag de opbouw langer duren. */
+          end: () => (window.matchMedia('(min-width: 1024px)').matches ? '+=300%' : '+=140%'),
+          invalidateOnRefresh: true,
           // Kort scrub-getal: de scène moet ónder je vinger meebewegen,
           // niet als een video naijlen. Dat is precies het verschil tussen
           // "dit reageert op mij" en "dit speelt gewoon af".

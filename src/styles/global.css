@@ -287,6 +287,39 @@ section[id],
 .marquee:hover .marquee-track {
   animation-play-state: paused;
 }
+/* Op een touchscreen valt er niets te hoveren: daar wordt het een veegrij,
+   zodat een review ook echt te lezen is. */
+@media (hover: none) {
+  .marquee {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .marquee-track {
+    animation: none;
+    width: max-content;
+  }
+  .marquee figure {
+    scroll-snap-align: center;
+  }
+}
+.marquee:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Zichtbare focus op de configuratorkaarten en de formuliervelden. */
+.config-card:has(:focus-visible),
+.lead-input:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+/* De cart-pill wijkt zodra de configurator zelf in beeld staat. */
+.cart-pill-off {
+  opacity: 0;
+  transform: translate(-50%, 5rem);
+  pointer-events: none;
+}
 
 /* ---------------------- Reduced motion ----------------------------- */
 /* GSAP-animaties zitten achter gsap.matchMedia(); dit dekt de rest.   */

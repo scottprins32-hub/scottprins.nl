@@ -21,6 +21,18 @@ const TO_ADDRESS = 'scottprins32@gmail.com';
 // Na domein-verificatie (zie README) kun je dit wijzigen naar bijv. site@scottprins.nl.
 const FROM_ADDRESS = 'Scott Prins Webdesign <onboarding@resend.dev>';
 
+/* Simpele limiter per IP: vijf aanvragen per uur is ruim voor een mens en
+   onbruikbaar voor een bot. In-memory, dus per serverless-instantie — genoeg
+   om spam te temperen zonder een externe store. */
+const hits = new Map<string, number[]>();
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const raam = (hits.get(ip) ?? []).filter((t) => now - t < 3_600_000);
+  raam.push(now);
+  hits.set(ip, raam);
+  return raam.length > 5;
+}
+
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), {
     status,
@@ -68,6 +80,9 @@ export const POST: APIRoute = async ({ request }) => {
 
   // getSecret leest runtime-omgeving (Vercel) én .env (lokaal): een key die
   // je later op Vercel toevoegt werkt direct, zonder rebuild.
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
+  if (rateLimited(ip)) return json(429, { ok: false, error: 'rate_limited' });
+
   const apiKey = getSecret('RESEND_API_KEY');
   if (!apiKey) {
     return json(503, { ok: false, error: 'email_not_configured' });
@@ -84,6 +99,10 @@ export const POST: APIRoute = async ({ request }) => {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
+      /* Zonder timeout blijft de functie hangen als Resend traag is en ziet
+         de bezoeker een spinner die nooit stopt. De catch geeft dan 502 en
+         de client toont de mailto-fallback. */
+      signal: AbortSignal.timeout(8000),
       body: JSON.stringify({
         from: FROM_ADDRESS,
         to: [TO_ADDRESS],

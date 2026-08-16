@@ -10,11 +10,11 @@ import { site } from '../site';
 /* ------------------------------ Hero ------------------------------ */
 
 const hero = {
-  eyebrow: 'Webdesign uit Nederland · vaste prijzen',
+  eyebrow: 'Website laten maken · vaste prijs vanaf € 495 · Badhoevedorp',
   /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
   headline: 'Websites die werken. Gebouwd in dagen, niet maanden.',
   /** Vaste ondertitel onder de H1. */
-  sub: 'Kies je basis, kies je extra’s — en zie precies wat je krijgt terwijl je site zichzelf bouwt. Live binnen 5 werkdagen, altijd een vaste prijs.',
+  sub: 'Kies je basis, kies je extra’s — en zie precies wat je krijgt terwijl je site zichzelf bouwt. Vaste prijs, en binnen 5 werkdagen online zodra jouw teksten en foto’s binnen zijn.',
   actions: {
     primary: { label: 'Stel je website samen', href: '#configurator' },
     secondary: { label: 'Bekijk de menukaart', href: '#menu' },
@@ -24,7 +24,7 @@ const hero = {
    * `text` is de regel die tijdens het scrollen meeloopt met de bouw.
    */
   days: [
-    { label: 'Schets', text: 'Dag 1 — we beginnen bij jouw verhaal. Geen template.' },
+    { label: 'Schets', text: 'Dag 1 — ik bel je een half uur: wat verkoop je, aan wie, en wat moet die site opleveren.' },
     { label: 'Ontwerp', text: 'Dag 2 — jouw kleuren, jouw foto’s, jouw toon.' },
     { label: 'Bouwen', text: 'Dag 3 — alles wat je hier ziet werken, kun je bestellen.' },
     { label: 'Content', text: 'Dag 4 — teksten, prijzen en openingstijden staan erin. En dan gaat het licht aan.' },
@@ -195,7 +195,8 @@ const demoKaart = {
     },
   ],
   loadLabel: 'Kaart laden',
-  privacyNote: 'De kaart laadt pas als je ’m in beeld scrolt — scheelt data en trackers.',
+  privacyNote: 'De kaart laadt pas als jíj erop klikt — daarna gaat er wél een verzoek naar Google. Zo hoeft er op je site geen cookiebanner.',
+  loadButton: 'Kaart laden (laadt Google Maps en zet cookies van Google)',
 } as const;
 
 /* Demo 4 — Prijscalculator (fictief klusbedrijf) */
@@ -245,18 +246,19 @@ const demoBestellen = {
 /* Demo 6 — Reviews-wall */
 const demoReviews = {
   kicker: 'Optie 6',
-  ariaLabel: 'Voorbeeld-reviews van Google',
+  ariaLabel: 'Verzonnen voorbeeld-reviews voor deze demo',
   title: 'Reviews-wall',
-  lead: 'Je Google-reviews, automatisch vers en stijlvol in beeld. Deze wall scrolt vanzelf.',
+  lead: 'Je échte Google-reviews, automatisch vers en stijlvol in beeld. Veeg erdoorheen — op desktop scrolt hij vanzelf.',
+  demoNote: 'Verzonnen reviews van een niet-bestaande salon. Op jouw site staan hier je échte Google-reviews.',
   reviews: [
-    { name: 'Sanne V.', stars: 5, text: 'Binnen een week een site waar ik écht trots op ben. Snelle communicatie, vaste prijs, geen verrassingen.' },
-    { name: 'Mehmet K.', stars: 5, text: 'De online agenda scheelt me elke week uren aan telefoontjes. Had ik veel eerder moeten doen.' },
-    { name: 'Lisa de B.', stars: 5, text: 'Eindelijk iemand die gewoon doet wat hij belooft. Site stond live op dag vier.' },
-    { name: 'Peter J.', stars: 4, text: 'Strakke site, goed vindbaar in Google. Kleine wijzigingen worden razendsnel opgepakt.' },
-    { name: 'Fatima A.', stars: 5, text: 'De chatbot beantwoordt ’s avonds de vragen die ik vroeger allemaal zelf terugbelde.' },
-    { name: 'Joris T.', stars: 5, text: 'Van bezorgplatform naar eigen bestelsite: de commissie die ik bespaar betaalt de site dubbel terug.' },
-    { name: 'Anouk R.', stars: 5, text: 'Duidelijke menukaart met prijzen, dus je weet vooraf waar je aan toe bent. Verademing.' },
-    { name: 'Bas W.', stars: 5, text: 'Mijn oude site was uit 2011. Het verschil? Klanten zeggen nu: “wat zien jullie er professioneel uit”.' },
+    { name: 'Sanne V.', stars: 5, text: 'Voor het eerst een kleuring waar ik echt blij mee ben. En ik kon ’s avonds om elf uur nog online een plekje pakken.' },
+    { name: 'Mehmet K.', stars: 5, text: 'Op tijd geholpen, netjes geknipt, pinnen en klaar. Niets op aan te merken.' },
+    { name: 'Lisa de B.', stars: 5, text: 'Mijn zoon van 6 zat voor het eerst stil in de stoel. Petje af.' },
+    { name: 'Peter J.', stars: 4, text: 'Prima knipbeurt en een eerlijke prijs. Alleen was het even zoeken naar een parkeerplek.' },
+    { name: 'Fatima A.', stars: 5, text: 'Zaterdagavond een vraag geappt, meteen antwoord. Maandag geknipt.' },
+    { name: 'Joris T.', stars: 5, text: 'Al drie jaar klant. Ze weten precies wat ik bedoel met “niet te kort”.' },
+    { name: 'Anouk R.', stars: 5, text: 'De cadeaubon voor mijn moeder stond binnen een minuut in haar mail. Top geregeld.' },
+    { name: 'Bas W.', stars: 5, text: 'Een sms-herinnering een dag van tevoren — daardoor vergeet ik mijn afspraak nooit meer.' },
   ],
 } as const;
 
@@ -374,7 +376,7 @@ const demoMeertalig = {
 const demoScrollvideo = {
   kicker: 'Optie 11',
   title: 'Scroll-video / animaties',
-  lead: 'Die opening die je net zag — website die zichzelf opbouwt terwijl je scrolt? Dat is deze optie. Hieronder speelt hij nog een keer af.',
+  lead: 'Die opening die je net zag, de site die zichzelf opbouwt terwijl je scrolt? Dat is deze optie. Hieronder speelt hij nog een keer af.',
   replay: 'Speel opnieuw af',
 } as const;
 
@@ -402,7 +404,7 @@ const configurator = {
   title: 'Jouw website, jouw prijs.',
   lead: 'Kies een basis, zet je extra’s aan (wat je onderweg toevoegde staat al klaar) en zie meteen wat het kost.',
   presetTitle: 'Snel starten — wat voor zaak heb je?',
-  presetLead: 'Eén tik en er staat een voorstel klaar dat past bij jouw vak. Daarna pas je alles gewoon aan.',
+  presetLead: 'Eén tik en er staat een compleet voorstel klaar dat past bij jouw vak — inclusief prijs. Daarna pas je alles gewoon aan.',
   baseTitle: 'Kies je basis',
   addonsTitle: 'Kies je extra’s',
   addonsNoDemoNote: 'Geen demo op deze pagina — vraag ernaar, dan laat ik ’m live zien.',
@@ -410,10 +412,26 @@ const configurator = {
   quoteTitle: 'Jouw samenstelling',
   upfrontLabel: 'Eenmalig',
   monthlyLabel: 'Per maand',
-  disclaimer: 'Richtprijs excl. btw — definitieve offerte na kort gesprek, altijd vaste prijs.',
+  disclaimer: 'Dit is de prijs, excl. btw. Je krijgt hem één op één terug in je offerte — hij gaat alleen omhoog als jíj er iets bij kiest.',
   cartOne: 'optie',
   cartMany: 'opties',
   popularBadge: 'Populair',
+  /* 13 — staan alle drie al in de voorwaarden; hier alleen zichtbaar gemaakt. */
+  assurances: [
+    'Domein op jouw naam — vanaf dag één',
+    'Maandelijks opzegbaar — geen minimumlooptijd',
+    'Stop je? Alle bestanden mee en gratis domeinverhuizing',
+  ],
+  monthlyTitle: 'Wat betaal ik dat maandbedrag precies voor?',
+  monthlyItems: [
+    'Hosting — de computer waar je site 24/7 op draait, inclusief het slotje in de adresbalk.',
+    'Updates en beveiliging — zodat je site niet stilletjes veroudert of gehackt wordt.',
+    'Kleine wijzigingen — een nieuwe prijs, een andere foto, gewijzigde openingstijden: gewoon een appje.',
+    'De opties met doorlopende kosten die je koos (agenda, chatbot, reviews).',
+  ],
+  includedWorth: 'Samen t.w.v.',
+  cartTotal: 'totaal',
+  presetFrom: 'vanaf',
   includedBadge: 'Inbegrepen',
   freeLabel: 'gratis',
   seeDemo: 'Bekijk de demo ↑',
@@ -456,10 +474,11 @@ const showcase = {
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',
-  totalNote: 'Vaste prijs. Live binnen 5–7 werkdagen.',
+  totalNote: 'Vaste prijs. Zo’n complete site staat in 7 werkdagen live, gerekend vanaf jouw materiaal.',
   presetCta: 'Zet deze samenstelling klaar',
   openCta: 'Open de hele site',
   liveBadge: 'Bekijk live',
+  demoEnvNote: 'demo-omgeving — draait op een tijdelijk adres',
   newTab: 'opent in een nieuw tabblad',
   sites: [
     {
@@ -510,7 +529,7 @@ const showcase = {
 
 const proof = {
   kicker: 'Resultaat',
-  title: 'Dit draait al. Klik het zelf na.',
+  title: 'Dit draait al. Klik er zelf doorheen.',
   lead: 'Geen muur met klantlogo’s en geen quotes die ik zelf verzonnen heb. Wel twee echte sites die ik zelf gebouwd heb én zelf bezit — open ze en klik erdoorheen.',
   visitLabel: 'Bekijk de site',
   newTab: 'opent in een nieuw tabblad',
@@ -545,8 +564,8 @@ const proof = {
     },
   ],
   stats: [
-    { value: 25, suffix: '+', label: 'sites gebouwd' },
-    { value: 5, suffix: ' dagen', label: 'gem. oplevertijd' },
+    { value: 25, suffix: '+', label: 'sites & web-apps gebouwd — eigen projecten inbegrepen' },
+    { value: 5, suffix: ' werkdagen', label: 'van jouw materiaal tot live' },
     { value: 48, prefix: '< ', suffix: ' uur', label: 'reactietijd' },
   ],
 } as const;
@@ -610,7 +629,7 @@ const faq = {
 
 const footer = {
   kicker: 'Samenwerken?',
-  cta: 'Laten we samen iets moois maken.',
+  cta: 'Vertel me over je zaak. Dan weet je binnen 48 uur wat het kost.',
   sub: 'Vertel me over je zaak — binnen 48 uur ligt er een concreet voorstel met een vaste prijs.',
   ctaButton: 'Stel je website samen',
   phoneLine: 'Bellen of appen:',
@@ -766,9 +785,9 @@ const voorwaarden = {
 } as const;
 
 const meta = {
-  title: 'Scott Prins — Websites die werken. Gebouwd in dagen, niet maanden.',
+  title: 'Website laten maken vanaf € 495 — Scott Prins Webdesign',
   description:
-    'Snelle, moderne websites en web-apps voor kleine ondernemers. Kies je basis, kies je extra’s en zie elke optie live op deze site. Vaste prijzen, live binnen 5 werkdagen.',
+    'Website laten maken met een vaste prijs: vanaf € 495 excl. btw, live binnen 5 werkdagen. Webdesigner uit Badhoevedorp, werkt in heel Nederland. Stel je site zelf samen.',
 } as const;
 
 /* ------ Teksten in de mini-site die zichzelf bouwt (HeroScene) ------ */
@@ -814,17 +833,17 @@ const pricing = {
     visitekaartje: {
       name: 'Visitekaartje',
       description: 'Eén sterke pagina die je zaak verkoopt.',
-      includes: ['One-pager, perfect op mobiel', 'Contactformulier + WhatsApp-knop', 'Basis-SEO', 'Hosting, domein & SSL geregeld'],
+      includes: ['Eén pagina waarop alles staat, gemaakt voor de telefoon', 'Contactformulier + WhatsApp-knop', 'Vindbaar in Google op je vak en je plaats', 'Domein, hosting en het slotje in de adresbalk: geregeld'],
     },
     compleet: {
       name: 'Compleet',
       description: 'Meerdere pagina’s, klaar om te groeien.',
-      includes: ['Tot 5 pagina’s', 'Alles uit Visitekaartje', 'Koppeling met je Google Bedrijfsprofiel', 'Statistieken'],
+      includes: ['Tot 5 pagina’s', 'Alles uit Visitekaartje', 'Gekoppeld aan je Google-bedrijfsprofiel: openingstijden, route en reviews kloppen overal', 'Bezoekcijfers, zonder cookiebanner'],
     },
     interactief: {
       name: 'Interactief',
-      description: 'Voor zaken die online wérken.',
-      includes: ['Alles uit Compleet', 'Prioriteit bij wijzigingen'],
+      description: 'Voor zaken waar klanten zelf boeken, bestellen of hun dossier inzien.',
+      includes: ['Alles uit Compleet', 'Online agenda zit er gratis bij', 'Jouw wijzigingen gaan voor'],
     },
   },
   addons: {

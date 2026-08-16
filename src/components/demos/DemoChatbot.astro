@@ -42,7 +42,7 @@ const { demoChatbot } = content(Astro.currentLocale);
     <label class="sr-only" for="chat-input">{demoChatbot.placeholder}</label>
     <input
       id="chat-input"
-      class="min-w-0 flex-1 rounded-xl border border-line bg-cream px-4 py-2.5 text-sm outline-none focus:border-accent"
+      class="min-w-0 flex-1 rounded-xl border border-line bg-cream px-4 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent"
       placeholder={demoChatbot.placeholder}
       autocomplete="off"
       maxlength="200"

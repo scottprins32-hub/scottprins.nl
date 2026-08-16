@@ -10,10 +10,11 @@ const { configurator } = content(Astro.currentLocale);
 
 <a
   href="#configurator"
-  class="cart-pill fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 translate-y-20 items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream opacity-0 shadow-card-lg ring-1 ring-white/15 transition-all duration-300 hover:ring-accent motion-reduce:transition-none"
+  class="cart-pill fixed bottom-4 left-1/2 z-40 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 translate-y-20 items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-xs font-semibold whitespace-nowrap text-cream opacity-0 shadow-card-lg ring-1 ring-white/15 transition-all duration-300 hover:ring-accent sm:text-sm motion-reduce:transition-none"
   data-cart-pill
   data-cart-one={configurator.cartOne}
   data-cart-many={configurator.cartMany}
+  data-cart-total-label={configurator.cartTotal}
   aria-hidden="true"
   tabindex="-1"
 >
@@ -29,7 +30,7 @@ const { configurator } = content(Astro.currentLocale);
 
 <script>
   import { addons } from '../data/pricing';
-  import { addonCost, isIncluded } from '../lib/calc';
+  import { calcTotals, isIncluded } from '../lib/calc';
   import { eur, perMaand } from '../lib/format';
   import { subscribe } from '../scripts/store';
 
@@ -43,12 +44,16 @@ const { configurator } = content(Astro.currentLocale);
     const chosen = addons.filter(
       (a) => sel.addons.includes(a.id) && !isIncluded(sel.base, a.id),
     );
-    const upfront = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).upfront, 0);
-    const monthly = chosen.reduce((sum, a) => sum + addonCost(sel.base, a).monthly, 0);
+    /* Het hele voorstel, niet alleen de extra's: de pill toonde eerder
+       € 490 terwijl de offerte ernaast € 1.285 zei. */
+    const totals = calcTotals(sel);
 
     count.textContent = String(chosen.length);
     label.textContent = chosen.length === 1 ? pill.dataset.cartOne! : pill.dataset.cartMany!;
-    total.textContent = monthly > 0 ? `${eur(upfront)} + ${eur(monthly)}${perMaand()}` : eur(upfront);
+    total.textContent =
+      totals.monthly > 0
+        ? `${eur(totals.upfront)} + ${eur(totals.monthly)}${perMaand()}`
+        : eur(totals.upfront);
 
     const visible = chosen.length > 0;
     pill.classList.toggle('translate-y-20', !visible);
@@ -56,4 +61,13 @@ const { configurator } = content(Astro.currentLocale);
     pill.setAttribute('aria-hidden', String(!visible));
     pill.tabIndex = visible ? 0 : -1;
   });
+
+  /* In de configurator staat het totaal al groot in beeld; de pill zou daar
+     alleen maar over de knoppen heen liggen. */
+  const cfg = document.querySelector('#configurator');
+  if (cfg) {
+    new IntersectionObserver(([e]) => pill.classList.toggle('cart-pill-off', e.isIntersecting), {
+      threshold: 0,
+    }).observe(cfg);
+  }
 </script>

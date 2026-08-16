@@ -32,11 +32,22 @@ const locations = demoKaart.locations;
 
   <div class="relative aspect-[16/10] bg-cream-dim" data-kaart-frame>
     {/* Placeholder tot de iframe geladen is */}
-    <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center" data-kaart-placeholder>
+    {/* Een knop, geen div: Google mag pas geladen worden als de bezoeker
+        er zelf om vraagt. Anders staat er een tracker op de pagina van een
+        site die belooft zonder cookiebanner te kunnen. */}
+    <button
+      type="button"
+      class="absolute inset-0 flex w-full flex-col items-center justify-center gap-2 p-6 text-center transition-colors hover:bg-cream"
+      data-kaart-placeholder
+      data-kaart-load
+    >
       <span class="text-3xl" aria-hidden="true">📍</span>
-      <p class="font-medium" data-kaart-name>{locations[0].name}</p>
-      <p class="text-muted text-sm">{demoKaart.privacyNote}</p>
-    </div>
+      <span class="font-medium" data-kaart-name>{locations[0].name}</span>
+      <span class="text-muted text-sm">{demoKaart.privacyNote}</span>
+      <span class="mt-1 rounded-lg border border-line px-3 py-2 text-xs font-semibold">
+        {demoKaart.loadButton}
+      </span>
+    </button>
   </div>
 
   <p class="border-t border-line px-4 py-3 text-sm text-muted" data-kaart-address>
@@ -45,6 +56,9 @@ const locations = demoKaart.locations;
 </div>
 
 <script>
+  import { content } from '../../data/content';
+  const demoKaartTitle = content().demoKaart.title;
+
   const root = document.querySelector<HTMLElement>('[data-kaart]');
   if (root) {
     const frame = root.querySelector<HTMLElement>('[data-kaart-frame]')!;
@@ -53,8 +67,9 @@ const locations = demoKaart.locations;
     const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-loc-chip]')];
     let iframe: HTMLIFrameElement | null = null;
 
+    const taal = document.documentElement.lang === 'en' ? 'en' : 'nl';
     const embedUrl = (q: string) =>
-      `https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&hl=nl&output=embed`;
+      `https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&hl=${taal}&output=embed`;
 
     function showLocation(chip: HTMLButtonElement) {
       chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
@@ -67,7 +82,7 @@ const locations = demoKaart.locations;
       const active = chips.find((c) => c.getAttribute('aria-pressed') === 'true') ?? chips[0];
       iframe = document.createElement('iframe');
       iframe.className = 'absolute inset-0 h-full w-full border-0';
-      iframe.title = `Kaart — ${active.dataset.name}`;
+      iframe.title = `${demoKaartTitle} — ${active.dataset.name}`;
       iframe.loading = 'lazy';
       iframe.referrerPolicy = 'no-referrer-when-downgrade';
       iframe.src = embedUrl(active.dataset.q!);
@@ -75,17 +90,8 @@ const locations = demoKaart.locations;
       frame.appendChild(iframe);
     }
 
-    // Kaart pas laden als de sectie bijna in beeld is.
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          mountIframe();
-          io.disconnect();
-        }
-      },
-      { rootMargin: '300px' },
-    );
-    io.observe(frame);
+    // Geen IntersectionObserver: alleen een klik laadt Google.
+    placeholder.addEventListener('click', () => mountIframe());
 
     chips.forEach((chip) =>
       chip.addEventListener('click', () => {

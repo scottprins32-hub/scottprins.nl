@@ -8,11 +8,11 @@ import { site } from '../site';
 /* ------------------------------ Hero ------------------------------ */
 
 const hero = {
-  eyebrow: 'Web design from the Netherlands · fixed prices',
+  eyebrow: 'Website design · fixed price from €495 · Badhoevedorp',
   /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
   headline: 'Websites that work. Built in days, not months.',
   /** Vaste ondertitel onder de H1. */
-  sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Live in 5 working days, always a fixed price.',
+  sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Fixed price, and online within 5 working days once your copy and photos are in.',
   actions: {
     primary: { label: 'Build your website', href: '#configurator' },
     secondary: { label: 'See the menu', href: '#menu' },
@@ -22,7 +22,7 @@ const hero = {
    * `text` is de regel die tijdens het scrollen meeloopt met de bouw.
    */
   days: [
-    { label: 'Sketch', text: 'Day 1 — we start with your story. No template.' },
+    { label: 'Sketch', text: 'Day 1 — half an hour on the phone: what you sell, to whom, and what the site has to deliver.' },
     { label: 'Design', text: 'Day 2 — your colours, your photos, your tone.' },
     { label: 'Build', text: 'Day 3 — everything you see working here, you can order.' },
     { label: 'Content', text: 'Day 4 — copy, prices and opening hours go in. And then the lights come on.' },
@@ -193,7 +193,8 @@ const demoKaart = {
     },
   ],
   loadLabel: 'Load map',
-  privacyNote: 'The map only loads once you scroll it into view — saves data and trackers.',
+  privacyNote: 'The map only loads when you click it — after that a request does go to Google. That way your site needs no cookie banner.',
+  loadButton: 'Load map (loads Google Maps and sets Google cookies)',
 } as const;
 
 /* Demo 4 — Prijscalculator (fictief klusbedrijf) */
@@ -243,18 +244,19 @@ const demoBestellen = {
 /* Demo 6 — Reviews-wall */
 const demoReviews = {
   kicker: 'Option 6',
-  ariaLabel: 'Example Google reviews',
+  ariaLabel: 'Made-up example reviews for this demo',
   title: 'Reviews wall',
-  lead: 'Your Google reviews, always fresh and nicely presented. This wall scrolls by itself.',
+  lead: 'Your real Google reviews, always fresh and nicely presented. Swipe through them — on desktop it scrolls by itself.',
+  demoNote: 'Made-up reviews for a salon that does not exist. On your site these are your real Google reviews.',
   reviews: [
-    { name: 'Sanne V.', stars: 5, text: 'A site I’m genuinely proud of, within a week. Quick replies, fixed price, no surprises.' },
-    { name: 'Mehmet K.', stars: 5, text: 'The online booking saves me hours of phone calls every week. Should have done it far sooner.' },
-    { name: 'Lisa de B.', stars: 5, text: 'Finally someone who just does what he promises. Site was live on day four.' },
-    { name: 'Peter J.', stars: 4, text: 'Tidy site, easy to find in Google. Small changes get picked up fast.' },
-    { name: 'Fatima A.', stars: 5, text: 'The chatbot handles the evening questions I used to ring back about myself.' },
-    { name: 'Joris T.', stars: 5, text: 'From delivery platform to my own ordering site: the commission I save pays for the site twice over.' },
-    { name: 'Anouk R.', stars: 5, text: 'A clear menu with prices, so you know where you stand up front. Refreshing.' },
-    { name: 'Bas W.', stars: 5, text: 'My old site was from 2011. The difference? Customers now say: “you look really professional”.' },
+    { name: 'Sanne V.', stars: 5, text: 'First colour I have genuinely been happy with. And I could still grab a slot online at eleven at night.' },
+    { name: 'Mehmet K.', stars: 5, text: 'Seen on time, neat cut, paid and done. Nothing to complain about.' },
+    { name: 'Lisa de B.', stars: 5, text: 'My six-year-old sat still in the chair for the first time ever. Hats off.' },
+    { name: 'Peter J.', stars: 4, text: 'Good cut and a fair price. Only downside was finding a parking spot.' },
+    { name: 'Fatima A.', stars: 5, text: 'Messaged a question on Saturday evening, got an answer straight away. Cut on Monday.' },
+    { name: 'Joris T.', stars: 5, text: 'Three years a customer now. They know exactly what I mean by “not too short”.' },
+    { name: 'Anouk R.', stars: 5, text: 'The gift card for my mum was in her inbox within a minute. Sorted.' },
+    { name: 'Bas W.', stars: 5, text: 'A text reminder the day before, so I never forget my appointment any more.' },
   ],
 } as const;
 
@@ -372,7 +374,7 @@ const demoMeertalig = {
 const demoScrollvideo = {
   kicker: 'Option 11',
   title: 'Scroll video & animation',
-  lead: 'That opening you just saw — a website building itself while you scroll? That’s this option. It plays once more below.',
+  lead: 'That opening you just saw, the site building itself while you scroll? That’s this option. It plays once more below.',
   replay: 'Play again',
 } as const;
 
@@ -400,7 +402,7 @@ const configurator = {
   title: 'Your website, your price.',
   lead: 'Pick a base, switch on your extras (whatever you added along the way is already here) and see what it costs.',
   presetTitle: 'Quick start — what kind of business do you have?',
-  presetLead: 'One tap and a setup that fits your trade is ready. After that you just change what you like.',
+  presetLead: 'One tap and a complete setup that fits your trade is ready, price included. After that you just change what you like.',
   baseTitle: 'Pick your base',
   addonsTitle: 'Pick your extras',
   addonsNoDemoNote: 'No demo on this page — ask, and I’ll show it live.',
@@ -408,10 +410,26 @@ const configurator = {
   quoteTitle: 'Your build',
   upfrontLabel: 'One-off',
   monthlyLabel: 'Per month',
-  disclaimer: 'Guide price ex VAT — final quote after a short chat, always a fixed price.',
+  disclaimer: 'This is the price, ex VAT. You get it back one to one in your quote — it only goes up if you add something yourself.',
   cartOne: 'option',
   cartMany: 'options',
   popularBadge: 'Popular',
+  /* 13 — allemaal al in de voorwaarden; hier alleen zichtbaar gemaakt. */
+  assurances: [
+    'Domain in your name — from day one',
+    'Cancel monthly — no minimum term',
+    'Leaving? All files come with you and the domain transfer is free',
+  ],
+  monthlyTitle: 'What exactly am I paying that monthly amount for?',
+  monthlyItems: [
+    'Hosting — the computer your site runs on 24/7, including the padlock in the address bar.',
+    'Updates and security — so your site does not quietly age or get hacked.',
+    'Small changes — a new price, a different photo, changed opening hours: just send a message.',
+    'The options with running costs that you chose (booking, chatbot, reviews).',
+  ],
+  includedWorth: 'Together worth',
+  cartTotal: 'total',
+  presetFrom: 'from',
   includedBadge: 'Included',
   freeLabel: 'free',
   seeDemo: 'See the demo ↑',
@@ -454,10 +472,11 @@ const showcase = {
   lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
   contentsLabel: 'What’s in it',
   totalLabel: 'This site',
-  totalNote: 'Fixed price. Live in 5–7 working days.',
+  totalNote: 'Fixed price. A complete site like this goes live in 7 working days, counted from your material.',
   presetCta: 'Load this build',
   openCta: 'Open the full site',
   liveBadge: 'View live',
+  demoEnvNote: 'demo environment — running on a temporary address',
   newTab: 'opens in a new tab',
   sites: [
     {
@@ -508,7 +527,7 @@ const showcase = {
 
 const proof = {
   kicker: 'Results',
-  title: 'This is already live. Go and click it.',
+  title: 'This is already live. Click your way through it.',
   lead: 'No wall of client logos and no quotes I made up myself. What I do have: two real sites I built and own myself — open them and click around.',
   visitLabel: 'Open the site',
   newTab: 'opens in a new tab',
@@ -543,8 +562,8 @@ const proof = {
     },
   ],
   stats: [
-    { value: 25, suffix: '+', label: 'sites built' },
-    { value: 5, suffix: ' days', label: 'avg. delivery time' },
+    { value: 25, suffix: '+', label: 'sites & web apps built — own projects included' },
+    { value: 5, suffix: ' working days', label: 'from your material to live' },
     { value: 48, prefix: '< ', suffix: ' hrs', label: 'response time' },
   ],
 } as const;
@@ -608,7 +627,7 @@ const faq = {
 
 const footer = {
   kicker: 'Work together?',
-  cta: 'Let’s make something great together.',
+  cta: 'Tell me about your business. You’ll know what it costs within 48 hours.',
   sub: 'Tell me about your business — within 48 hours you’ll have a concrete fixed-price proposal.',
   ctaButton: 'Build your website',
   phoneLine: 'Call or message:',
@@ -763,9 +782,9 @@ const voorwaarden = {
 } as const;
 
 const meta = {
-  title: 'Scott Prins — Websites that work. Built in days, not months.',
+  title: 'Website design from €495 — Scott Prins Webdesign',
   description:
-    'Fast, modern websites and web apps for small business owners. Pick your base, pick your extras and see every option live on this site. Fixed prices, live in 5 working days.',
+    'A website at a fixed price: from €495 ex VAT, live in 5 working days. Web designer based in Badhoevedorp, working across the Netherlands. Build your own site right here.',
 } as const;
 
 /* ------ Teksten in de mini-site die zichzelf bouwt (HeroScene) ------ */
@@ -811,17 +830,17 @@ const pricing = {
     visitekaartje: {
       name: 'One-Pager',
       description: 'One strong page that sells your business.',
-      includes: ['One page, perfect on mobile', 'Contact form + WhatsApp button', 'Basic SEO', 'Hosting, domain & SSL sorted'],
+      includes: ['One page with everything on it, built for the phone', 'Contact form + WhatsApp button', 'Findable in Google for your trade and your town', 'Domain, hosting and the padlock in the address bar: sorted'],
     },
     compleet: {
       name: 'Complete',
       description: 'Several pages, ready to grow.',
-      includes: ['Up to 5 pages', 'Everything in One-Pager', 'Linked to your Google Business Profile', 'Visitor stats'],
+      includes: ['Up to 5 pages', 'Everything in One-Pager', 'Linked to your Google Business Profile: opening hours, directions and reviews match everywhere', 'Visitor numbers, without a cookie banner'],
     },
     interactief: {
       name: 'Interactive',
-      description: 'For businesses that really work online.',
-      includes: ['Everything in Complete', 'Priority on changes'],
+      description: 'For businesses where customers book, order or check their own file.',
+      includes: ['Everything in Complete', 'Online booking included at no extra cost', 'Your changes go first'],
     },
   },
   addons: {

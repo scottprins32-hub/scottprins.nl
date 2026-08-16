@@ -10,14 +10,14 @@ const { demoReviews } = content(Astro.currentLocale);
 const doubled = [demoReviews.reviews, demoReviews.reviews];
 ---
 
-<div class="marquee overflow-hidden py-2" data-reviews aria-label={demoReviews.ariaLabel}>
+<div class="marquee overflow-hidden py-2" data-reviews tabindex="0" role="group" aria-label={demoReviews.ariaLabel}>
   {/* Elke helft draagt zijn eigen eind-gap (pr-4): -50% = exact één helft. */}
   <div class="marquee-track">
     {
       doubled.map((group, g) => (
         <div class="flex shrink-0 gap-4 pr-4" aria-hidden={g === 1 ? 'true' : undefined}>
           {group.map((review) => (
-            <figure class="w-72 shrink-0 rounded-2xl border border-line bg-white p-5 shadow-card">
+            <figure class="w-[min(18rem,78vw)] shrink-0 snap-center rounded-2xl border border-line bg-white p-5 shadow-card">
               <div class="flex items-center gap-2.5">
                 <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent">
                   {review.name[0]}
@@ -39,3 +39,5 @@ const doubled = [demoReviews.reviews, demoReviews.reviews];
     }
   </div>
 </div>
+
+<p class="text-muted mt-3 text-xs">{demoReviews.demoNote}</p>
