@@ -501,7 +501,7 @@ const configurator = {
  */
 const showcase = {
   kicker: 'Examples',
-  title: 'Three complete sites. Try to break them.',
+  title: 'Three complete sites. Try them yourself.',
   lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
   contentsLabel: 'What’s in it',
   totalLabel: 'This site',

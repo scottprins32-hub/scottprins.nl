@@ -503,7 +503,7 @@ const configurator = {
  */
 const showcase = {
   kicker: 'Voorbeelden',
-  title: 'Drie complete sites. Klik ze kapot.',
+  title: 'Drie complete sites. Probeer ze zelf.',
   lead: 'Hierboven staat elke optie los. Zo ziet het eruit als alles samenkomt in één site — inclusief wat zo\u2019n site dan kost. De bedrijven heb ik verzonnen; de sites werken echt.',
   contentsLabel: 'Wat zit erin',
   totalLabel: 'Deze site',

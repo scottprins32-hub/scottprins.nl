@@ -85,7 +85,7 @@ export const branchesNl: Branche[] = [
     ],
     demoTitle: 'Probeer het hieronder',
     demoLead:
-      'Dit zijn geen screenshots. De drie onderdelen die voor een praktijk het meest uitmaken staan hier live; klik ze gerust kapot.',
+      'Dit zijn geen screenshots. De drie onderdelen die voor een praktijk het meest uitmaken staan hier live. Probeer ze gerust.',
     priceTitle: 'Wat kost zo’n praktijksite?',
     priceLead:
       'Deze samenstelling — het pakket Interactief met de agenda, de digitale intake, het klantenportaal en sms-herinneringen — staat hieronder al voor je klaar. Verander gerust wat je niet nodig hebt; de prijs rekent live mee.',
@@ -129,7 +129,7 @@ export const branchesEn: Branche[] = [
     ],
     demoTitle: 'Try it below',
     demoLead:
-      'These are not screenshots. The three parts that matter most for a practice are live right here; click them to pieces.',
+      'These are not screenshots. The three parts that matter most for a practice are live right here. Try them for yourself.',
     priceTitle: 'What does a practice site like this cost?',
     priceLead:
       'This build — the Interactive package with booking, the digital intake, the customer portal and SMS reminders — is already loaded for you below. Change whatever you do not need; the price recalculates live.',
