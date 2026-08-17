@@ -232,45 +232,44 @@
         flex-wrap: wrap;
         gap: 0.75rem;
       }
-      /* Beeldvlak zonder foto: een opgebouwd kleurvlak in plaats van een
-         stockbeeld dat toch niet van deze verzonnen salon is. De bogen geven
-         het vlak richting, zodat het als ontwerp leest en niet als een
-         plaatje dat nog moest komen. */
+      /* Beeldvlak. De foto is CC0 (StockSnap, Nick Demou), dus vrij te
+         gebruiken — ook commercieel, ook zonder naamsvermelding. Hij staat
+         in deze map en wordt nergens anders vandaan geladen.
+
+         Het kleurvlak eronder blijft staan als vangnet: laadt de foto niet,
+         dan is het paneel nog steeds een bewust ontworpen vlak in plaats
+         van een gat. */
       .kunst {
         position: relative;
         aspect-ratio: 5 / 4;
         border-radius: var(--radius);
         overflow: hidden;
         background:
-          radial-gradient(85% 60% at 20% 8%, rgba(233, 205, 178, 0.95) 0%, transparent 62%),
-          radial-gradient(70% 55% at 95% 30%, rgba(154, 168, 143, 0.7) 0%, transparent 65%),
+          url("salon.webp") center / cover no-repeat,
+          radial-gradient(
+            85% 60% at 20% 8%,
+            rgba(233, 205, 178, 0.95) 0%,
+            transparent 62%
+          ),
+          radial-gradient(
+            70% 55% at 95% 30%,
+            rgba(154, 168, 143, 0.7) 0%,
+            transparent 65%
+          ),
           linear-gradient(158deg, #46583f 0%, #2c3a2e 55%, #1e2620 100%);
       }
-      /* Bogen: één herhalend patroon, van boven naar beneden uitdovend. */
-      .kunst::before {
-        content: "";
-        position: absolute;
-        inset: -25% -30% auto -30%;
-        height: 150%;
-        background-image:
-          repeating-radial-gradient(
-            circle at 50% 100%,
-            transparent 0 62px,
-            rgba(247, 243, 236, 0.3) 54px 55px
-          );
-        -webkit-mask-image: linear-gradient(to bottom, #000 5%, transparent 78%);
-        mask-image: linear-gradient(to bottom, #000 5%, transparent 78%);
-      }
+      /* Scrim onder het bijschrift: zonder deze verloop leest de cremekleurige
+         tekst niet op de lichte plekken van de foto. */
       .kunst::after {
         content: "";
         position: absolute;
         inset: 0;
-        background-image: radial-gradient(
-          rgba(255, 255, 255, 0.11) 1px,
-          transparent 1px
+        background: linear-gradient(
+          to top,
+          rgba(20, 26, 21, 0.82) 0%,
+          rgba(20, 26, 21, 0.45) 28%,
+          transparent 55%
         );
-        background-size: 4px 4px;
-        mix-blend-mode: overlay;
       }
       .kunst span {
         position: absolute;
@@ -818,7 +817,7 @@
           <div
             class="kunst"
             role="img"
-            aria-label="Sfeerbeeld van de salon: warme kleurvlakken"
+            aria-label="Scharen aan een houten wand in de salon"
           >
             <span>Sinds 2016<br />aan de Gedempte<br />Oude Gracht.</span>
           </div>
@@ -1210,6 +1209,8 @@
           <a href="https://scottprins.nl/" style="text-decoration: underline"
             >scottprins.nl</a
           >.
+          <!-- CC0 verplicht geen naamsvermelding; het is gewoon netjes. -->
+          Foto: Nick Demou via StockSnap (CC0).
         </p>
       </div>
     </footer>
