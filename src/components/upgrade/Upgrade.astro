@@ -1,0 +1,484 @@
+---
+/**
+ * Het upgrade-ding: de handtekening van de site.
+ *
+ * Bovenop ligt een verouderde site, eronder een nieuwe versie van dezelfde
+ * zaak. Met de muis kijk je erdoorheen (een vloeibare lens), en wie de site
+ * ingedrukt houdt, giet de nieuwe versie eruit. Werkt ook met een duim, met
+ * het toetsenbord (de knop Upgrade) en met prefers-reduced-motion (dan een
+ * korte overvloeier in plaats van de lens).
+ *
+ * De bezoeker kiest een branche en typt de naam van de eigen zaak: dan is
+ * het niet meer een voorbeeld, maar zijn of haar site. Die keuze gaat via
+ * scripts/state.ts mee naar de bestelbon.
+ */
+import { content, toLocale } from '../../data/content';
+import {
+  TRADE_IDS,
+  SAMPLE_NAMES,
+  DEFAULT_TRADE,
+  MAX_NAME,
+  toDomain,
+  type TradeId,
+} from '../../data/trade-ids';
+import { url } from '../../lib/url';
+import Icon from '../Icon.astro';
+import SiteBefore from './SiteBefore.astro';
+import SiteAfter from './SiteAfter.astro';
+import '../../styles/sites.css';
+
+interface Props {
+  trade?: TradeId;
+  id?: string;
+  class?: string;
+  /** Waar 'Claim deze site' heen gaat. */
+  claimHref?: string;
+}
+const { trade, id = 'upgrade', class: className = '', claimHref = '#bestellen' } = Astro.props;
+const start = trade ?? DEFAULT_TRADE;
+const locale = toLocale(Astro.currentLocale);
+const t = content(locale);
+const d = t.device;
+const exampleBase = url(locale === 'en' ? '/en/voorbeeld/' : '/voorbeeld/');
+const name = SAMPLE_NAMES[start];
+---
+
+<div
+  class:list={['device', className]}
+  id={id}
+  role="region"
+  aria-label={d.regionLabel}
+  aria-describedby={`${id}-desc`}
+  data-device
+  data-trade={start}
+  data-preset={trade}
+  data-state="idle"
+  data-example-base={exampleBase}
+  data-sr-revealed={d.srRevealed}
+  data-sr-reset={d.srReset}
+>
+  <p class="sr-only" id={`${id}-desc`}>{d.srDescription}</p>
+
+  <div class="device-controls">
+    <div class="device-tabs" role="tablist" aria-label={d.tablistLabel}>
+      {
+        TRADE_IDS.map((tid) => (
+          <button
+            type="button"
+            role="tab"
+            class="device-tab"
+            id={`${id}-tab-${tid}`}
+            aria-selected={tid === start ? 'true' : 'false'}
+            aria-controls={`${id}-stage`}
+            tabindex={tid === start ? 0 : -1}
+            data-tab={tid}
+          >
+            {t.trades[tid].tab}
+          </button>
+        ))
+      }
+    </div>
+    <label class="device-name">
+      <span class="device-name-label">{d.nameLabel}</span>
+      <input
+        type="text"
+        data-name-input
+        maxlength={MAX_NAME}
+        placeholder={d.namePlaceholder}
+        autocomplete="organization"
+        autocapitalize="words"
+        spellcheck="false"
+        enterkeyhint="done"
+      />
+    </label>
+  </div>
+
+  <div class="stage-meta" aria-hidden="true">
+    <span class="stage-domain" data-domain>{toDomain(name)}</span>
+    <span class="stage-tag stage-tag-before">{d.beforeTag}</span>
+    <span class="stage-tag stage-tag-after">{d.afterTag}</span>
+  </div>
+
+  <div class="stage" id={`${id}-stage`} role="tabpanel" aria-labelledby={`${id}-tab-${start}`} data-stage>
+    <div class="layer layer-before" data-layer="before" aria-hidden="true" inert>
+      <div class="vp">
+        {
+          TRADE_IDS.map((tid) => (
+            <div class="site" data-site={tid} hidden={tid !== start}>
+              <SiteBefore trade={tid} name={SAMPLE_NAMES[tid]} eager={tid === start} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="layer layer-after" data-layer="after" aria-hidden="true" inert>
+      <div class="vp">
+        {
+          TRADE_IDS.map((tid) => (
+            <div class="site" data-site={tid} hidden={tid !== start}>
+              <SiteAfter trade={tid} name={SAMPLE_NAMES[tid]} eager={tid === start} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="device-bar">
+    <p class="device-hint">
+      <span class="hint-fine"><Icon name="cursor-click" />{d.hintFine}</span>
+      <span class="hint-coarse"><Icon name="hand-tap" />{d.hintCoarse}</span>
+    </p>
+    <p class="device-result">
+      {d.revealedBefore} <strong data-naam>{name}</strong>. {d.revealedAfter}
+    </p>
+    <div class="device-actions">
+      <button type="button" class="btn btn-signal device-upgrade" data-upgrade data-magnetic>
+        <span class="device-upgrade-fill" aria-hidden="true"></span>
+        <span class="device-upgrade-label">{d.upgrade}</span>
+      </button>
+      <a class="btn btn-signal device-claim" href={claimHref} data-claim data-magnetic>
+        {d.claim}<Icon name="arrow-right" />
+      </a>
+      <a class="btn btn-ghost device-open" href={`${exampleBase}${start}/`} data-open>
+        {d.openFull}<Icon name="arrow-up-right" />
+      </a>
+      <button type="button" class="device-reset" data-reset>
+        <Icon name="arrow-counter-clockwise" />{d.reset}
+      </button>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" data-live></p>
+</div>
+
+<script>
+  import { initUpgrade } from '../../scripts/upgrade';
+  for (const el of document.querySelectorAll<HTMLElement>('[data-device]')) initUpgrade(el);
+</script>
+
+<style>
+  .device {
+    container: device / inline-size;
+    width: 100%;
+  }
+
+  /* -------------------------------------------------- keuzes erboven -- */
+  .device-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.25rem;
+  }
+  .device-tabs {
+    display: flex;
+    gap: 0.375rem;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Ruimte voor de focusring, die anders wordt afgekapt. */
+    padding: 4px;
+    margin: -4px;
+  }
+  .device-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .device-tab {
+    flex: none;
+    min-height: 2.75rem;
+    padding: 0 1.05rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-bone-2);
+    font-size: 0.9375rem;
+    font-weight: 520;
+    font-stretch: 104%;
+    transition:
+      background-color 0.25s var(--ease-out-quart),
+      color 0.25s var(--ease-out-quart),
+      border-color 0.25s var(--ease-out-quart);
+  }
+  .device-tab:hover {
+    border-color: var(--color-bone);
+    color: var(--color-bone);
+  }
+  .device-tab[aria-selected='true'] {
+    border-color: var(--color-bone);
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .device-name {
+    display: grid;
+    gap: 0.4rem;
+    flex: 1 1 16rem;
+    max-width: 22rem;
+  }
+  .device-name-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-mute);
+  }
+  .device-name input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0 0 0.25rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-line-strong);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-bone);
+    font: inherit;
+    font-size: 1.375rem;
+    font-weight: 560;
+    font-stretch: 108%;
+    letter-spacing: -0.01em;
+    transition: border-color 0.2s;
+  }
+  .device-name input::placeholder {
+    color: var(--color-mute);
+    opacity: 1;
+  }
+  .device-name input:focus {
+    outline: none;
+    border-bottom-color: var(--color-signal-text);
+  }
+  .device-name input:focus-visible {
+    outline: none;
+  }
+
+  /* ---------------------------------------------------- het scherm -- */
+  .stage-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: 0.04em;
+    color: var(--color-mute);
+  }
+  .stage-domain {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .stage-tag {
+    flex: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .stage-tag-after,
+  .device[data-state='revealed'] .stage-tag-before {
+    display: none;
+  }
+  .device[data-state='revealed'] .stage-tag-after {
+    display: inline;
+    color: var(--color-signal-text);
+  }
+
+  .stage {
+    position: relative;
+    aspect-ratio: 1280 / 800;
+    overflow: hidden;
+    border-radius: 0.875rem;
+    background: #d3d7dd;
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 48px 90px -50px rgb(0 0 0 / 0.75);
+    container: stage / inline-size;
+    isolation: isolate;
+    /* Verticaal scrollen blijft van de browser; vasthouden is van ons. */
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .layer-after {
+    clip-path: circle(0px at 50% 50%);
+  }
+  .device[data-state='revealed'] .layer-after {
+    clip-path: none;
+  }
+  .vp {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 800px;
+    transform-origin: 0 0;
+    /* Het script zet --s-js; zonder script rekent CSS de schaal zelf uit. */
+    transform: scale(var(--s-js, tan(atan2(100cqw, 1280px))));
+    container: vp / inline-size;
+  }
+  .site {
+    position: absolute;
+    inset: 0;
+  }
+  .site[hidden] {
+    display: none;
+  }
+  @container device (width < 640px) {
+    .stage {
+      aspect-ratio: 390 / 640;
+    }
+    .vp {
+      width: 390px;
+      height: 640px;
+      transform: scale(var(--s-js, tan(atan2(100cqw, 390px))));
+    }
+  }
+
+  /* ---------------------------------------------------- de balk eronder -- */
+  .device-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin-top: 1.25rem;
+  }
+  .device-hint,
+  .device-result {
+    margin: 0;
+  }
+  .device-hint {
+    color: var(--color-bone-2);
+  }
+  .device-hint > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .device-hint :global(.icon) {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    color: var(--color-signal-text);
+  }
+  .hint-coarse {
+    display: none !important;
+  }
+  @media not ((hover: hover) and (pointer: fine)) {
+    .hint-fine {
+      display: none !important;
+    }
+    .hint-coarse {
+      display: inline-flex !important;
+    }
+  }
+  .device-result {
+    display: none;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-weight: 560;
+    font-stretch: 108%;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  .device-result strong {
+    font-weight: 760;
+    color: var(--color-bone);
+  }
+  .device-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .device-claim,
+  .device-open,
+  .device-reset {
+    display: none;
+  }
+  .device[data-state='revealed'] .device-result {
+    display: block;
+  }
+  .device[data-state='revealed'] .device-claim,
+  .device[data-state='revealed'] .device-open,
+  .device[data-state='revealed'] .device-reset {
+    display: inline-flex;
+  }
+  .device[data-state='revealed'] .device-hint,
+  .device[data-state='revealed'] .device-upgrade {
+    display: none;
+  }
+  /* Zonder JavaScript: geen knop die niets doet, wel de weg naar de echte site. */
+  :global(html:not(.js)) .device-upgrade,
+  :global(html:not(.js)) .device-hint {
+    display: none;
+  }
+  :global(html:not(.js)) .device-open {
+    display: inline-flex;
+  }
+
+  .device-upgrade {
+    overflow: hidden;
+    isolation: isolate;
+    min-width: 9.5rem;
+  }
+  .device-upgrade-fill {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-bone);
+    transform: scaleX(var(--p, 0));
+    transform-origin: left center;
+    transition: transform 0.35s var(--ease-out-quart);
+  }
+  .device[data-holding] .device-upgrade-fill {
+    transition: none;
+  }
+  .device-reset {
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--color-bone-2);
+    font: inherit;
+    font-size: 0.9375rem;
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-underline-offset: 0.25em;
+  }
+  .device-reset:hover {
+    color: var(--color-bone);
+  }
+  .device-reset :global(.icon) {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  @container device (width < 480px) {
+    .stage-domain {
+      display: none;
+    }
+    .stage-meta {
+      justify-content: flex-end;
+    }
+  }
+  @container device (width < 640px) {
+    .device-controls {
+      gap: 1rem;
+    }
+    .device-name {
+      max-width: none;
+    }
+    .device-bar {
+      align-items: stretch;
+    }
+    .device-actions,
+    .device-actions .btn {
+      width: 100%;
+    }
+  }
+</style>

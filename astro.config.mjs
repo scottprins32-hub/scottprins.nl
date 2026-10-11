@@ -4,61 +4,53 @@ import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Static site + één serverless endpoint (/api/lead, zie `prerender = false` daar).
-// De Vercel-adapter zorgt dat alleen die route een function wordt.
+/*
+ * Twee sporen (zie Scotts preview/release-afspraak):
+ *
+ *   productie  →  Vercel. Statische pagina's plus één serverless functie
+ *                 (/api/lead, zie `prerender = false` daar).
+ *   preview    →  GitHub Pages, met PREVIEW=1. Puur statisch, onder een
+ *                 submap (/scottprins.nl/). Geen adapter, dus ook geen
+ *                 /api/lead: het formulier valt daar terug op WhatsApp/mail.
+ *
+ * Alle interne links en assets lopen via `url()` uit src/lib/url.ts of via
+ * Vite-imports, zodat dezelfde code onder / én onder /scottprins.nl/ werkt.
+ */
+const preview = process.env.PREVIEW === '1';
+const base = preview ? (process.env.PREVIEW_BASE ?? '/scottprins.nl') : '/';
+
 export default defineConfig({
-  /* Nederlands is de standaardtaal en staat op /, Engels op /en/.
-     prefixDefaultLocale: false houdt de bestaande NL-urls dus intact. */
+  /* Nederlands is de standaardtaal en staat op /, Engels op /en/. */
   i18n: {
     defaultLocale: 'nl',
     locales: ['nl', 'en'],
     routing: { prefixDefaultLocale: false, redirectToDefaultLocale: false },
   },
   site: 'https://scottprins.nl',
+  base,
+  trailingSlash: 'ignore',
   output: 'static',
-  adapter: vercel(),
+  devToolbar: { enabled: false },
+  /* De oude kapsalon-demo is opgegaan in de voorbeeldsites. Alleen in
+     productie: de preview heeft een andere base en geen oude links. */
+  redirects: preview ? {} : { '/demo/kapsalon': '/voorbeeld/kapper/' },
+  adapter: preview ? undefined : vercel(),
   integrations: [
-    sitemap({ i18n: { defaultLocale: 'nl', locales: { nl: 'nl-NL', en: 'en-NL' } } }),
-    /* De twee grote chunks worden pas na twee hops ontdekt (html → component-
-       script → chunk). Een modulepreload haalt ze meteen op. De namen zijn
-       gehasht, dus we lezen ze na de build uit de map. */
-    {
-      name: 'modulepreload-hoisted',
-      hooks: {
-        'astro:build:done': async ({ dir }) => {
-          const fs = await import('node:fs/promises');
-          /* `dir` wijst al naar dist/client/, niet naar dist/. */
-          const map = new URL('_astro/', dir);
-          const files = await fs.readdir(map);
-          const groot = files.filter((f) => /^(scene-timeline|index)\.[^.]+\.js$/.test(f));
-          if (groot.length !== 2) {
-            console.warn('modulepreload-hoisted: chunknamen gewijzigd, niets geinjecteerd');
-            return;
-          }
-          const tags = groot.map((f) => `<link rel="modulepreload" href="/_astro/${f}">`).join('');
-          for (const pagina of ['index.html', 'en/index.html']) {
-            const url = new URL(pagina, dir);
-            try {
-              const html = await fs.readFile(url, 'utf8');
-              await fs.writeFile(url, html.replace('</head>', `${tags}</head>`));
-            } catch {
-              /* pagina bestaat niet in deze build */
-            }
-          }
-        },
-      },
-    },
+    sitemap({
+      i18n: { defaultLocale: 'nl', locales: { nl: 'nl-NL', en: 'en-NL' } },
+      /* De voorbeeldsites zijn demo's met noindex: niet in de sitemap. */
+      filter: (page) => !page.includes('/voorbeeld/'),
+    }),
   ],
   build: {
-    /*
-     * De stylesheets zijn samen ~12 kB, maar kostten wél twee losse
-     * render-blokkerende requests vóór de eerste paint (Lighthouse:
-     * ~700 ms op mobiel). Inline zetten scheelt die hele round-trip;
-     * bij twee pagina's weegt caching daar niet tegenop.
-     */
+    /* Alle CSS samen is klein; inline scheelt een render-blokkerende request
+       vóór de eerste paint. */
     inlineStylesheets: 'always',
   },
   vite: {
     plugins: [tailwindcss()],
+    define: {
+      'import.meta.env.PREVIEW': JSON.stringify(preview),
+    },
   },
 });

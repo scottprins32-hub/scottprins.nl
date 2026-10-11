@@ -1,952 +1,546 @@
 /**
- * Engelse teksten, zichtbaar op /en/.
- * Dezelfde sleutels als nl.ts — wijkt de een af, dan valt de site om.
- * `pnpm check` (astro check) vangt dat af via het Content-type.
+ * English copy. Same keys as nl.ts (TypeScript enforces it via Widen).
+ *
+ * Rules, same as Dutch:
+ * - No em or en dashes in visible text. Full stop, comma, colon or
+ *   brackets. content.test.ts guards this.
+ * - Numbers (price, days, hours) come from offer.ts, never typed in.
+ * - {naam} is replaced by the business name in the demo.
+ *
+ * Written by Claude: native review before launch.
  */
 import { site } from '../site';
+import { offer } from '../offer';
+import { eur } from '../../lib/format';
+import type { Widen } from './types';
+import type { nl } from './nl';
 
-/* ------------------------------ Hero ------------------------------ */
+const PRICE = eur(offer.price, 'en');
+const DAYS = offer.deliveryDays;
+const HOURS = offer.responseHours;
+const PLUS = eur(offer.care[0].monthly, 'en');
+const PENALTY = eur(offer.latePenaltyPerDay, 'en');
 
-const hero = {
-  eyebrow: 'Website design · fixed price from €495 · Badhoevedorp',
-  /** De H1 — staat vanaf de eerste seconde in beeld (ook de LCP van de pagina). */
-  headline: 'Websites that work. Built in days, not months.',
-  /** Vaste ondertitel onder de H1. */
-  sub: 'Pick your base, pick your extras — and see exactly what you get while your site builds itself. Fixed price, and online within 5 working days once your copy and photos are in.',
-  actions: {
-    primary: { label: 'Build your website', href: '#configurator' },
-    secondary: { label: 'See the menu', href: '#menu' },
-  },
-  /**
-   * De vijf bouwdagen. `label` verschijnt in de voortgangsbalk links,
-   * `text` is de regel die tijdens het scrollen meeloopt met de bouw.
-   */
-  days: [
-    { label: 'Sketch', text: 'Day 1 — half an hour on the phone: what you sell, to whom, and what the site has to deliver.' },
-    { label: 'Design', text: 'Day 2 — your colours, your photos, your tone.' },
-    { label: 'Build', text: 'Day 3 — everything you see working here, you can order.' },
-    { label: 'Content', text: 'Day 4 — copy, prices and opening hours go in. And then the lights come on.' },
-    { label: 'Live', text: 'Day 5 — findable, fast, and yours. Ready for customers.' },
-  ],
-  caption: '↑ This effect? You can just order it. Option 11 on the menu.',
-  captionTargetId: 'menu-scrollvideo',
-  scrollHint: 'Scroll — and it builds itself',
-  /** Meelopende prijsteller: laat zien wat er verschijnt én wat het kost. */
-  ledger: {
-    label: 'Your site so far',
-    upfrontLabel: 'one-off',
-    monthlyLabel: '/mo',
-    cta: 'Add it to my quote →',
-  },
-} as const;
-
-/* ------------------------------ Navigatie --------------------------- */
+const meta = {
+  title: `A website for ${PRICE}, all in | Scott Prins`,
+  description: `Under your website, there’s a better one. I build it for ${PRICE}: an original design, fluid motion and fast on every phone. Live within ${DAYS} working days. Web designer near Amsterdam.`,
+  ogAlt: `Under your website, there’s a better one. Scott Prins builds it for ${PRICE}.`,
+};
 
 const nav = {
+  home: 'Scott Prins, back to top',
+  label: 'Main menu',
   links: [
-    { label: 'Menu', href: '#menu' },
-    { label: 'Examples', href: '#examples' },
-    { label: 'Pricing', href: '#configurator' },
-    { label: 'Results', href: '#results' },
-    { label: 'About Scott', href: '#about' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'The demo', href: '#upgrade' },
+    { label: 'Price', href: '#prijs' },
+    { label: 'How it works', href: '#werkwijze' },
+    { label: 'Questions', href: '#vragen' },
   ],
-  cta: 'Free sample page',
-  skipToContent: 'Skip to content',
-  menuLabel: 'Main menu',
+  cta: 'Claim your site',
+  menu: 'Menu',
+  close: 'Close',
+  skip: 'Skip to content',
   langLabel: 'Language',
-  langSwitchTo: 'Bekijk deze site in het Nederlands',
-} as const;
+  langSwitchTo: 'Schakel naar Nederlands',
+};
 
-/* --------------------------- Zo werkt het -------------------------- */
+const hero = {
+  titleStart: 'Under your website, there’s a',
+  titleAccent: 'better',
+  titleEnd: 'one.',
+  lead: `I bring it to the surface. An original design, fluid motion and fast on every phone. For ${PRICE}, live within ${DAYS} working days.`,
+  cta: `Claim your site for ${PRICE}`,
+  ctaWhy: `Why only ${PRICE}?`,
+};
 
-const howItWorks = {
-  kicker: 'How it works',
-  title: 'Three steps. No fuss.',
-  steps: [
-    {
-      title: 'Pick your base',
-      text: 'One-Pager, Complete or Interactive — three honest packages with fixed prices.',
+const device = {
+  regionLabel: 'Interactive demo: from an old website to a new one',
+  tablistLabel: 'Pick your trade',
+  nameLabel: 'Your business name',
+  namePlaceholder: 'Type your business name',
+  hintFine: 'Move over the site. Hold to upgrade.',
+  hintCoarse: 'Hold your thumb on the site to upgrade.',
+  upgrade: 'Upgrade',
+  reset: 'Back to the old one',
+  revealedBefore: 'This is',
+  revealedAfter: `For ${PRICE}.`,
+  openFull: 'Open as a real site',
+  claim: 'Claim this site',
+  srDescription:
+    'On top is a dated website, underneath is a new version of the same business. Press and hold the site, or use the Upgrade button, to show the new version. Use the tabs to pick a trade and the text field to type the name of your own business.',
+  srRevealed: 'The new version is showing.',
+  srReset: 'The old version is showing again.',
+  beforeTag: 'What the average site looks like',
+  afterTag: 'What it could look like',
+};
+
+/* Copy per trade. `before` is the dated site (deliberately so), `after`
+   the new one. Every business here is a made-up example. */
+const trades = {
+  bakker: {
+    tab: 'Bakery',
+    before: {
+      tagline: 'Your baker for fresh bread and pastries!',
+      nav: 'Our range',
+      p1: '{naam} is a family business. Come to us for fresh bread, pastries and cakes for every occasion.',
+      p2: 'We stand for quality and service. Feel free to drop by our shop!',
+      news: 'NEW: now also open on Sundays!!',
+      caption: 'Our shop',
     },
-    {
-      title: 'Pick your extras',
-      text: 'On this site you try every feature live: add what suits your business.',
+    after: {
+      nav: ['Bread', 'Cakes', 'Order'],
+      navCta: 'Order for tomorrow',
+      eyebrow: 'Artisan bakery',
+      titleStart: 'Bread you can',
+      titleAccent: 'smell',
+      titleEnd: 'before you walk in.',
+      sub: 'Baked every night in our own oven. Order before 8 pm and pick it up fresh tomorrow.',
+      cta: 'Order for tomorrow',
+      cta2: 'See what we bake',
+      facts: ['Every morning from 7:00', 'Our own oven, our own dough', 'Order online too'],
+      alt: 'Fresh bread on a wooden board',
     },
-    {
-      title: 'A price and a sample page within 48 hours',
-      text: 'You get a fixed price and a free sample page: one real page of your site, with your name, colours and copy. Like it? Then I build on. If not, it costs you nothing.',
+  },
+  kapper: {
+    tab: 'Hair salon',
+    before: {
+      tagline: 'For all your hair needs',
+      nav: 'Price list',
+      p1: '{naam} has been a local favourite for years. We cut hair for women, men and children.',
+      p2: 'You can book an appointment by phone during opening hours.',
+      news: 'Want an appointment? Call us during opening hours!',
+      caption: 'Our salon',
     },
+    after: {
+      nav: ['Treatments', 'Team', 'Prices'],
+      navCta: 'Book your appointment',
+      eyebrow: 'Hair and styling',
+      titleStart: 'Hair that',
+      titleAccent: 'suits',
+      titleEnd: 'you.',
+      sub: 'Cuts, colour and styling, with time to listen first. Book online yourself, evenings too.',
+      cta: 'Book your appointment',
+      cta2: 'See the prices',
+      facts: ['Book online, evenings too', 'Colour and balayage', 'Reminder by text message'],
+      alt: 'Scissors hanging on a wooden wall',
+    },
+  },
+  restaurant: {
+    tab: 'Restaurant',
+    before: {
+      tagline: 'Relaxed dining in a cosy atmosphere',
+      nav: 'Menu (PDF)',
+      p1: 'Welcome to {naam}! We serve delicious dishes every day in a cosy setting.',
+      p2: 'Reservations by phone or email.',
+      news: 'Download our menu here (PDF, 4.2 MB)',
+      caption: 'Our restaurant',
+    },
+    after: {
+      nav: ['Menu', 'Book', 'Contact'],
+      navCta: 'Book a table',
+      eyebrow: 'Seasonal kitchen',
+      titleStart: 'Table for two?',
+      titleAccent: 'Tonight.',
+      titleEnd: '',
+      sub: 'A seasonal menu, natural wine and a kitchen that stays open until 10 pm. Booking takes twenty seconds.',
+      cta: 'Book a table',
+      cta2: 'See the menu',
+      facts: ['Wed to Sun from 5 pm', 'Seasonal menu', 'Groups up to 20'],
+      alt: 'Pasta and red wine by candlelight',
+    },
+  },
+  bouw: {
+    tab: 'Builder',
+    before: {
+      tagline: 'For all your building and renovation work',
+      nav: 'Services',
+      p1: '{naam} is your partner for new builds, renovations and maintenance. We work with skilled staff.',
+      p2: 'Feel free to contact us for a no-obligation quote.',
+      news: 'See our projects on Facebook too!',
+      caption: 'At work',
+    },
+    after: {
+      nav: ['Services', 'Projects', 'About'],
+      navCta: 'Request a quote',
+      eyebrow: 'Building and renovation',
+      titleStart: 'We build.',
+      titleAccent: 'You live.',
+      titleEnd: '',
+      sub: 'Extensions, renovations and new builds. One point of contact, a fixed price and a schedule that holds.',
+      cta: 'Request a quote',
+      cta2: 'See our projects',
+      facts: ['Fixed price up front', 'Our own craftspeople', 'One point of contact'],
+      alt: 'Tools on a wooden workbench',
+    },
+  },
+  praktijk: {
+    tab: 'Practice',
+    before: {
+      tagline: 'Your physiotherapy practice',
+      nav: 'Treatments',
+      p1: 'Welcome to the website of {naam}. Our practice specialises in all forms of physiotherapy.',
+      p2: 'For an appointment, please call during opening hours. Don’t forget your insurance card!',
+      news: 'Please note: changed opening hours during the holidays',
+      caption: 'Our practice',
+    },
+    after: {
+      nav: ['Treatments', 'Insurance', 'Team'],
+      navCta: 'Book an appointment',
+      eyebrow: 'Physio in your neighbourhood',
+      titleStart: 'Move without pain',
+      titleAccent: 'again.',
+      titleEnd: '',
+      sub: 'Personal treatment, a short waiting list and exercises you actually do at home. No referral needed.',
+      cta: 'Book an appointment',
+      cta2: 'What does insurance cover?',
+      facts: ['No referral needed', 'Intake online beforehand', 'Evening appointments'],
+      alt: 'A bonsai on a table in a calm room',
+    },
+  },
+  sport: {
+    tab: 'Gym',
+    before: {
+      tagline: 'Sport and fitness for everyone!',
+      nav: 'Class timetable',
+      p1: '{naam} offers fitness and group classes for young and old.',
+      p2: 'Drop by for a tour or ask about our rates at the front desk.',
+      news: 'Offer: FREE registration!!',
+      caption: 'Our gym',
+    },
+    after: {
+      nav: ['Classes', 'Timetable', 'Membership'],
+      navCta: 'Free trial class',
+      eyebrow: 'Training in small groups',
+      titleStart: 'Stronger than',
+      titleAccent: 'yesterday.',
+      titleEnd: '',
+      sub: 'Small groups, real coaching and a timetable that fits around your work. Your first class is free.',
+      cta: 'Book a free trial class',
+      cta2: 'See the timetable',
+      facts: ['Small groups', 'Open from 6:00', 'First class free'],
+      alt: 'Close-up of a weight plate',
+    },
+  },
+};
+
+/* Shared bits of the dated example site. */
+const oldSite = {
+  nav: ['Home', 'About us', 'Contact'],
+  welcome: 'Welcome to the website of {naam}!',
+  link: 'Click here for our opening hours',
+  footer: '© 2014 {naam} | All rights reserved | Last updated: 12-03-2017',
+  visitors: 'Visitors:',
+  hours: 'Opening hours',
+  hoursRows: [
+    ['Mon', 'closed'],
+    ['Tue to Fri', '8:30 - 17:30'],
+    ['Sat', '8:00 - 16:00'],
   ],
-} as const;
+};
 
-/* ------------------------- De menukaart ---------------------------- */
-
-const menuIntro = {
-  indexLabel: 'Jump to an option',
-  index: [
-    { id: 'menu-booking', label: 'Online booking' },
-    { id: 'menu-chatbot', label: 'AI chatbot' },
-    { id: 'menu-map', label: 'Map' },
-    { id: 'menu-calculator', label: 'Price calculator' },
-    { id: 'menu-ordering', label: 'Online ordering' },
-    { id: 'menu-reviews', label: 'Reviews' },
-    { id: 'menu-beforeafter', label: 'Before/after' },
-    { id: 'menu-intake', label: 'Intake' },
-    { id: 'menu-portal', label: 'Customer portal' },
-    { id: 'menu-multilingual', label: 'Multilingual' },
-    { id: 'menu-scrollvideo', label: 'Scroll video' },
-    { id: 'menu-giftcards', label: 'Gift cards' },
-    { id: 'menu-telefonist', label: 'AI phone assistant' },
+const vijftig = {
+  label: 'First impression',
+  title: 'You get 50 milliseconds.',
+  flashCaption: 'That was 50 milliseconds. Did you catch it?',
+  flashReduced: 'That is how short 50 milliseconds is: three frames on your screen.',
+  play: 'Show 50 milliseconds',
+  replay: 'Once more',
+  body: [
+    'That is how fast a visitor judges your website, before a single word is read. And that first judgement colours everything after it.',
+    'Anyone who drops off then clicks back to Google. To the next name on the list.',
   ],
-  kicker: 'The menu',
-  title: 'Don’t read what it does. Just try it.',
-  lead: 'Every option below is a real, working demo. Like it? Tap “Add to my site” and it’s in your quote.',
-} as const;
+  punch: 'Your competitor gets the same 50 milliseconds. The difference is what’s on the screen.',
+  source: 'Source: Lindgaard et al., Behaviour & Information Technology, 2006',
+  sourceHref: 'https://doi.org/10.1080/01449290500330448',
+};
 
-/* Demo 1 — Online agenda (fictieve massagepraktijk) */
-const demoAgenda = {
-  kicker: 'Option 1',
-  title: 'Let customers book online',
-  lead: 'Your customers book themselves, day and night. Try it — this one’s real.',
-  businessName: 'Demo Practice',
-  treatments: [
-    { id: 'sport', name: 'Sports massage', duration: '30 min', price: '€42' },
-    { id: 'ontspanning', name: 'Relaxation massage', duration: '60 min', price: '€69' },
-    { id: 'intake', name: 'Intake + treatment', duration: '45 min', price: '€55' },
-  ],
-  therapists: [
-    { id: 'emma', name: 'Emma', role: 'Sports masseur' },
-    { id: 'yusuf', name: 'Yusuf', role: 'Physiotherapist' },
-    { id: 'lotte', name: 'Lotte', role: 'Massage therapist' },
-  ],
-  slots: ['09:00', '10:30', '11:45', '14:00', '15:30', '16:45'],
-  confirmTitle: 'Appointment confirmed',
-  confirmText: 'That’s how easy it is for your customers. The confirmation goes out automatically; SMS reminders are an optional extra.',
-  restart: 'Try again',
-  stepLabels: ['Treatment', 'Therapist', 'Time'],
-} as const;
-
-/* Demo 2 — AI-chatbot (fictieve kapsalon) */
-const demoChatbot = {
-  kicker: 'Option 2',
-  title: 'AI chatbot answering questions 24/7',
-  lead: 'Trained on your business: opening hours, prices, appointments. Ask it something.',
-  botName: 'Salon Demo',
-  status: 'replies instantly',
-  sendButton: 'Send',
-  greeting: 'Hi, I’m the assistant at Salon Demo. Ask me about opening hours, prices or appointments. 💇',
-  placeholder: 'Type your question…',
-  suggestions: ['What are your opening hours?', 'What does a haircut cost?', 'Can I come in today?'],
-  /** Sleutelwoorden → antwoord. Eerste match wint (van boven naar beneden). */
-  answers: [
-    {
-      keywords: ['open', 'what time', 'when', 'hours', 'sunday', 'monday'],
-      reply: 'We’re open Tuesday to Saturday, 09:00–17:30. On Monday and Sunday we’re closed.',
-    },
-    {
-      keywords: ['haircut', 'cut'],
-      reply: 'A haircut is €34.50 (women and men). Wash and dry always included.',
-    },
-    {
-      keywords: ['colour', 'color', 'highlights'],
-      reply: 'Colour starts at €65, highlights at €79. The exact price depends on your hair length.',
-    },
-    {
-      keywords: ['price', 'cost', 'rate', 'rates', 'expensive'],
-      reply: 'Haircut €34.50 · colour from €65 · blow-dry €27.50. Want to see the full price list?',
-    },
-    {
-      keywords: ['appointment', 'book', 'reserve', 'available', 'slot', 'today', 'tomorrow'],
-      reply: 'You can. Book straight away via online booking — there’s still a slot today at 15:30. 📅',
-    },
-    {
-      keywords: ['address', 'where', 'location', 'parking', 'find you'],
-      reply: 'You’ll find us at Demostraat 12 in Utrecht. Free parking round the corner.',
-    },
-    {
-      keywords: ['pay', 'by card', 'ideal', 'cash', 'tikkie'],
-      reply: 'You can pay by card, contactless or get a payment request. Cash is fine too.',
-    },
-    {
-      keywords: ['cancel', 'reschedule', 'move'],
-      reply: 'Moving or cancelling is free up to 24 hours ahead, just use the link in your confirmation.',
-    },
-    {
-      keywords: ['gift card', 'gift', 'voucher'],
-      reply: 'Good idea. We sell digital gift cards from €15 — you can order one online right away. 🎁',
-    },
-    {
-      keywords: ['child', 'children'],
-      reply: 'Kids up to 12 get a haircut for €19.50. Bring them along.',
-    },
-  ],
-  fallback: 'In real life I plug into your own knowledge and diary 😉 For this demo I mainly know questions about opening hours, prices and appointments.',
-} as const;
-
-/* Demo 3 — Interactieve kaart (fictieve fietsenwinkel-keten) */
-const demoKaart = {
-  kicker: 'Option 3',
-  title: 'All your locations on one map',
-  lead: 'More than one location? One map, always up to date. Switch between them.',
-  locations: [
-    {
-      id: 'amsterdam',
-      name: 'Demo Bikes Amsterdam',
-      address: 'Prinsengracht 263, Amsterdam',
-      q: 'Prinsengracht 263, Amsterdam',
-    },
-    {
-      id: 'utrecht',
-      name: 'Demo Bikes Utrecht',
-      address: 'Oudegracht 158, Utrecht',
-      q: 'Oudegracht 158, Utrecht',
-    },
-    {
-      id: 'eindhoven',
-      name: 'Demo Bikes Eindhoven',
-      address: 'Markt 17, Eindhoven',
-      q: 'Markt 17, Eindhoven',
-    },
-  ],
-  loadLabel: 'Load map',
-  privacyNote: 'The map only loads when you click it — after that a request does go to Google. That way your site needs no cookie banner.',
-  loadButton: 'Load map (loads Google Maps and sets Google cookies)',
-} as const;
-
-/* Demo 4 — Prijscalculator (fictief klusbedrijf) */
-const demoCalculator = {
-  kicker: 'Option 4',
-  title: 'Price calculator for quote requests',
-  lead: 'Let visitors work it out themselves — you get enquiries from people who already know the price.',
-  heading: 'What will your bathroom renovation cost?',
-  sliders: [
-    { id: 'oppervlak', label: 'Floor area', min: 2, max: 15, value: 6, unit: 'm²' },
-    { id: 'afwerking', label: 'Finish level', min: 1, max: 3, value: 2, unit: '', labels: ['Basic', 'Comfort', 'Luxury'] },
-    { id: 'sanitair', label: 'Sanitaryware', min: 1, max: 3, value: 2, unit: '', labels: ['Standard', 'Mid-range', 'Designer'] },
-  ],
-  /** Rekensom van de demo: basis + m² × factor(afwerking) + sanitair-staffel. */
-  formula: { base: 2400, perM2: [650, 850, 1150], sanitair: [900, 1900, 3400] },
-  resultLabel: 'Indicative price incl. fitting',
-  disclaimer: 'Demo amounts — your calculator uses your own prices.',
-} as const;
-
-/* Demo 5 — Eigen online bestellen (fictieve pizzeria) */
-const demoBestellen = {
-  kicker: 'Option 5',
-  title: 'Online ordering without platform commission',
-  lead: 'Orders through your own site instead of a delivery platform. Work out what that saves you.',
-  restaurantName: 'Pizzeria La Vera (demo)',
+const included = {
+  label: 'What you get',
+  title: 'Everything you see here, you get too.',
+  lead: 'Not a template kit with your logo on it. A site that shows what your business is worth from the very first second.',
   items: [
-    { id: 'margherita', name: 'Margherita', price: 11.5 },
-    { id: 'quattro', name: 'Quattro Formaggi', price: 14.0 },
-    { id: 'diavola', name: 'Diavola', price: 13.5 },
-    { id: 'tiramisu', name: 'Tiramisu', price: 6.5 },
-  ],
-  checkoutTitle: 'Checkout',
-  checkoutNote: 'Demo checkout — nothing gets charged.',
-  payButton: 'Pay with iDEAL',
-  payNow: 'Pay',
-  banks: ['Demobank', 'ING', 'Rabobank', 'ABN AMRO'],
-  emptyCart: 'Nothing ordered yet',
-  orderAgain: 'Order again',
-  paidTitle: 'Order received 🍕',
-  paidText: 'Straight to your kitchen, with no commission on top.',
-  /** Gemiddelde platform-commissie waarmee de besparingsteller rekent. */
-  commissionRate: 0.13,
-  savingsLine: 'At 200 orders a month you save ±€7,000/year in delivery-platform commission.',
-  savedLabel: 'saved vs. delivery platform',
-} as const;
-
-/* Demo 6 — Reviews-wall */
-const demoReviews = {
-  kicker: 'Option 6',
-  ariaLabel: 'Made-up example reviews for this demo',
-  title: 'Your Google reviews on your own site',
-  lead: 'Your real Google reviews, always fresh and nicely presented. Swipe through them — on desktop it scrolls by itself.',
-  demoNote: 'Made-up reviews for a salon that does not exist. On your site these are your real Google reviews.',
-  reviews: [
-    { name: 'Sanne V.', stars: 5, text: 'First colour I have genuinely been happy with. And I could still grab a slot online at eleven at night.' },
-    { name: 'Mehmet K.', stars: 5, text: 'Seen on time, neat cut, paid and done. Nothing to complain about.' },
-    { name: 'Lisa de B.', stars: 5, text: 'My six-year-old sat still in the chair for the first time ever. Hats off.' },
-    { name: 'Peter J.', stars: 4, text: 'Good cut and a fair price. Only downside was finding a parking spot.' },
-    { name: 'Fatima A.', stars: 5, text: 'Messaged a question on Saturday evening, got an answer straight away. Cut on Monday.' },
-    { name: 'Joris T.', stars: 5, text: 'Three years a customer now. They know exactly what I mean by “not too short”.' },
-    { name: 'Anouk R.', stars: 5, text: 'The gift card for my mum was in her inbox within a minute. Sorted.' },
-    { name: 'Bas W.', stars: 5, text: 'A text reminder the day before, so I never forget my appointment any more.' },
-  ],
-} as const;
-
-/* Demo 7 — Before/after-slider (fictieve bakkerij) */
-const demoBeforeAfter = {
-  kicker: 'Option 7',
-  title: 'Before and after, side by side',
-  lead: 'Perfect for hairdressers, builders, landscapers — or, as here, for the difference a new website makes. Drag it.',
-  beforeLabel: 'Old site (2010)',
-  afterLabel: 'New site',
-  sliderLabel: 'Compare old and new website',
-  bakkerij: {
-    name: 'Bakkerij De Korenbloem',
-    tagline: 'Fresh from our own oven every day',
-    items: ['Sourdough bread', 'Croissants', 'Apple pie'],
-    orderButton: 'Order online',
-    /* De 2010-site is een parodie — vandaar de hoofdletters en de uitroeptekens. */
-    oud: {
-      welkom: '~*~ Welcome to',
-      nav: ['Home', 'Photo album', 'Guestbook', 'Links'],
-      menuTitle: 'Menu',
-      menuItems: ['» Our bread', '» Opening hours', '» Directions'],
-      nieuws: 'NEW!! Now with apple pie!!',
-      bezoekers: 'Visitors: 004217',
-      foto: '[shop_photo_small.jpg]',
-      bodyPre: 'For over 25 years your trusted address for',
-      bodyPost: 'and much more!!! Do drop by the shop.',
-      link: 'click here for the opening hours',
-      footer: '© 2010 | This site works best in Internet Explorer 8',
+    {
+      term: 'An original design',
+      text: 'Not a template your competitor also uses. Your colours, your images, your voice.',
     },
-  },
-} as const;
+    {
+      term: 'Motion that fits',
+      text: 'Smooth scrolling, text that glides in and details that respond to your visitor. As much as suits your business, and never in the way.',
+    },
+    {
+      term: 'Fast, even on 4G',
+      text: 'No bloated site builders. Your site loads quickly, even outdoors on a phone.',
+    },
+    {
+      term: 'Designed for thumbs',
+      text: 'Not a shrunken desktop site, but a site that starts on the phone.',
+    },
+    {
+      term: 'Getting found',
+      text: 'A clean foundation for Google: good titles and descriptions, structured data and a fast site.',
+    },
+    {
+      term: 'Contact without friction',
+      text: 'A form that actually arrives, a WhatsApp button and your number one tap away.',
+    },
+    {
+      term: 'Copy sorted',
+      text: 'No time to write? In a half-hour conversation you tell me about your business, and I turn it into the copy.',
+    },
+    {
+      term: 'Domain and launch',
+      text: 'I connect your domain and put everything live. You don’t have to do anything technical.',
+    },
+  ],
+};
 
-/* Demo 8 — Digitale intake */
-const demoIntake = {
-  kicker: 'Option 8',
-  /** {n} en {totaal} worden vervangen door de cijfers. */
-  stepCounter: 'Step {n} of {totaal}',
-  title: 'Digital intake form for new customers',
-  lead: 'New clients fill in their details up front. You start every appointment prepared.',
+const price = {
+  label: 'The price',
+  question: 'What does a site like this cost?',
+  once: 'One-off. Everything included. After that, it’s yours.',
+  compareLabel: 'Compare it',
+  compare: [
+    { who: 'An agency', what: 'Often thousands of euros, and weeks of waiting.', mine: false },
+    { who: 'A site builder', what: 'A monthly fee forever, and you look like everyone else.', mine: false },
+    { who: 'Scott Prins', what: `${PRICE} one-off. Live within ${DAYS} working days.`, mine: true },
+  ],
+  includedLabel: 'Included',
+  included: [
+    'One page, everything on it',
+    'Original design',
+    'Motion and animation',
+    'Mobile and fast',
+    'Foundation for Google',
+    'Copy after one phone call',
+    'Domain connected',
+    'Hosting',
+    `${offer.revisionRounds} rounds of changes`,
+  ],
+  whyTitle: `Why only ${PRICE}?`,
+  why: [
+    'Because I don’t build every site from scratch. I work with my own system of designs and animations, and tailor it to each client.',
+    'And I work with modern AI tooling. What AI does not do: think about your business, make the calls and guard the quality. That’s me.',
+  ],
+  terms: 'Price excludes VAT. Half at the start, half on delivery.',
+  care: `No subscription needed. Want me to look after your site? From ${PLUS} a month, cancel any month.`,
+  cta: `Claim your site for ${PRICE}`,
+};
+
+const process = {
+  label: 'How it works',
+  title: `From request to live in ${DAYS} working days.`,
   steps: [
     {
-      title: 'Your details',
-      fields: [
-        { id: 'naam', label: 'Name', type: 'text', placeholder: 'Anna Voorbeeld' },
-        { id: 'geboortedatum', label: 'Date of birth', type: 'text', placeholder: '12-04-1988' },
-      ],
+      title: 'Your request',
+      when: 'Today',
+      text: 'You fill in the order slip below. Two minutes of work, and you pay nothing yet.',
     },
     {
-      title: 'What you need',
-      fields: [
-        { id: 'klacht', label: 'What can I help you with?', type: 'textarea', placeholder: 'E.g. ongoing shoulder pain…' },
-      ],
+      title: 'Your sample page',
+      when: `Within ${HOURS} hours`,
+      text: 'You see the top of your new site, with your name and colours. Free. Don’t like it? Then it ends here.',
     },
     {
-      title: 'Availability',
-      fields: [
-        { id: 'voorkeur', label: 'When are you usually free?', type: 'choice', options: ['Morning', 'Afternoon', 'Evening'] },
-      ],
-    },
-  ],
-  doneTitle: 'Intake received ✓',
-  doneText: 'In real life this is now waiting in your inbox or client file — before the first appointment.',
-  next: 'Next',
-  back: 'Back',
-  send: 'Send',
-  restart: 'Restart demo',
-} as const;
-
-/* Demo 9 — Klantenportaal */
-const demoPortaal = {
-  kicker: 'Option 9',
-  title: 'Customer portal with its own login',
-  lead: 'Documents, appointments and invoices behind one login of your own. Go ahead and log in (anything goes).',
-  loginTitle: 'Log in to Demo & Co',
-  emailLabel: 'Email address',
-  passwordLabel: 'Password',
-  loginButton: 'Log in',
-  loginHint: 'Demo: any input works.',
-  welcome: 'Welcome back, Anna 👋',
-  tiles: [
-    { icon: '📄', title: 'Documents', detail: '3 files' },
-    { icon: '📅', title: 'Appointments', detail: 'Tue 14:00 — check-up' },
-    { icon: '🧾', title: 'Invoices', detail: '1 outstanding' },
-    { icon: '💬', title: 'Messages', detail: '2 unread' },
-  ],
-  logout: 'Log out',
-} as const;
-
-/* Demo 10 — Meertalig: de NL- en EN-kopij van déze sectie */
-const demoMeertalig = {
-  kicker: 'Option 10',
-  ariaLabel: 'Choose a language',
-  nl: {
-  title: 'Meertalig',
-    lead: 'Deze knop hierboven doet het echt: de hele sectie wisselt van taal. Handig voor toeristen, expats en internationale klanten.',
-    bullets: [
-      'Automatische taalkeuze op basis van de browser',
-      'Nette vertaal-structuur, goed voor Google',
-      'Jij levert de tekst — of ik regel de vertaling',
-    ],
-  },
-  en: {
-  title: 'Multilingual',
-    lead: 'That toggle above actually works: this whole section switches language. Perfect for tourists, expats and international clients.',
-    bullets: [
-      'Automatic language detection from the browser',
-      'Clean translation structure, great for Google',
-      'You provide the copy — or I arrange the translation',
-    ],
-  },
-} as const;
-
-/* Demo 11 — Scroll-video / animaties */
-const demoScrollvideo = {
-  kicker: 'Option 11',
-  title: 'Scroll animation that tells your story',
-  lead: 'That opening you just saw, the site building itself while you scroll? That’s this option. It plays once more below.',
-  replay: 'Play again',
-} as const;
-
-/* Demo 12 — Cadeaubonnen & stempelkaart */
-const demoCadeau = {
-  kicker: 'Option 12',
-  title: 'Sell gift cards straight from your site',
-  lead: 'Digital gift cards and a loyalty card in the phone — no hassle with paper. Go on, flip the card over.',
-  cardBrand: 'Salon Demo',
-  cardValue: '€25',
-  cardCode: 'DEMO-8F2K-2026',
-  flipHint: 'Tap to flip',
-  redeem: 'Redeem',
-  redeemed: 'Redeemed — enjoy 🎉',
-  stampTitle: 'Loyalty card',
-  stampHint: 'Tap to stamp',
-  stampReward: 'Card full — 10th cut free',
-  stampCount: 10,
-} as const;
-
-/* --------------------------- Configurator -------------------------- */
-
-const configurator = {
-  kicker: 'Build your website',
-  title: 'Your website, your price.',
-  lead: 'Pick a base, switch on your extras (whatever you added along the way is already here) and see what it costs.',
-  presetTitle: 'Quick start — what kind of business do you have?',
-  presetLead: 'One tap and a complete setup that fits your trade is ready, price included. After that you just change what you like.',
-  /* Below the quick-start chips: through to that trade's own page. */
-  brancheIntro: 'In depth, per trade:',
-  baseTitle: 'Pick your base',
-  addonsTitle: 'Pick your extras',
-  addonsNoDemoNote: 'No demo on this page — ask, and I’ll show it live.',
-  careTitle: 'Maintenance & support',
-  quoteTitle: 'Your build',
-  upfrontLabel: 'One-off',
-  monthlyLabel: 'Per month',
-  disclaimer: 'This is the price, ex VAT. You get it back one to one in your quote — it only goes up if you add something yourself.',
-  cartOne: 'option',
-  cartMany: 'options',
-  popularBadge: 'Popular',
-  /* 13 — allemaal al in de voorwaarden; hier alleen zichtbaar gemaakt. */
-  guarantee: 'Delivery guarantee: 5 working days after your copy and photos are in, your site is live. Later? Then €50 per working day comes off the final invoice.',
-  revisionNote: 'Two rounds of adjustments are included in the price.',
-  assurances: [
-    'Domain in your name — from day one',
-    'Cancel monthly — no minimum term',
-    'Leaving? All files come with you and the domain transfer is free',
-  ],
-  monthlyTitle: 'What exactly am I paying that monthly amount for?',
-  monthlyItems: [
-    'Hosting — the computer your site runs on 24/7, including the padlock in the address bar.',
-    'Updates and security — so your site does not quietly age or get hacked.',
-    'Small changes — a new price, a different photo, changed opening hours: just send a message.',
-    'The options with running costs that you chose (booking, chatbot, reviews).',
-  ],
-  includedWorth: 'Together worth',
-  cartTotal: 'total',
-  exVat: 'ex VAT',
-  vatNote: 'All prices exclude VAT. As a VAT-registered business you reclaim it from the tax office. If you fall under the small-business scheme or are VAT-exempt (healthcare), the amount including VAT is your final price.',
-  presetFrom: 'from',
-  stripTitle: 'Three starting points',
-  stripNote: 'Every option below is added on top — you always see exactly what.',
-  stripCta: 'See what each package includes',
-  includedBadge: 'Included',
-  freeLabel: 'free',
-  seeDemo: 'See the demo ↑',
-  addButton: '+ Add to my site',
-  addedButton: '✓ In your site',
-  includedButton: '✓ Free with your package',
-  form: {
-  title: 'Free: a sample page of your own site',
-    lead: 'Within 48 hours you get a fixed price and a real sample page for your business. No obligations, no cost — nothing happens until you say yes.',
-    name: 'Name',
-    company: 'Company',
-    phone: 'Phone / WhatsApp',
-    email: 'Email',
-    message: 'Note (optional)',
-    submit: 'Yes, send my free sample page',
-    callTitle: 'When shall I give you a call?',
-    callLead: 'One ten-minute call saves three emails back and forth. Pick whatever suits you — or call me yourself.',
-    callOptions: ['Today after 17:00', 'Tomorrow morning', 'Tomorrow afternoon'],
-    callSelf: 'I’d rather call you',
-    callDone: 'Noted. I’ll call you then.',
-    selfCopy: 'Not ready yet? Email my build to myself',
-    selfCopyError: 'Fill in your email address and I’ll send your build over.',
-    sending: 'Sending…',
-    success: 'Nice. You’ll have your quote within 48 hours, plus a free demo proposal for your business.',
-    errorValidation: 'Have a look at the fields marked in red.',
-    errorSend: 'That didn’t send. Use one of the buttons below — your build goes along automatically.',
-    mailtoButton: 'Email your build',
-    whatsappButton: 'Rather message? Send your build straight over',
-    privacyNote: 'I only use your details to send your quote. See',
-    privacyLink: 'the privacy policy',
-  },
-} as const;
-
-/* ---------------------------- Voorbeelden --------------------------- */
-/**
- * Twee complete voorbeeldsites. Let op: de bedrijven zijn verzonnen — dit is
- * geen opgeleverd klantwerk. Zeg dat er ook bij; het maakt de rest
- * geloofwaardiger, niet minder. Echte casestudies horen in `proof.cases`.
- *
- * `base` + `addons` zijn met opzet exact gelijk aan een preset in pricing.ts
- * ('praktijk' en 'klus'). Daardoor klopt niet alleen de prijs die hier staat,
- * maar licht in de configurator ook de bijbehorende snelstart-knop op zodra
- * je hier op "Zet deze samenstelling klaar" tikt.
- */
-const showcase = {
-  kicker: 'Examples',
-  title: 'Three complete sites. Try them yourself.',
-  lead: 'Above, every option stands on its own. This is what it looks like when it all comes together in one site — including what a site like that costs. I made the businesses up; the sites work for real.',
-  contentsLabel: 'What’s in it',
-  totalLabel: 'This site',
-  totalNote: 'Fixed price, ex VAT. A complete site like this goes live in 7 working days, counted from your material.',
-  presetCta: 'Load this build',
-  openCta: 'Open the full site',
-  liveBadge: 'View live',
-  demoEnvNote: 'demo environment — running on a temporary address',
-  demoOwnNote: 'demo environment — invented business, running on this domain',
-  newTab: 'opens in a new tab',
-  sites: [
-    {
-      name: 'Kapsalon Mera',
-      sector: 'Hair salon · Haarlem',
-      domain: 'kapsalonmera.nl',
-      /* Draait op scottprins.nl zelf — zie de notitie in nl.ts. */
-      href: '/demo/kapsalon/',
-      image: '/voorbeeld-salon',
-      summary: 'A complete salon site: customers book themselves, get a text reminder, and the gift card sells itself.',
-      base: 'compleet',
-      /** Gelijk aan preset 'salon' in pricing.ts. */
-      addons: ['agenda', 'reviews', 'sms', 'cadeaubonnen'] as const,
-      does: {
-        agenda: 'treatment, stylist and time in three taps',
-        reviews: 'the ratings sit on the page itself',
-        sms: 'reminder a day ahead, fewer no-shows',
-        cadeaubonnen: 'pick an amount, add a name, done',
-      },
-      extra: '+ a price list the salon updates itself.',
+      title: 'Go-ahead and a call',
+      when: 'Day 1',
+      text: 'You pay the first half. Half an hour on the phone: what do you sell, to whom, and what should your site achieve?',
     },
     {
-      name: 'Fysio Vesting',
-      sector: 'Physiotherapy practice · Naarden',
-      domain: 'fysiovesting.nl',
-      href: 'https://ad-1-kliniek.base44.app',
-      /**
-       * Basisnaam van de schermafbeelding in `public/`. Showcase.astro maakt
-       * daar `-600.webp` en `-1200.webp` van. Ontbreekt het bestand, dan slaat
-       * hij het beeld over en werkt de kaart gewoon zonder.
-       */
-      image: '/voorbeeld-fysio',
-      summary: 'A complete practice site: patients book themselves, and the intake form is done before they walk in.',
-      base: 'interactief',
-      /** Gelijk aan preset 'praktijk' in pricing.ts. */
-      addons: ['agenda', 'intake', 'portaal', 'sms'] as const,
-      /** Eén korte regel per optie: wat het hier doet, niet wat het is. */
-      does: {
-        agenda: 'patients book themselves, evenings too',
-        intake: 'filled in beforehand instead of in the waiting room',
-        portaal: 'exercise videos and appointments behind their own login',
-        sms: 'a reminder the day before',
-      },
-      extra: '+ an admin screen where the practice opens up its diary.',
+      title: 'Build and refine',
+      when: 'Day 2 to 4',
+      text: `I build your site. You follow along and steer, in ${offer.revisionRounds} rounds.`,
     },
     {
-      name: 'Hovenier Van Slooten',
-      sector: 'Landscaping & paving · Deventer',
-      domain: 'hovenier-vanslooten.nl',
-      href: 'https://ad-2-vakman.base44.app',
-      image: '/voorbeeld-vakman',
-      summary: 'A complete trade site: two questions and you know where you stand, and the request arrives complete.',
-      base: 'compleet',
-      /** Gelijk aan preset 'klus' in pricing.ts. */
-      addons: ['calculator', 'intake', 'beforeafter'] as const,
-      does: {
-        calculator: 'a price indication in four steps',
-        intake: 'measurements and photos sent along straight away',
-        beforeafter: 'projects with a before and after shot',
-      },
-      extra: '+ one overview where every request lands.',
+      title: 'Live',
+      when: `Day ${DAYS}`,
+      text: 'Your site is online and your domain is connected. Only then do you pay the second half.',
     },
   ],
-} as const;
-
-/* ------------------------------ Proof ------------------------------ */
-
-const proof = {
-  kicker: 'Results',
-  title: 'This is already live. Click your way through it.',
-  lead: 'No wall of client logos and no quotes I made up myself. What I do have: two real sites I built and own myself — open them and click around.',
-  visitLabel: 'Open the site',
-  newTab: 'opens in a new tab',
-  builtLabel: 'What runs on it',
-  cases: [
-    {
-      company: 'modernpitching.nl',
-      sector: 'My own business · baseball coaching',
-      href: 'https://modernpitching.nl',
-      extern: true,
-      result: 'Twelve pages, two languages and its own app area — the site my own coaching business runs on.',
-      built: [
-        'AI coach that answers pitchers’ questions',
-        'Booking form for sessions',
-        'Video upload for a free analysis',
-        'Dashboard with progress and messages',
-        'Fully Dutch and English',
-      ],
-    },
-    {
-      company: 'scottprins.nl',
-      sector: 'The page you’re on right now',
-      href: '#menu',
-      extern: false,
-      result: 'Everything on the menu above is live right here. No mockups — you just used the options yourself.',
-      built: [
-        'Twelve working demos, not screenshots',
-        'Configurator that prices your build live',
-        'Quote that lands in my inbox as an email',
-        'Fully Dutch and English',
-      ],
-    },
-  ],
-  stats: [
-    { value: 25, suffix: '+', label: 'sites & web apps built — own projects included' },
-    { value: 5, suffix: ' working days', label: 'from your material to live' },
-    { value: 48, prefix: '< ', suffix: ' hrs', label: 'response time' },
-  ],
-} as const;
-
-/* ---------------------------- Over Scott --------------------------- */
+  note: `The ${DAYS} working days count from the moment your material is in. Not live on time? Then ${PENALTY} per working day comes off the final invoice.`,
+};
 
 const about = {
-  kicker: 'About Scott',
-  title: 'Direct contact with the maker. No account managers.',
+  label: 'About me',
+  title: 'I’m Scott.',
   paragraphs: [
-    'I’m Scott — I build websites and web apps for small business owners in the Netherlands. Everything you see working on this page, I built myself. And everything I build for you works just as well.',
-    'I work with modern AI tooling. That’s why I can deliver in days and charge in hundreds, not thousands. What AI doesn’t do: think about your business, make the choices and keep the quality up. That’s me.',
-    'You message or call me directly. Need a change today? Usually it’s live the same day.',
+    'I build websites from Badhoevedorp, near Amsterdam, for business owners who would rather practise their craft than wrestle with a site builder.',
+    `You have one point of contact: me, the person who builds it. You message or call me directly and hear back within ${HOURS} hours.`,
   ],
-  whatsappButton: '💬 Message me on WhatsApp',
-  photoAlt: 'Photo of Scott Prins',
-} as const;
-
-/* ------------------------------- FAQ -------------------------------- */
+  photoAlt: 'Portrait of Scott Prins',
+  stats: [
+    { value: '25+', label: 'sites and web apps built, own projects included' },
+    { value: `${DAYS} working days`, label: 'from your material to live' },
+    { value: `< ${HOURS} hrs`, label: 'response time' },
+  ],
+  proofLabel: 'Click through it yourself',
+  proof: [
+    {
+      name: 'modernpitching.nl',
+      text: 'The site of my own coaching business. Twelve pages, two languages and its own app area.',
+      href: 'https://modernpitching.nl',
+    },
+    {
+      name: 'scottprins.nl',
+      text: 'The site you are on right now. Including that thing at the top.',
+      href: '#upgrade',
+    },
+  ],
+  newTab: 'opens in a new tab',
+  whatsapp: 'Message me on WhatsApp',
+};
 
 const faq = {
-  kicker: 'FAQ',
+  label: 'Questions',
   title: 'Good questions.',
   items: [
     {
+      q: 'How can this be so affordable?',
+      a: 'I work with my own system of designs and animations and with modern AI tooling, so I don’t have to build every site from scratch. You pay for the custom work, not for reinventing the wheel.',
+    },
+    {
+      q: 'Is there a subscription attached?',
+      a: `No. You pay ${PRICE} once and hosting is included. The only thing you pay yourself is your domain name, usually around €10 a year. Want me to look after your site? That starts at ${PLUS} a month, cancel any month.`,
+    },
+    {
+      q: 'How many pages do I get?',
+      a: 'One long, flowing page with everything on it: what you do, for whom, your offer or prices, who you are and how to reach you. For most small businesses that is exactly right. If you really need more pages, you hear the price up front.',
+    },
+    {
+      q: 'I don’t have good copy or photos. Can we still do this?',
+      a: 'Yes, and that is the rule rather than the exception. I write the copy from one half-hour phone call: you tell me about your business, I turn it into the page, you read it through. Photos from a modern phone are often good enough; otherwise I find decent royalty-free images or recommend a photographer near you.',
+    },
+    {
+      q: 'How quickly am I live?',
+      a: `Within ${DAYS} working days, counted from the moment your copy (or our call), photos and logo are in.`,
+    },
+    {
+      q: `What if the site isn’t finished within ${DAYS} working days?`,
+      a: `Then it costs me money, not you. The clock starts as soon as your material is in. If you’re not live within ${DAYS} working days after that, ${PENALTY} per working day comes off the final invoice.`,
+    },
+    {
+      q: 'What if I don’t like it?',
+      a: `That’s why you start with a free sample page. If you don’t like it, it ends there and you pay nothing. If you go ahead, you still have ${offer.revisionRounds} rounds to steer before the site goes live.`,
+    },
+    {
+      q: 'I already have a site and a domain. What happens to them?',
+      a: 'You keep your own domain name; we move it, so your shop sign and business cards stay correct. We move your email addresses over before the new site goes live, so you don’t miss any mail. And your place in Google comes along: every old address neatly redirects to the new page.',
+    },
+    {
       q: 'Who owns the domain and the website?',
-      a: 'You do. The domain is in your name and you can always ask for all the files and logins. You’re not tied to anything.',
+      a: 'You do. The domain is registered in your name and the site is yours once it’s paid for. On request you get all the files and access. You’re not locked into anything.',
     },
     {
-      q: 'What if I want to stop the monthly fee?',
-      a: 'You can cancel monthly. The site stays yours; you move it to your own hosting or I hand everything over properly. Only the ongoing services (hosting, updates, modules like online booking) stop.',
+      q: 'Can a web shop, a booking calendar or something else be added later?',
+      a: `Yes. Anything outside the ${PRICE} gets a fixed price up front. Extra work only exists if you want something extra, and you hear the price for that up front too.`,
     },
     {
-      q: 'How fast am I live?',
-      a: 'Most sites are live in 5 working days, counted from the moment your texts and photos are in. More complex modules (customer portal, ordering) can take a few days extra.',
+      q: 'Why don’t I see any clients or reviews on this site?',
+      a: 'Because I have only just started as a web designer and I am not going to invent quotes. What I do have: this site, with a demo you can try yourself, and modernpitching.nl, my own company’s site, which I built from front to back. Click through it; that says more than a wall of logos.',
     },
     {
-      q: 'I don’t have good copy or photos. Can it still work?',
-      a: 'Yes, and that is the rule rather than the exception. I write the copy based on one half-hour phone call: you tell me about your business, I turn it into the page, you read it back. Photos from a modern phone are often good enough; otherwise I find decent royalty-free images or recommend a photographer near you.',
-    },
-    {
-      q: 'I already have a site and a domain. What happens to those?',
-      a: 'You keep your own domain name — we transfer it, so your signage and business cards stay correct. Your email addresses move across before the new site goes live, so you miss nothing. And your place in Google comes along: every old address redirects neatly to the new page.',
-    },
-    {
-      q: 'What if the site isn’t ready within 5 working days?',
-      a: 'Then it costs money — mine. The clock starts once your copy and photos are in. If you are not live within 5 working days after that, €50 per working day comes off the final invoice. More complex modules such as a customer portal or online ordering are agreed at 7 working days up front.',
-    },
-    {
-      q: 'What happens if you stop doing this?',
-      a: 'Your site stays yours, and that is not just a promise: the domain is in your name and the site is technically yours once the one-off amount is paid. On request you get all files and logins, so any other web builder can pick it up. You are tied to nothing — you can cancel any month.',
-    },
-    {
-      q: 'Why are there no clients or reviews on this site?',
-      a: 'Because I have just started as a web designer and I am not going to invent quotes. What I do have: this site, with twelve options you can try yourself, and modernpitching.nl — my own company’s site, which I built from front to back. Click through it; that says more than a wall of logos.',
-    },
-    {
-      q: 'Does my site work well on mobile?',
-      a: 'Mobile is the starting point, not an afterthought — most of your visitors arrive on their phone (probably like you right now). I test every site on real phones.',
-    },
-    {
-      q: 'What about the GDPR and privacy?',
-      a: 'By default I build without tracking cookies, so usually no cookie banner is needed. If you pick visitor stats or a Google map, we’ll check together whether a notice is needed — cookieless stats are an option too. Forms are sent encrypted and you get a privacy policy to match your site.',
-    },
-    {
-      q: 'What does a change cost after launch?',
-      a: 'The occasional small change — a price, a photo, your opening hours — is simply part of the deal, even without an extra plan. Want things updated monthly? That’s what Plus and Premium are for. Bigger changes always get a fixed price first.',
-    },
-    {
-      q: 'Do you work with fixed prices?',
-      a: 'Always. You can see on this page what everything costs, and your quote is a fixed price. Extra work only exists if you want something extra — and you hear that price up front too.',
-    },
-    {
-      q: 'Can I add options later?',
-      a: 'Yes, that’s exactly the idea behind the menu. Start small and add online booking or the chatbot later — at the prices you see here.',
+      q: 'What about GDPR and privacy?',
+      a: 'By default I build without tracking cookies, so usually no cookie banner is needed. If you want statistics or a Google map, we check together whether a notice is needed; cookieless statistics are an option too. Forms are sent encrypted and you get a suitable privacy statement with your site.',
     },
   ],
-} as const;
+};
 
-/* ------------------------------ Footer ------------------------------ */
+const order = {
+  label: 'Order',
+  titleStart: 'Your competitor could have this site next week.',
+  titleAccent: 'Or you could.',
+  lead: `Fill in the slip. Within ${HOURS} hours you have your free sample page, and you only pay once you like it.`,
+  points: [`Free sample page within ${HOURS} hours`, 'You only pay after approval', 'Rather call or message? Also fine.'],
+  slip: {
+    heading: 'Order slip',
+    dateLabel: 'Date',
+    qtyLine: 'Custom website',
+    forLabel: 'for',
+    detail: 'One page with design, motion, copy, Google foundation, domain and hosting',
+    roundsLine: 'rounds of changes',
+    sampleLine: 'Sample page',
+    included: 'included',
+    free: 'free',
+    totalLabel: 'Due now',
+    totalNote: 'You only pay after approving your sample page.',
+    exVat: 'excl. VAT',
+  },
+  fields: {
+    name: 'Your name',
+    email: 'Email address',
+    phone: 'Phone',
+    company: 'Business name',
+    trade: 'Trade',
+    message: 'Anything else I should know?',
+    optional: 'optional',
+  },
+  tradeOther: 'Something else',
+  submit: 'Request my free sample page',
+  sending: 'Sending your slip…',
+  privacy: 'I only use your details to answer your request.',
+  privacyLink: 'Privacy statement',
+  success: {
+    title: 'Slip received.',
+    text: `You’ll hear from me within ${HOURS} hours. In a hurry? Just message me.`,
+  },
+  errors: {
+    name: 'Please fill in your name.',
+    email: 'Please enter a valid email address.',
+    generic: 'Sending didn’t work. Send your slip via WhatsApp or email instead; everything is already filled in.',
+  },
+  whatsapp: 'Send via WhatsApp',
+  mail: 'Send via email',
+  previewNote: 'This is a preview of the site: sending works via WhatsApp or email here. Everything is already filled in.',
+  mailSubject: 'Order slip via scottprins.nl',
+  messageIntro: 'Hi Scott, I’d like a free sample page.',
+};
 
 const footer = {
-  kicker: 'Work together?',
-  cta: 'Tell me about your business. You’ll know what it costs within 48 hours.',
-  sub: 'Tell me about your business — within 48 hours you’ll have a concrete fixed-price proposal.',
-  ctaButton: 'Build your website',
-  phoneLine: 'Call or message:',
-  kvkLabel: 'Dutch Chamber of Commerce',
+  closer: 'Under your website, there’s a better one.',
+  closerCta: 'Bring it to the surface',
+  contactLabel: 'Contact',
+  phoneLabel: 'Call or message',
+  emailLabel: 'Email',
+  addressLabel: 'Address',
+  detailsLabel: 'Details',
+  kvkLabel: 'Chamber of Commerce',
   kvk: '89874994',
   btwLabel: 'VAT ID',
   btw: '{BTW}',
-  privacyLink: 'Privacy policy',
-  termsLink: 'Terms & conditions',
+  privacyLink: 'Privacy statement',
+  termsLink: 'Terms and conditions',
   rights: `© ${new Date().getFullYear()} ${site.legalName}`,
-} as const;
+  timer: 'You’ve been here for {tijd}. Time enough for {aantal} first impressions.',
+  credits: 'Photos in the demos: StockSnap (CC0).',
+};
 
-/* --------------------------- Privacy-pagina ------------------------- */
+const sticky = {
+  price: PRICE,
+  cta: 'Claim your site',
+};
 
+const voorbeeld = {
+  back: 'Back to scottprins.nl',
+  badge: 'Example site',
+  note: `This is an example of what you get for ${PRICE}.`,
+  claim: 'Claim this site',
+  titleSuffix: 'example site by Scott Prins',
+};
 
-/* ----------------------- Algemene voorwaarden ----------------------- */
-/* Door Scott bevestigd — zie de notitie in nl.ts. */
-
-
-/* ------------------ Demo 13 — AI phone assistant ------------------- */
-/* Nagespeeld gesprek — zie de notitie in nl.ts. */
-const demoTelefonist = {
-  kicker: 'Option 13',
-  title: 'AI phone assistant that picks up when you can’t',
-  lead: 'The most expensive option on this menu, and until now the only one without a demo. Press call: this is a re-enacted conversation, exactly how it would run at Salon Demo.',
-  callButton: 'Call Salon Demo',
-  callAgain: 'Play again',
-  callingLabel: 'Calling…',
-  connected: 'Connected to the AI phone assistant',
-  ended: 'Call ended · 42 seconds',
-  demoNote: 'Re-enacted conversation. On your number the assistant really answers, with your voice settings and your calendar.',
-  resultTitle: 'What happened in the meantime',
-  results: [
-    'Appointment booked: Thursday 14:30, cut + blow-dry',
-    'Confirmation sent to the caller by text',
-    'Added to your calendar, with name and phone number',
-  ],
-  script: [
-    { wie: 'ai', ms: 900, tekst: 'Good afternoon, you’re through to the assistant at Salon Demo. How can I help?' },
-    { wie: 'beller', ms: 2400, tekst: 'Hi, I wanted to book an appointment for a haircut.' },
-    { wie: 'ai', ms: 1800, tekst: 'Of course. Do you have a preferred day or time of day?' },
-    { wie: 'beller', ms: 2200, tekst: 'Thursday afternoon would be great.' },
-    { wie: 'ai', ms: 2000, tekst: 'On Thursday I can offer 14:30 or 16:00. Which suits you best?' },
-    { wie: 'beller', ms: 1900, tekst: 'Half past two, please.' },
-    { wie: 'ai', ms: 1700, tekst: 'Noted. Could I take your name and mobile number for the confirmation?' },
-    { wie: 'beller', ms: 2600, tekst: 'Anne de Wit, 06 12 34 56 78.' },
-    { wie: 'ai', ms: 2400, tekst: 'Thank you. Thursday 14:30, cut and blow-dry, under the name Anne de Wit. You’ll get a text confirmation shortly. Have a good day!' },
-  ],
-} as const;
-
-/* ------------------ Trade landing pages ---------------------------- */
-/* Only the recurring labels; the copy per trade lives in branches.ts. */
-const branche = {
-  navDemos: 'Demos',
-  navPrice: 'Price',
-  navMenu: 'All options',
-  heroDemoCta: 'See the demos first',
-  quoteTitle: 'This build',
-  breakdown: 'See the breakdown',
-  adjustNote: 'Adjust it below; the price recalculates live.',
-} as const;
-
-const meta = {
-  title: 'Website design from €495 — Scott Prins Webdesign',
-  description:
-    'A website at a fixed price: from €495 ex VAT, live in 5 working days. Web designer based in Badhoevedorp, working across the Netherlands. Build your own site right here.',
-} as const;
-
-/* ------ Teksten in de mini-site die zichzelf bouwt (HeroScene) ------ */
-const heroScene = {
-  menuKicker: 'The menu',
-  headline: 'Your website.',
-  sub: 'Pick your base, pick your extras.',
-  cta: 'Build your website',
-  chatName: 'Salon Demo',
-  chatBot: 'Hi. Ask me about opening hours or prices 💇',
-  chatUser: 'Can I come in today?',
-  addToSite: '+ Add to my site',
-  statNumber: '5',
-  statUnit: 'days',
-  statLabel: 'avg. delivery time',
-  cartUnit: 'option',
-} as const;
-
-/* ------- Tekst rond de offerte-samenvatting (quote.ts) ------- */
-const quote = {
-  intro: 'My build via scottprins.nl:',
-  base: 'Base package',
-  includedWith: 'Included with',
-  extras: 'Extras',
-  none: 'none',
-  care: 'Care plan',
-  included: 'included',
-  totalUpfront: 'Total one-off',
-  totalMonthly: 'Total per month',
-  /* Wat de bezoeker zelf verstuurt via WhatsApp of mailto. */
-  greeting: 'Hi Scott! ',
-  subject: 'Quote request via scottprins.nl',
-  name: 'Name',
-  company: 'Company',
-  phone: 'Phone',
-  note: 'Note',
-} as const;
-
-/* --------- Namen en omschrijvingen bij pricing.ts ---------- */
-/* De getallen staan in pricing.ts; alleen de tekst is taalgebonden. */
-const pricing = {
-  base: {
-    visitekaartje: {
-      name: 'One-Pager',
-      description: 'One strong page that sells your business.',
-      includes: ['One page with everything on it, built for the phone', 'Contact form + WhatsApp button', 'Findable in Google for your trade and your town', 'Domain, hosting and the padlock in the address bar: sorted'],
-    },
-    compleet: {
-      name: 'Complete',
-      description: 'Several pages, ready to grow.',
-      includes: ['Up to 5 pages', 'Everything in One-Pager', 'Linked to your Google Business Profile: opening hours, directions and reviews match everywhere', 'Visitor numbers, without a cookie banner'],
-    },
-    interactief: {
-      name: 'Interactive',
-      description: 'For businesses where customers book, order or check their own file.',
-      includes: ['Everything in Complete', 'Online booking included at no extra cost', 'Your changes go first'],
-    },
-  },
-  addons: {
-    agenda: {
-      name: 'Online booking',
-      shortPitch: 'Customers book their own appointment.',
-    },
-    chatbot: {
-      name: 'AI chatbot',
-      shortPitch: 'Answers questions, day and night.',
-    },
-    'ai-telefonist': {
-      name: 'AI phone assistant',
-      shortPitch: 'Picks up when your hands are full.',
-    },
-    bestellen: {
-      name: 'Your own online ordering',
-      shortPitch: 'No platform commission.',
-    },
-    kaart: {
-      name: 'Interactive map',
-      shortPitch: 'All your locations, neatly on the map.',
-    },
-    scrollvideo: {
-      name: 'Scroll video & animation',
-      shortPitch: 'That opening on this site.',
-    },
-    intake: {
-      name: 'Digital intake form',
-      shortPitch: 'Smart form, step by step.',
-    },
-    calculator: {
-      name: 'Price calculator',
-      shortPitch: 'Customers work out their own price.',
-    },
-    beforeafter: {
-      name: 'Before/after slider',
-      shortPitch: 'Show the difference.',
-    },
-    reviews: {
-      name: 'Reviews wall',
-      shortPitch: 'Your Google reviews, live on your site.',
-    },
-    meertalig: {
-      name: 'Multilingual',
-      shortPitch: 'NL/EN in one click.',
-    },
-    portaal: {
-      name: 'Customer portal',
-      shortPitch: 'Documents and invoices behind a login.',
-    },
-    cadeaubonnen: {
-      name: 'Gift cards & loyalty card',
-      shortPitch: 'Sell gift cards and bring customers back.',
-    },
-    sms: {
-      name: 'SMS reminders',
-      shortPitch: 'Fewer no-shows.',
-    },
-    nieuwsbrief: {
-      name: 'Newsletter',
-      shortPitch: 'Stay on your customers’ radar.',
-    },
-  },
-  care: {
-    basis: {
-      name: 'Basic',
-      description: 'Hosting, updates and the occasional small tweak.',
-    },
-    plus: {
-      name: 'Plus',
-      description: 'Changes applied every month + reporting.',
-    },
-    premium: {
-      name: 'Premium',
-      description: 'Unlimited small changes, always priority.',
-    },
-  },
-  presets: {
-    salon: {
-      label: 'Hair or beauty salon',
-    },
-    horeca: {
-      label: 'Restaurant, café or delivery',
-    },
-    klus: {
-      label: 'Trades, building or landscaping',
-    },
-    praktijk: {
-      label: 'Practice or therapist',
-    },
-    winkel: {
-      label: 'Shop or showroom',
-    },
-  },
-} as const;
-
-export const en = {
+export const en: Widen<typeof nl> = {
   meta,
-  pricing,
-  quote,
-  hero,
-  heroScene,
   nav,
-  howItWorks,
-  menuIntro,
-  demoAgenda,
-  demoChatbot,
-  demoKaart,
-  demoCalculator,
-  demoBestellen,
-  demoReviews,
-  demoBeforeAfter,
-  demoIntake,
-  demoPortaal,
-  demoMeertalig,
-  demoScrollvideo,
-  demoCadeau,
-  demoTelefonist,
-  branche,
-  configurator,
-  showcase,
-  proof,
+  hero,
+  device,
+  trades,
+  oldSite,
+  vijftig,
+  included,
+  price,
+  process,
   about,
   faq,
+  order,
   footer,
-} as const;
+  sticky,
+  voorbeeld,
+};

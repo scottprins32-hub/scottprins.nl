@@ -1,0 +1,97 @@
+---
+/**
+ * Op de telefoon: de prijs en de knop altijd één tik weg, zodra de knoppen
+ * bovenin uit beeld zijn. Verdwijnt weer bij de bestelbon zelf.
+ */
+import { content, toLocale } from '../data/content';
+
+const t = content(toLocale(Astro.currentLocale));
+---
+
+<a class="sticky" href="#bestellen" data-sticky inert>
+  <span class="sticky-price">
+    {t.sticky.price}
+    <small>{t.order.slip.exVat}</small>
+  </span>
+  <span class="btn btn-signal sticky-btn">{t.sticky.cta}</span>
+</a>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky]');
+  /* Zodra de knoppen bovenin uit beeld zijn, neemt deze balk het over. */
+  const hero = document.querySelector<HTMLElement>('[data-sticky-after]');
+  const order = document.getElementById('bestellen');
+  if (bar && hero && order) {
+    let pastHero = false;
+    let atOrder = false;
+    const update = () => {
+      const show = pastHero && !atOrder;
+      bar.classList.toggle('is-visible', show);
+      bar.inert = !show;
+    };
+    new IntersectionObserver(([entry]) => {
+      pastHero = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      update();
+    }).observe(hero);
+    new IntersectionObserver(([entry]) => {
+      atOrder = entry.isIntersecting;
+      update();
+    }, { rootMargin: '0px 0px -30% 0px' }).observe(order);
+  }
+</script>
+
+<style>
+  .sticky {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 1.15rem;
+    border-radius: 999px;
+    background: var(--color-ink-3);
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 18px 40px -12px rgb(0 0 0 / 0.6);
+    color: var(--color-bone);
+    transform: translateY(calc(100% + 2rem));
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .sticky.is-visible {
+    transform: none;
+  }
+  .sticky-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 1.15rem;
+    font-weight: 760;
+    font-stretch: 112%;
+    letter-spacing: -0.02em;
+  }
+  .sticky-price small {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-mute);
+  }
+  .sticky-btn {
+    min-height: 2.75rem;
+  }
+  @media (max-width: 63.99rem) {
+    .sticky {
+      display: flex;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticky {
+      transition: none;
+    }
+  }
+</style>

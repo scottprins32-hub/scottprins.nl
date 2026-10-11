@@ -1,16 +1,12 @@
 ---
-/** Engelse algemene voorwaarden. Zelfde inhoud als /voorwaarden, andere taal. */
+/** Algemene voorwaarden. De tekst staat in src/data/content/*-legal.ts. */
 import Base from '../../layouts/Base.astro';
+import LegalPage from '../../components/LegalPage.astro';
 import { site } from '../../data/site';
 import { legal } from '../../data/content';
-import TermsPage from '../../components/TermsPage.astro';
 const { voorwaarden } = legal(Astro.currentLocale);
 ---
 
-<Base
-  title={`${voorwaarden.title} — ${site.legalName}`}
-  description={voorwaarden.metaDescription}
-  path="/voorwaarden"
->
-  <TermsPage />
+<Base title={`${voorwaarden.title} | ${site.legalName}`} description={voorwaarden.metaDescription} path="/voorwaarden">
+  <LegalPage kind="voorwaarden" />
 </Base>

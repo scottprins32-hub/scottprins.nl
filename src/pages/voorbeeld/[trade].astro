@@ -1,0 +1,22 @@
+---
+/** Nederlandse voorbeeldsites, één per branche. Niet geïndexeerd: het zijn demo's. */
+import Base from '../../layouts/Base.astro';
+import VoorbeeldPage from '../../components/VoorbeeldPage.astro';
+import { content } from '../../data/content';
+import { TRADE_IDS, SAMPLE_NAMES, type TradeId } from '../../data/trade-ids';
+
+export function getStaticPaths() {
+  return TRADE_IDS.map((trade) => ({ params: { trade }, props: { trade } }));
+}
+const { trade } = Astro.props as { trade: TradeId };
+const t = content('nl');
+---
+
+<Base
+  title={`${SAMPLE_NAMES[trade]} | ${t.voorbeeld.titleSuffix}`}
+  description={t.voorbeeld.note}
+  path={`/voorbeeld/${trade}`}
+  noindex
+>
+  <VoorbeeldPage {trade} />
+</Base>

@@ -1,0 +1,215 @@
+---
+/**
+ * Vijftig milliseconden: zo snel oordeelt een bezoeker. Hier kun je het
+ * zelf ervaren: je eigen nieuwe site (uit het upgrade-ding, met je eigen
+ * naam) flitst precies drie beeldjes lang in beeld.
+ *
+ * Eén flits, alleen als je zelf op de knop drukt, en nooit bij
+ * prefers-reduced-motion: dan staat er een zin in plaats van de flits.
+ */
+import { content, toLocale } from '../data/content';
+import Icon from './Icon.astro';
+
+const t = content(toLocale(Astro.currentLocale));
+const v = t.vijftig;
+---
+
+<section class="vijftig section-pad" id="vijftig" aria-labelledby="vijftig-title">
+  <div class="wrap vijftig-grid">
+    <div class="vijftig-head">
+      <p class="label vijftig-label">{v.label}</p>
+      <h2 id="vijftig-title" class="display vijftig-title" data-reveal="title">{v.title}</h2>
+    </div>
+
+    <div class="vijftig-test" data-flash data-caption={v.flashCaption} data-replay={v.replay}>
+      <div class="flash-screen" data-flash-screen>
+        <span class="flash-ghost" aria-hidden="true">50</span>
+        <div class="flash-vp" data-flash-vp aria-hidden="true"></div>
+        <div class="flash-ui">
+          <button type="button" class="btn btn-ghost flash-play" data-flash-play>
+            <Icon name="eye" /><span data-flash-label>{v.play}</span>
+          </button>
+          <p class="flash-reduced">{v.flashReduced}</p>
+        </div>
+      </div>
+      <p class="flash-caption" data-flash-caption aria-live="polite"></p>
+    </div>
+
+    <div class="vijftig-body">
+      {
+        v.body.map((paragraph) => (
+          <p class="lead" data-reveal="up">
+            {paragraph}
+          </p>
+        ))
+      }
+      <p class="vijftig-punch" data-reveal="up">{v.punch}</p>
+      <p class="vijftig-source">
+        <a class="text-link" href={v.sourceHref} target="_blank" rel="noopener">{v.source}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initFlash } from '../scripts/flash';
+  const el = document.querySelector<HTMLElement>('[data-flash]');
+  if (el) initFlash(el);
+</script>
+
+<style>
+  .vijftig-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 2vw, 2rem);
+  }
+  .vijftig-head {
+    grid-column: 1 / -1;
+  }
+  .vijftig-label {
+    margin: 0 0 1.25rem;
+    color: var(--color-mute);
+  }
+  .vijftig-title {
+    margin: 0;
+    font-size: var(--text-display-l);
+    max-width: 14ch;
+  }
+  .vijftig-test {
+    grid-column: 1 / -1;
+    container: flash / inline-size;
+  }
+  .flash-screen {
+    position: relative;
+    aspect-ratio: 1280 / 800;
+    overflow: hidden;
+    border-radius: 0.875rem;
+    background: var(--color-ink-2);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+  @container flash (width < 640px) {
+    .flash-screen {
+      aspect-ratio: 390 / 640;
+    }
+  }
+  .flash-ghost {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 46cqi;
+    font-weight: 800;
+    font-stretch: 125%;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-line-strong);
+    user-select: none;
+  }
+  .flash-vp {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+  }
+  .flash-screen.is-on .flash-vp {
+    visibility: visible;
+  }
+  .flash-vp :global(.vp) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 800px;
+    transform-origin: 0 0;
+    transform: scale(var(--s-js, 0.5));
+    container: vp / inline-size;
+  }
+  @container flash (width < 640px) {
+    .flash-vp :global(.vp) {
+      width: 390px;
+      height: 640px;
+    }
+  }
+  .flash-vp :global(.site) {
+    position: absolute;
+    inset: 0;
+  }
+  .flash-ui {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .flash-screen.is-on .flash-ui {
+    visibility: hidden;
+  }
+  .flash-reduced {
+    display: none;
+    max-width: 26rem;
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .vijftig-test[data-reduced] .flash-play {
+    display: none;
+  }
+  .vijftig-test[data-reduced] .flash-reduced,
+  :global(html:not(.js)) .flash-reduced {
+    display: block;
+  }
+  :global(html:not(.js)) .flash-play {
+    display: none;
+  }
+  .flash-caption {
+    min-height: 1.6em;
+    margin: 1rem 0 0;
+    font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+    font-weight: 560;
+    font-stretch: 106%;
+    color: var(--color-bone);
+  }
+  .vijftig-body {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1.25rem;
+    max-width: 40rem;
+  }
+  .vijftig-body .lead {
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .vijftig-punch {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-weight: 640;
+    font-stretch: 108%;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .vijftig-source {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: var(--color-mute);
+  }
+  @media (min-width: 64rem) {
+    .vijftig-head {
+      grid-column: 1 / span 5;
+      grid-row: 1 / span 2;
+      align-self: start;
+      position: sticky;
+      top: 7rem;
+    }
+    .vijftig-test {
+      grid-column: 6 / -1;
+      grid-row: 1;
+    }
+    .vijftig-body {
+      grid-column: 6 / span 6;
+      grid-row: 2;
+    }
+  }
+</style>

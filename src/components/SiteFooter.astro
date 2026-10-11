@@ -1,73 +1,208 @@
 ---
 /**
- * Footer met de grote "samenwerken?"-uitnodiging en de bedrijfsgegevens.
- * ({BTW} nog vervangen vóór livegang; adresvelden in site.ts invullen
- * zodra Scott ze aanlevert — leeg = niet tonen.)
+ * Footer: de zin van de site nog één keer, groot, en daaronder de
+ * gegevens. Plus een klokje dat telt hoeveel eerste indrukken er in jouw
+ * bezoek passen. De btw-regel verschijnt pas als er een echt nummer staat.
  */
 import { site } from '../data/site';
 import { content, toLocale, altPath } from '../data/content';
+import { url } from '../lib/url';
+import Icon from './Icon.astro';
+import LangSwitch from './LangSwitch.astro';
+import Logo from './Logo.astro';
+
+interface Props {
+  home?: boolean;
+}
+const { home = true } = Astro.props;
 const locale = toLocale(Astro.currentLocale);
 const { footer } = content(locale);
-import Logo from './Logo.astro';
+const orderHref = home ? '#bestellen' : `${url(altPath('/', locale))}#bestellen`;
+const hasBtw = !footer.btw.startsWith('{');
 ---
 
-<footer class="grain bg-ink py-16 text-cream sm:py-20">
-  <div class="mx-auto max-w-6xl px-5">
-    <div class="flex flex-col items-start justify-between gap-10 md:flex-row md:items-end">
-      <div class="max-w-xl">
-        <Logo class="mb-6" />
-        <p class="kicker">{footer.kicker}</p>
-        <p class="font-display mt-2 text-3xl font-semibold text-balance sm:text-4xl">{footer.cta}</p>
-        <p class="text-muted-dark mt-3">{footer.sub}</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a
-            href="#configurator"
-            class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            {footer.ctaButton}
-          </a>
-          <a
-            href={`https://wa.me/${site.whatsapp}`}
-            target="_blank"
-            rel="noopener"
-            class="rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold transition-colors hover:border-accent"
-          >
-            💬 WhatsApp
-          </a>
-        </div>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-closer">
+      <p class="display footer-title" data-reveal="title">{footer.closer}</p>
+      <a class="btn btn-signal" href={orderHref} data-magnetic>
+        {footer.closerCta}<Icon name="arrow-right" />
+      </a>
+    </div>
+
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h2 class="label footer-label">{footer.contactLabel}</h2>
+        <a class="footer-link" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">
+          <Icon name="whatsapp" />{site.whatsappDisplay}
+        </a>
+        <a class="footer-link" href={`tel:+${site.whatsapp}`}><Icon name="phone" />{footer.phoneLabel}</a>
+        <a class="footer-link" href={`mailto:${site.email}`}><Icon name="envelope" />{site.email}</a>
       </div>
-      <div class="text-muted-dark text-sm leading-relaxed sm:text-right">
-        <p class="font-semibold text-cream">{site.legalName}</p>
+      {
+        site.addressStreet && (
+          <div class="footer-col">
+            <h2 class="label footer-label">{footer.addressLabel}</h2>
+            <p>
+              {site.addressStreet}
+              <br />
+              {site.addressCity}
+            </p>
+          </div>
+        )
+      }
+      <div class="footer-col">
+        <h2 class="label footer-label">{footer.detailsLabel}</h2>
         <p>
-          <a href={`mailto:${site.email}`} class="underline-offset-2 hover:text-cream hover:underline">{site.email}</a>
+          {site.legalName}
+          <br />
+          {footer.kvkLabel} {footer.kvk}
+          {
+            hasBtw && (
+              <>
+                <br />
+                {footer.btwLabel} {footer.btw}
+              </>
+            )
+          }
         </p>
-        <p>
-          {footer.phoneLine}
-          <a href={`tel:+${site.whatsapp}`} class="underline-offset-2 hover:text-cream hover:underline">
-            {site.whatsappDisplay}
-          </a>
+        <p class="footer-legal">
+          <a class="text-link" href={url(altPath('/privacy', locale))}>{footer.privacyLink}</a>
+          <a class="text-link" href={url(altPath('/voorwaarden', locale))}>{footer.termsLink}</a>
         </p>
-        {site.addressStreet && <p class="mt-2">{site.addressStreet}</p>}
-        {site.addressCity && <p>{site.addressCity}</p>}
-        {/* De btw-regel verschijnt pas als er een echt nummer staat; een
-            zichtbare {BTW}-placeholder is erger dan geen btw-regel. */}
-        <p class="mt-2">
-          {footer.kvkLabel}: {footer.kvk}
-          {!footer.btw.startsWith('{') && ` · ${footer.btwLabel}: ${footer.btw}`}
-        </p>
+      </div>
+      <div class="footer-col footer-end">
+        <Logo />
+        <LangSwitch />
       </div>
     </div>
 
-    <div class="text-muted-dark mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs">
+    <div class="footer-bottom">
+      <p class="footer-timer" data-timer data-template={footer.timer} data-locale={locale}></p>
       <p>{footer.rights}</p>
-      <div class="flex flex-wrap gap-4">
-        <a href={altPath('/voorwaarden', locale)} class="underline-offset-2 hover:text-cream hover:underline">
-          {footer.termsLink}
-        </a>
-        <a href={altPath('/privacy', locale)} class="underline-offset-2 hover:text-cream hover:underline">
-          {footer.privacyLink}
-        </a>
-      </div>
+      <p>{footer.credits}</p>
     </div>
   </div>
 </footer>
+
+<script>
+  /* Hoe lang ben je hier, en hoeveel keer 50 ms is dat? Telt alleen
+     zolang de footer in beeld is; zonder JS staat er niets. */
+  const el = document.querySelector<HTMLElement>('[data-timer]');
+  if (el) {
+    const template = el.dataset.template ?? '';
+    const nf = new Intl.NumberFormat(el.dataset.locale === 'en' ? 'en-GB' : 'nl-NL');
+    let timer = 0;
+    const render = () => {
+      const ms = performance.now();
+      const total = Math.floor(ms / 1000);
+      const min = Math.floor(total / 60);
+      const sec = total % 60;
+      const tijd = min > 0 ? `${min} min ${sec} sec` : `${sec} sec`;
+      el.textContent = template.replace('{tijd}', tijd).replace('{aantal}', nf.format(Math.floor(ms / 50)));
+    };
+    new IntersectionObserver(([entry]) => {
+      window.clearInterval(timer);
+      if (entry?.isIntersecting) {
+        render();
+        timer = window.setInterval(render, 1000);
+      }
+    }).observe(el);
+  }
+</script>
+
+<style>
+  .footer {
+    padding-block: clamp(5rem, 10vw, 9rem) clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--color-line);
+  }
+  .footer-closer {
+    display: grid;
+    justify-items: start;
+    gap: 2.5rem;
+  }
+  .footer-title {
+    max-width: 14ch;
+    margin: 0;
+    font-size: var(--text-display-xl);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem 2rem;
+    margin-top: clamp(4rem, 8vw, 7rem);
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .footer-col p {
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .footer-label {
+    margin: 0 0 1rem;
+    color: var(--color-mute);
+  }
+  .footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    color: var(--color-bone-2);
+    width: fit-content;
+  }
+  .footer-link:hover {
+    color: var(--color-bone);
+  }
+  .footer-link :global(.icon) {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: none;
+  }
+  .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin-top: 1rem !important;
+  }
+  .footer-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+  .footer-end {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .footer-bottom {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 3rem;
+    font-size: 0.875rem;
+    color: var(--color-mute);
+  }
+  .footer-bottom p {
+    margin: 0;
+  }
+  .footer-timer:empty {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .footer-closer {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .footer-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .footer-end {
+      align-items: flex-end;
+    }
+  }
+</style>

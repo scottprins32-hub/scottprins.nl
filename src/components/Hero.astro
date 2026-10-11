@@ -1,447 +1,164 @@
 ---
 /**
- * De opening: split screen. Links de belofte in tekst, rechts een échte
- * mini-scottprins.nl die zichzelf in 3D in elkaar zet.
- *
- * Wat de bezoeker beleeft:
- *  t=0      kopregel, knoppen en een gekleurde aurora staan er meteen —
- *           geen zwart scherm, en er is direct iets te dóén.
- *  ~0,4 s   de stukken van de site komen uit de diepte aanvliegen en
- *           blijven zweven in een gekantelde 3D-opstelling.
- *  muis     de hele scène kantelt mee met de cursor (bewijs: geen video).
- *  scrollen de bouw gaat verder — dag 1 t/m 5 — en op het eind draait de
- *           camera vlak, klikt alles op zijn plek en gaat de site "live".
- *
- * Zonder JavaScript of met prefers-reduced-motion staat hier direct het
- * eindbeeld: volledige tekst plus de afgebouwde, vlakke mini-site.
+ * De hero: de zin waar de hele site om draait, en eronder het ding dat hem
+ * waarmaakt. Het woord 'betere' komt binnen als een ouderwetse blauwe link
+ * en wordt dan zelf geüpgraded: de handtekening in het klein.
  */
-import { content } from '../data/content';
-const { hero } = content(Astro.currentLocale);
-import LangSwitch from './LangSwitch.astro';
-import HeroScene from './HeroScene.astro';
-import Logo from './Logo.astro';
+import { content, toLocale } from '../data/content';
+import { tail } from '../lib/text';
+import Icon from './Icon.astro';
+import Rise from './Rise.astro';
+import Upgrade from './upgrade/Upgrade.astro';
+
+const locale = toLocale(Astro.currentLocale);
+const { hero } = content(locale);
+const startWords = hero.titleStart.split(/\s+/).filter(Boolean).length;
+const end = tail(hero.titleEnd);
 ---
 
-<section class="hero relative overflow-hidden bg-ink text-cream" data-hero>
-  {/* Kleur en licht: langzaam drijvende aurora achter alles */}
-  <div class="aurora" aria-hidden="true">
-    <span class="aurora-1"></span>
-    <span class="aurora-2"></span>
-    <span class="aurora-3"></span>
-  </div>
-  <div class="grain absolute inset-0" aria-hidden="true"></div>
-
-  <div
-    class="relative mx-auto grid h-svh w-full max-w-7xl grid-rows-[auto_1fr_auto] gap-2 overflow-hidden px-5 pt-5 pb-5 sm:px-8"
-  >
-    {/* Bovenste regel: logo links, taalschakelaar rechts. De navigatiebalk
-        komt pas ná de hero binnen, dus zónder deze schakelaar kan iemand die
-        boven aan de pagina staat helemaal niet van taal wisselen — en juist
-        daar beslist hij of hij verder scrolt. */}
-    <div class="flex shrink-0 items-center justify-between gap-3">
-      <Logo />
-      <LangSwitch />
-    </div>
-
-    {/*
-      Drie zones in een grid met named areas. Op de telefoon staan ze
-      onder elkaar — kop, dan de scène met de meeste ruimte, dan de
-      cijfers en knoppen. Op een breed scherm schuift de scène naast de
-      tekst. Zo hoeft er niets gedupliceerd te worden.
-    */}
-    <div class="hero-layout min-h-0 min-w-0">
-      {/* ---------------- De belofte ---------------- */}
-      <div class="area-head relative z-10 min-w-0 max-w-xl">
-        <p class="kicker" data-hero-eyebrow>{hero.eyebrow}</p>
-
-        <h1
-          class="font-display mt-3 text-[clamp(1.95rem,4.4vw,3.9rem)] leading-[1.03] font-semibold tracking-[-0.02em] text-balance"
-          data-hero-headline
-        >
-          {hero.headline.split(' ').map((word, i) => (
-            <>
-              <span class="hero-word">
-                <span style={`--i:${i}`}>{word}</span>
-              </span>{' '}
-            </>
-          ))}
-        </h1>
-
-        {/* Op de telefoon staat deze zin alleen voor schermlezers en
-            zoekmachines in de pagina: de hoogte gaat daar naar de scène,
-            en de kopregel plus de prijsteller vertellen hetzelfde. */}
-        <p
-          class="text-muted-dark sr-only sm:not-sr-only sm:mt-4 sm:max-w-lg sm:text-lg"
-          data-hero-sub
-        >
-          {hero.sub}
-        </p>
-      </div>
-
-      {/* ---------------- De site die zichzelf bouwt ---------------- */}
-      <div class="hero-scene-wrap area-scene relative min-w-0" data-hero-scene>
-        <HeroScene interactive />
-      </div>
-
-      {/* ---------------- Voortgang, teller en knoppen ---------------- */}
-      <div class="area-meta relative z-10 min-w-0 max-w-xl">
-        {/* Voortgangsbalk van de vijf bouwdagen + de meelopende regel */}
-        <div data-hero-rail>
-          {/* De vijf-balkjes zijn op een telefoon te fijnmazig; daar draagt
-              alleen de meelopende dagregel het verhaal. */}
-          <ol class="hidden items-center gap-2 sm:flex" aria-hidden="true">
-            {
-              hero.days.map((day, i) => (
-                <li class="flex flex-1 flex-col gap-1.5" data-rail-step={i}>
-                  <span class="block h-[3px] rounded-full bg-white/15">
-                    <span class="block h-full w-0 rounded-full bg-accent" data-rail-fill />
-                  </span>
-                  <span class="text-[10px] font-semibold tracking-wider text-muted-dark uppercase transition-colors">
-                    {day.label}
-                  </span>
-                </li>
-              ))
-            }
-          </ol>
-
-          <div class="hero-beats relative grid min-h-[2.5rem] sm:mt-3.5 sm:min-h-[2.75rem]">
-            {
-              hero.days.map((day, i) => (
-                <p
-                  class="col-start-1 row-start-1 self-start text-[13px] leading-snug text-cream/90 sm:text-sm sm:leading-relaxed"
-                  data-hero-beat={i}
-                >
-                  {day.text}
-                </p>
-              ))
-            }
-          </div>
-        </div>
-
-        {/* Meelopende prijsteller: elk onderdeel dat rechts verschijnt,
-            telt hier zichtbaar mee. Zo is de animatie zelf het verhaal
-            "dit krijg je, dit kost het". */}
-        <div
-          class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-2xl bg-white/5 px-3.5 py-2.5 ring-1 ring-white/10 sm:mt-5 sm:gap-x-5 sm:px-4 sm:py-3"
-          data-hero-ledger
-        >
-          <span class="text-muted-dark w-full text-[10px] tracking-wider uppercase sm:w-auto sm:text-xs">
-            {hero.ledger.label}
-          </span>
-          <span class="font-display text-lg font-semibold tabular-nums">
-            <span data-ledger-upfront data-value="0">€ 0</span>
-            <span class="text-muted-dark text-sm font-normal"> {hero.ledger.upfrontLabel}</span>
-          </span>
-          <span class="font-display text-lg font-semibold tabular-nums">
-            <span data-ledger-monthly data-value="0">€ 0</span>
-            <span class="text-muted-dark text-sm font-normal"> {hero.ledger.monthlyLabel}</span>
-          </span>
-          <button
-            type="button"
-            class="ml-auto hidden min-h-11 items-center rounded-lg bg-accent px-3.5 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
-            data-ledger-cta
-          >
-            {hero.ledger.cta}
-          </button>
-        </div>
-
-        {/* Knoppen onderaan: op de telefoon precies waar je duim zit. */}
-        <div class="mt-4 flex flex-wrap items-center gap-3" data-hero-actions>
-          <a
-            href={hero.actions.primary.href}
-            class="flex-1 rounded-xl bg-accent px-5 py-3 text-center text-sm font-semibold text-white shadow-[0_10px_30px_-10px_var(--accent)] transition-transform hover:-translate-y-0.5 sm:flex-none sm:px-6 sm:py-3.5 sm:text-base motion-reduce:hover:translate-y-0"
-          >
-            {hero.actions.primary.label}
-          </a>
-          <a
-            href={hero.actions.secondary.href}
-            class="flex-1 rounded-xl border border-white/25 px-5 py-3 text-center text-sm font-semibold transition-colors hover:border-accent sm:flex-none sm:px-6 sm:py-3.5 sm:text-base"
-          >
-            {hero.actions.secondary.label}
-          </a>
-        </div>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <h1 id="hero-title" class="hero-title display" data-hero-title>
+      <Rise text={hero.titleStart} />{' '}<span class="rise-w"
+        ><span class="hero-accent" style={`--i:${startWords}`} data-word={hero.titleAccent}
+          ><em class="hero-accent-new serif-accent">{hero.titleAccent}</em>{
+            !end.startsWith(' ') && end
+          }</span
+        ></span
+      >{end.startsWith(' ') && <>{' '}<Rise text={end.trim()} from={startWords + 1} /></>}
+    </h1>
+    <div class="hero-side">
+      <p class="lead hero-lead intro-up" style="--d:0.55s">{hero.lead}</p>
+      <div class="hero-ctas intro-up" style="--d:0.65s" data-sticky-after>
+        <a class="btn btn-signal" href="#bestellen" data-magnetic>
+          {hero.cta}<Icon name="arrow-right" />
+        </a>
+        <a class="hero-why text-link" href="#waarom">{hero.ctaWhy}</a>
       </div>
     </div>
-
-    {/* Voet: de caption die uitlegt hoe de site werkt + scroll-hint.
-        Op de telefoon een compacte tekstlink in plaats van een pil —
-        die scheelde twee regels hoogte die de scène beter kan gebruiken. */}
-    <div class="relative z-10 flex min-w-0 shrink-0 flex-col items-center gap-2">
-      {/* w-fit, niet w-max: max-content zou de hele grid-kolom oprekken tot
-          de breedte van deze zin en de hero op mobiel uit beeld duwen. */}
-      <a
-        class="w-fit max-w-full text-center text-[11px] font-medium text-muted-dark underline-offset-4 hover:text-cream sm:rounded-full sm:bg-ink-soft/80 sm:px-5 sm:py-2.5 sm:text-sm sm:text-cream sm:no-underline sm:ring-1 sm:ring-white/15 sm:backdrop-blur sm:hover:ring-accent"
-        href={`#${hero.captionTargetId}`}
-        data-hero-caption>{hero.caption}</a
-      >
-      <p class="hero-hint text-xs tracking-widest text-muted-dark uppercase" data-hero-hint aria-hidden="true">
-        {hero.scrollHint} ↓
-      </p>
+    <div class="hero-device intro-up" style="--d:0.8s">
+      <Upgrade id="upgrade" />
     </div>
   </div>
 </section>
 
 <style>
-  /* ---------------------------------------------------------------
-     Indeling. Mobiel: kop → scène → cijfers/knoppen, waarbij de scène
-     alle resterende hoogte pakt (minmax(0,1fr)) in plaats van als
-     laatste restje onderaan te eindigen. Vanaf lg staat de scène in
-     een eigen kolom naast de tekst.
-     --------------------------------------------------------------- */
-  .hero-layout {
+  .hero {
+    padding-top: calc(4.5rem + clamp(2.5rem, 7vh, 5.5rem));
+    padding-bottom: clamp(1rem, 3vw, 2.5rem);
+  }
+  .hero-grid {
     display: grid;
-    grid-template-areas: 'head' 'scene' 'meta';
-    /* De scène krijgt een gegarandeerd aandeel van het scherm in plaats
-       van "wat er overblijft" — anders knijpt de tekst hem plat. */
-    grid-template-rows: auto auto auto;
-    align-content: center;
-    gap: 0.9rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2vw, 2rem);
   }
-  .area-head {
-    grid-area: head;
+  .hero-title {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: var(--text-display-xl);
   }
-  .area-scene {
-    grid-area: scene;
-    display: grid;
-    place-items: center;
-    min-height: 0;
+  .hero-accent {
+    position: relative;
   }
-  .area-meta {
-    grid-area: meta;
+  .hero-accent-new {
+    display: inline-block;
+    color: var(--color-signal-text);
+    /* Ruimte voor de cursieve overhang, zonder gat voor de punt. */
+    padding-right: 0.05em;
+    margin-right: -0.09em;
+    animation: accent-in 1.05s var(--ease-inout-expo) 1.05s both;
   }
-
-  /*
-    De scène wordt hier op HOOGTE gestuurd in plaats van op breedte: hij
-    vult de hele toegewezen rij en leidt zijn breedte daaruit af
-    (frame 4:3 binnen een scène van 94% → verhouding 1.418). Zo is hij op
-    een telefoon zo groot als er ruimte is, en valt hij nooit meer half
-    onder de vouw. Alles binnenin schaalt mee via cqw.
-  */
-  .area-scene > :global(.scene-stage) {
-    width: 100%;
-    max-height: 100%;
-  }
-  /* Op de telefoon loopt de scène tot de schermranden en gebruikt hij de
-     volle breedte van het frame: alles binnenin schaalt mee met cqw, dus
-     elke gewonnen pixel breedte maakt de opbouw letterlijk beter leesbaar. */
-  @media (max-width: 1023px) {
-    .area-scene {
-      /* clip: de gekantelde scène is hoger dan zijn grid-rij en schilderde
-         anders dwars over de prijsteller en de knoppen heen (320x568). */
-      overflow: clip;
-      margin-inline: -1.25rem;
-      /* Lucht boven en onder: de gekantelde scène steekt iets buiten zijn
-         eigen kader uit en raakte anders de kopregel. */
-      padding-block: 0.6rem;
+  @keyframes accent-in {
+    from {
+      clip-path: circle(0% at 0% 100%);
     }
-    /* Iets smaller dan het volle scherm: de 3D-kanteling duwt de linkerrand
-       naar buiten, en die marge vangt dat op. */
-    .area-scene :global(.scene) {
-      width: 92%;
+    to {
+      clip-path: circle(160% at 0% 100%);
     }
   }
-
-  /* Op een kort scherm is er simpelweg geen ruimte voor de scène; dan gaat
-     de hoogte naar de kop, de prijs en de knoppen. Het scène-JS blijft
-     gewoon draaien, het element is alleen niet zichtbaar. */
-  @media (max-width: 1023px) and (max-height: 660px) {
-    .area-scene {
+  /* Eerst staat er een ouderwetse link (Times, linkblauw, onderstreept),
+     dan wordt het woord zelf geüpgraded. Gegenereerde inhoud met een lege
+     alt-tekst: schermlezers en zoekmachines zien het woord maar één keer. */
+  .hero-accent::before {
+    content: attr(data-word) / '';
+    position: absolute;
+    left: 0;
+    bottom: 0.08em;
+    animation: old-out 0.35s ease-out 1.25s both;
+    font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+    font-size: 0.78em;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: 0;
+    line-height: 1;
+    color: #4a6cff;
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
+    white-space: nowrap;
+  }
+  @keyframes old-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-accent::before {
       display: none;
     }
-    .hero-layout {
-      grid-template-areas: 'head' 'meta';
-      grid-template-rows: auto auto;
+    .hero-accent-new {
+      animation: none;
     }
   }
-
-  @media (min-width: 1024px) {
-    .hero-layout {
-      grid-template-areas: 'head scene' 'meta scene';
-      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1fr);
-      grid-template-rows: auto auto;
-      align-content: center;
-      column-gap: 3rem;
-      row-gap: 1.75rem;
+  .hero-side {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1.75rem;
+    margin-top: clamp(1.75rem, 3.5vw, 3rem);
+  }
+  .hero-lead {
+    max-width: 34rem;
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+  .hero-why {
+    color: var(--color-bone-2);
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .hero-why:hover {
+    color: var(--color-bone);
+  }
+  .hero-device {
+    grid-column: 1 / -1;
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+  @media (min-width: 64rem) {
+    .hero-title {
+      grid-column: 1 / span 11;
+    }
+    .hero-side {
+      grid-column: 7 / -1;
+    }
+    .hero-device {
+      /* Zo groot mogelijk, maar het hele scherm moet in één keer in beeld
+         passen, met de keuzes erboven en de knop eronder. */
+      justify-self: center;
+      width: min(100%, calc((100svh - 13.5rem) * 1.6));
     }
   }
-
-  /* Woord-voor-woord reveal van de kopregel (masker, geen layout shift). */
-  .hero-word {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-  }
-  .hero-word > span {
-    display: inline-block;
-  }
-  .hero-hint {
-    display: none;
-  }
-  .js .hero-hint {
-    display: block;
-  }
-  /* Zonder JS: alleen de laatste (meest complete) regel tonen, anders
-     stapelen alle vijf de dagteksten over elkaar heen. */
-  .hero-beats [data-hero-beat]:not([data-hero-beat='4']) {
-    visibility: hidden;
+  @media (max-width: 30rem) {
+    .hero-ctas .btn {
+      width: 100%;
+    }
   }
 </style>
-
-<script>
-  import type { AddonId } from '../data/pricing';
-  import { calcTotals } from '../lib/calc';
-  import { eur } from '../lib/format';
-  import { gsap, NO_PREFERENCE } from '../scripts/motion';
-  import {
-    attachPointerTilt,
-    buildSceneTimeline,
-    INTRO_END,
-    LEDGER_STEPS,
-    startIdleFloat,
-  } from '../scripts/scene-timeline';
-  import { applyPreset, toggleAddon } from '../scripts/store';
-  import { tweenNumber } from '../scripts/tween';
-
-  const section = document.querySelector<HTMLElement>('[data-hero]');
-  if (section) {
-    const sceneWrap = section.querySelector<HTMLElement>('[data-hero-scene]')!;
-    const sceneRoot = sceneWrap.querySelector<HTMLElement>('[data-scene-root]')!;
-    const camera = sceneWrap.querySelector<HTMLElement>('[data-scene-camera]')!;
-    const beats = [...section.querySelectorAll<HTMLElement>('[data-hero-beat]')];
-    const railFills = [...section.querySelectorAll<HTMLElement>('[data-rail-fill]')];
-    const railLabels = [...section.querySelectorAll<HTMLElement>('[data-rail-step] span:last-child')];
-    const chrome = [
-      section.querySelector('[data-hero-eyebrow]'),
-      section.querySelector('[data-hero-sub]'),
-      section.querySelector('[data-hero-actions]'),
-      section.querySelector('[data-hero-rail]'),
-      section.querySelector('[data-hero-ledger]'),
-      section.querySelector('[data-hero-caption]'),
-    ].filter(Boolean) as HTMLElement[];
-
-    // ---- Prijsteller: telt mee met wat er in de scène verschijnt ----
-    const ledgerUpfront = section.querySelector<HTMLElement>('[data-ledger-upfront]')!;
-    const ledgerMonthly = section.querySelector<HTMLElement>('[data-ledger-monthly]')!;
-    const ledgerCta = section.querySelector<HTMLElement>('[data-ledger-cta]')!;
-    /** De samenstelling die de hero-demo laat zien — ook wat de knop bestelt. */
-    const DEMO_BASE = 'compleet' as const;
-    let shownAddons: AddonId[] = [];
-
-    function renderLedger(progress: number): void {
-      const addons = LEDGER_STEPS.filter(([at]) => progress >= at).map(([, id]) => id as AddonId);
-      if (addons.length === shownAddons.length) return;
-      shownAddons = addons;
-      const totals = calcTotals({ base: DEMO_BASE, addons, care: 'basis' });
-      tweenNumber(ledgerUpfront, totals.upfront, eur);
-      tweenNumber(ledgerMonthly, totals.monthly, eur);
-      // Zodra alles staat, kan de bezoeker deze samenstelling overnemen.
-      ledgerCta.classList.toggle('hidden', addons.length < LEDGER_STEPS.length);
-    }
-
-    ledgerCta.addEventListener('click', () => {
-      applyPreset(DEMO_BASE, shownAddons);
-      /* Niet zelf scrollen: een echte anker-klik laat Base.astro eerst alle
-         deferred secties openklappen, anders landt de sprong duizenden
-         pixels te vroeg. Showcase.astro doet het net zo. */
-      document.querySelector<HTMLAnchorElement>('a[href="#configurator"]')?.click();
-    });
-
-    // Beginstand: het kale basispakket staat er al.
-    renderLedger(0);
-
-    // De mini "+ In mijn website" doet écht iets: de agenda belandt in de
-    // configurator. Klein grapje, groot effect — de hero ís de site.
-    sceneRoot.querySelector('[data-scene-add]')?.addEventListener('click', () => {
-      toggleAddon('agenda');
-    });
-
-    const mm = gsap.matchMedia();
-
-    mm.add(NO_PREFERENCE, () => {
-      const sceneTl = buildSceneTimeline(sceneRoot);
-      gsap.set(beats, { autoAlpha: 0, y: 10 });
-      gsap.set(beats[0], { autoAlpha: 1, y: 0 });
-
-      // ---- Bedrijf 1: alles is er meteen, en de scène vliegt binnen ----
-      // (De kopregel onthult zichzelf via CSS — zie global.css.)
-      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      intro
-        .to(chrome, { autoAlpha: 1, duration: 0.5, stagger: 0.08 }, 0.25)
-        .to(
-          sceneTl,
-          { progress: INTRO_END, duration: 1.9, ease: 'power2.out', onUpdate: () => renderLedger(sceneTl.progress()) },
-          0.1,
-        );
-
-      // Zweven + muis-parallax zodra de intro geland is: het beeld leeft,
-      // ook als de bezoeker niets doet.
-      let stopFloat: (() => void) | undefined;
-      let stopTilt: (() => void) | undefined;
-      intro.call(() => {
-        stopFloat = startIdleFloat(sceneRoot);
-        stopTilt = attachPointerTilt(camera);
-      });
-
-      // ---- Bedrijf 2: scrollen bouwt verder ----
-      const scrollTl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          /* Op een telefoon kostte '+=300%' vier volle schermen scroll
-             voordat sectie 2 begon; op desktop mag de opbouw langer duren. */
-          end: () => (window.matchMedia('(min-width: 1024px)').matches ? '+=300%' : '+=140%'),
-          invalidateOnRefresh: true,
-          // Kort scrub-getal: de scène moet ónder je vinger meebewegen,
-          // niet als een video naijlen. Dat is precies het verschil tussen
-          // "dit reageert op mij" en "dit speelt gewoon af".
-          pin: true,
-          scrub: 0.18,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            // Scrollt iemand meteen? Dan de intro doorspoelen, niet dubbel animeren.
-            if (self.progress > 0.004 && intro.progress() < 1) intro.progress(1);
-            // De scrub neemt de bouw over vanaf waar de intro ophield.
-            const built = INTRO_END + self.progress * (1 - INTRO_END);
-            sceneTl.progress(built);
-            renderLedger(built);
-
-            // Voortgangsbalk + dagregel volgen dezelfde bouw.
-            const stage = gsap.utils.clamp(0, 4.999, self.progress * 5);
-            const index = Math.floor(stage);
-            railFills.forEach((fill, i) => {
-              fill.style.width = `${gsap.utils.clamp(0, 1, stage - i) * 100}%`;
-            });
-            railLabels.forEach((label, i) => {
-              label.classList.toggle('text-cream', i === index);
-            });
-            beats.forEach((beat, i) => {
-              gsap.to(beat, {
-                autoAlpha: i === index ? 1 : 0,
-                y: i === index ? 0 : 10,
-                duration: 0.25,
-                overwrite: 'auto',
-              });
-            });
-          },
-        },
-      });
-
-      // Op het eind maakt de tekst plaats voor het resultaat.
-      scrollTl.to(sceneWrap, { scale: 1.04, duration: 1 }, 0);
-
-      return () => {
-        intro.kill();
-        sceneTl.kill();
-        scrollTl.kill();
-        stopFloat?.();
-        stopTilt?.();
-        gsap.set([...chrome, ...beats, sceneWrap], { clearProps: 'all' });
-      };
-    });
-
-    // Reduced motion vraagt geen JavaScript: de CSS-startstand hierboven
-    // geldt alleen bij `no-preference`, dus de scène staat dan gewoon
-    // afgebouwd en vlak in beeld.
-  }
-</script>

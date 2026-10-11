@@ -1,0 +1,79 @@
+---
+/**
+ * Privacyverklaring en algemene voorwaarden: rustig zetwerk, geen motion
+ * behalve soepel scrollen. De teksten staan in content/*-legal.ts.
+ */
+import { legal, toLocale } from '../data/content';
+import SiteNav from './SiteNav.astro';
+import SiteFooter from './SiteFooter.astro';
+
+interface Props {
+  kind: 'privacy' | 'voorwaarden';
+}
+const { kind } = Astro.props;
+const doc = legal(toLocale(Astro.currentLocale))[kind];
+---
+
+<SiteNav home={false} />
+<main id="main" tabindex="-1" class="legal">
+  <div class="wrap legal-wrap">
+    <p class="label legal-updated">{doc.updated}</p>
+    <h1 class="display legal-title">{doc.title}</h1>
+    <p class="lead legal-intro">{doc.intro}</p>
+    {
+      doc.sections.map((section) => (
+        <section class="legal-section">
+          <h2>{section.title}</h2>
+          {section.body.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      ))
+    }
+  </div>
+</main>
+<SiteFooter home={false} />
+
+<script>
+  import { initPage } from '../scripts/page';
+  initPage();
+</script>
+
+<style>
+  .legal {
+    padding-top: calc(4.5rem + clamp(2.5rem, 7vh, 5rem));
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+  }
+  .legal-wrap {
+    max-width: 48rem;
+  }
+  .legal-updated {
+    margin: 0 0 1.25rem;
+    color: var(--color-mute);
+  }
+  .legal-title {
+    margin: 0;
+    font-size: var(--text-display-l);
+  }
+  .legal-intro {
+    margin: 2rem 0 0;
+    color: var(--color-bone-2);
+  }
+  .legal-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .legal-section h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: 680;
+    font-stretch: 108%;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .legal-section p {
+    margin: 0 0 1rem;
+    color: var(--color-bone-2);
+  }
+</style>

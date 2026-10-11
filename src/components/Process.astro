@@ -1,0 +1,140 @@
+---
+/**
+ * Werkwijze: vijf stappen, met een lijn die meegroeit terwijl je scrolt.
+ * Een stap licht op zodra de lijn hem bereikt; zonder motion staan ze
+ * allemaal aan.
+ */
+import { content, toLocale } from '../data/content';
+
+const { process } = content(toLocale(Astro.currentLocale));
+---
+
+<section class="process section-pad" id="werkwijze" aria-labelledby="process-title">
+  <div class="wrap process-grid">
+    <div class="process-head">
+      <p class="label process-label">{process.label}</p>
+      <h2 id="process-title" class="display process-title" data-reveal="title">{process.title}</h2>
+      <p class="process-note" data-reveal="up">{process.note}</p>
+    </div>
+    <ol class="process-steps" data-steps>
+      <li class="process-line" aria-hidden="true"><span class="process-line-fill" data-line></span></li>
+      {
+        process.steps.map((step) => (
+          <li class="process-step" data-step>
+            <span class="process-dot" aria-hidden="true" />
+            <p class="process-when">{step.when}</p>
+            <h3 class="process-step-title">{step.title}</h3>
+            <p class="process-text">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { initProcess } from '../scripts/process';
+  initProcess();
+</script>
+
+<style>
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(3rem, 6vw, 5rem) clamp(1rem, 2vw, 2rem);
+  }
+  .process-head,
+  .process-steps {
+    grid-column: 1 / -1;
+  }
+  .process-label {
+    margin: 0 0 1.25rem;
+    color: var(--color-mute);
+  }
+  .process-title {
+    margin: 0;
+    font-size: var(--text-display-l);
+  }
+  .process-note {
+    max-width: 28rem;
+    margin: 1.75rem 0 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-signal-text);
+    color: var(--color-bone-2);
+  }
+  .process-steps {
+    position: relative;
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    margin: 0;
+    padding: 0 0 0 2.75rem;
+    list-style: none;
+  }
+  .process-line {
+    position: absolute;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    left: 0.6875rem;
+    width: 2px;
+    background: var(--color-line);
+  }
+  .process-line-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-signal-text);
+    transform-origin: top;
+  }
+  .process-step {
+    position: relative;
+  }
+  .process-dot {
+    position: absolute;
+    top: 0.3rem;
+    left: -2.75rem;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 999px;
+    background: var(--color-ink);
+    box-shadow: inset 0 0 0 2px var(--color-line-strong);
+    transition:
+      background-color 0.4s var(--ease-out-quart),
+      box-shadow 0.4s var(--ease-out-quart);
+  }
+  .process-step.is-active .process-dot,
+  :global(.no-motion) .process-dot {
+    background: var(--color-signal-text);
+    box-shadow: inset 0 0 0 2px var(--color-signal-text);
+  }
+  .process-when {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-signal-text);
+  }
+  .process-step-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 700;
+    font-stretch: 112%;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .process-text {
+    max-width: 32rem;
+    margin: 0.75rem 0 0;
+    color: var(--color-bone-2);
+  }
+  @media (min-width: 64rem) {
+    .process-head {
+      grid-column: 1 / span 5;
+      align-self: start;
+      position: sticky;
+      top: 7rem;
+    }
+    .process-steps {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

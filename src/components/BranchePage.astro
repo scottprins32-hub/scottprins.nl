@@ -1,311 +1,249 @@
 ---
 /**
- * Eén landingspagina per vak. Zelfde bouwstenen als de homepage, maar
- * korter en toegespitst: kop → herkenbare ergernissen → wat ik ervoor bouw
- * → de drie demo's die er voor dít vak toe doen → de prijs die daarbij hoort
- * → de configurator, met die samenstelling al klaargezet.
- *
- * De tekst staat in src/data/content/branches.ts, de prijzen komen uit
- * pricing.ts. Hier staat dus geen enkel bedrag en geen enkele zin.
+ * Landingspagina per branche (nu: fysiotherapie). Eigen tekst, het
+ * upgrade-ding met de juiste branche al gekozen, de prijs en de bestelbon.
  */
-import type { Branche, BrancheDemoId } from '../data/content/branches';
-import { addons, basePackages, carePlans, presets } from '../data/pricing';
-import { addonCost, calcTotals, isIncluded } from '../lib/calc';
-import { content, toLocale, altPath } from '../data/content';
-import { eur, inbegrepen, perMaand } from '../lib/format';
-
+import type { Branche } from '../data/content/branches';
+import { offer } from '../data/offer';
 import SiteNav from './SiteNav.astro';
-import MenuSection from './MenuSection.astro';
-import Configurator from './Configurator.astro';
-import About from './About.astro';
-import Faq from './Faq.astro';
 import SiteFooter from './SiteFooter.astro';
-import CartPill from './CartPill.astro';
-
-import DemoAgenda from './demos/DemoAgenda.astro';
-import DemoIntake from './demos/DemoIntake.astro';
-import DemoPortaal from './demos/DemoPortaal.astro';
+import Upgrade from './upgrade/Upgrade.astro';
+import Order from './Order.astro';
+import StickyCta from './StickyCta.astro';
+import Icon from './Icon.astro';
+import Rise from './Rise.astro';
 
 interface Props {
   branche: Branche;
 }
-const { branche } = Astro.props;
-
-const taal = toLocale(Astro.currentLocale);
-const t = content(taal);
-const { branche: label, configurator, quote, pricing } = t;
-
-/* Register van de demo's die een branchepagina kan tonen. De sectie-id's zijn
-   dezelfde als op de homepage, zodat de "bekijk de demo"-links van de
-   configurator hier gewoon op de pagina zelf landen. `index` is het nummer
-   van de menukaart — dan klopt het decoratieve cijfer met de kicker. */
-const demoRegister: Record<
-  BrancheDemoId,
-  { id: string; index: number; intrinsic: number; kicker: string; title: string; lead: string }
-> = {
-  agenda: {
-    id: 'menu-booking',
-    index: 1,
-    intrinsic: 666,
-    kicker: t.demoAgenda.kicker,
-    title: t.demoAgenda.title,
-    lead: t.demoAgenda.lead,
-  },
-  intake: {
-    id: 'menu-intake',
-    index: 8,
-    intrinsic: 736,
-    kicker: t.demoIntake.kicker,
-    title: t.demoIntake.title,
-    lead: t.demoIntake.lead,
-  },
-  portaal: {
-    id: 'menu-portal',
-    index: 9,
-    intrinsic: 760,
-    kicker: t.demoPortaal.kicker,
-    title: t.demoPortaal.title,
-    lead: t.demoPortaal.lead,
-  },
-};
-
-/* Zelfde regel als op de homepage: nooit twee keer achter elkaar hetzelfde
-   kunstje. Zie de pacing-map in scripts/motion.ts. */
-const pacings = ['fade', 'none', 'parallax'] as const;
-
-const preset = presets.find((p) => p.id === branche.preset)!;
-const gekozen = { base: preset.base, addons: [...preset.addons], care: 'basis' as const };
-const totalen = calcTotals(gekozen);
-
-/* De offerteregels: pakket → wat het pakket gratis meebrengt → wat er los
-   bij komt. Exact dezelfde volgorde en dezelfde rekensom als in de
-   configurator ernaast, anders staat er twee keer iets anders op één pagina. */
-const basis = basePackages.find((p) => p.id === preset.base)!;
-const zorg = carePlans.find((c) => c.id === 'basis')!;
-const inbegrepenAddons = addons.filter((a) => isIncluded(preset.base, a.id));
-const extraAddons = addons.filter(
-  (a) => preset.addons.includes(a.id) && !isIncluded(preset.base, a.id),
-);
-
-const home = altPath('/', taal);
-/* Eigen navigatie: de homepage-ankers (#examples, #results) bestaan hier
-   niet, en een balk vol dode links is erger dan een korte balk. */
-const navLinks = [
-  { label: label.navDemos, href: '#demos' },
-  { label: label.navPrice, href: '#prijs' },
-  { label: label.navMenu, href: `${home}#menu` },
-];
+const { branche: b } = Astro.props;
+const digits = String(offer.price);
 ---
 
-<SiteNav links={navLinks} />
-
-<main id="main">
-  {/* ---- Kop ---- */}
-  <section class="grain bg-ink pt-28 pb-16 text-cream sm:pt-32 sm:pb-24">
-    <div class="mx-auto max-w-6xl px-5">
-      <div class="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div class="max-w-2xl">
-          <p class="kicker">{branche.eyebrow}</p>
-          {/* Zelfde schaal als de H1 van de homepage; er bestaat geen
-              `text-h1`-token, alleen h2 en h3. */}
-          <h1
-            class="font-display mt-3 text-[clamp(1.95rem,4.4vw,3.9rem)] leading-[1.03] font-semibold tracking-[-0.02em] text-balance"
-          >
-            {branche.h1}
-          </h1>
-          <p class="text-muted-dark text-lead mt-5">{branche.intro}</p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#configurator"
-              class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              {branche.ctaButton}
-            </a>
-            <a
-              href="#demos"
-              class="rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold transition-colors hover:border-accent"
-            >
-              {label.heroDemoCta}
-            </a>
-          </div>
-        </div>
-
-        {/* Prijs meteen in beeld: wie hier binnenkomt via Google wil eerst
-            weten of het überhaupt in de buurt komt van zijn budget.
-            Bewust "deze samenstelling" en niet "vanaf": dit bedrag is de
-            volledige aanbeveling van deze pagina, geen instapprijs. */}
-        <aside class="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
-          <p class="text-muted-dark text-xs tracking-wider uppercase">{label.quoteTitle}</p>
-          <p class="font-display mt-1 text-4xl font-semibold tabular-nums">{eur(totalen.upfront, taal)}</p>
-          <p class="text-muted-dark mt-1 text-sm">
-            + {eur(totalen.monthly, taal)}{perMaand(taal)} · {configurator.exVat}
-          </p>
-          <ul class="mt-4 grid gap-1.5 border-t border-white/15 pt-4 text-sm text-cream/85">
-            {branche.demos.map((id) => (
-              <li class="flex gap-2">
-                <span class="text-accent" aria-hidden="true">✓</span>
-                {pricing.addons[id].name}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="#prijs"
-            class="text-accent-soft mt-4 inline-flex min-h-11 items-center text-sm font-medium underline-offset-2 hover:underline"
-          >
-            {label.breakdown} →
-          </a>
-        </aside>
+<SiteNav home={false} />
+<main id="main" tabindex="-1">
+  <section class="hero bp-hero" aria-labelledby="bp-title">
+    <div class="wrap bp-grid">
+      <p class="label bp-eyebrow intro-up" style="--d:0s">{b.eyebrow}</p>
+      <h1 id="bp-title" class="display bp-title"><Rise text={b.h1} /></h1>
+      <p class="lead bp-intro intro-up" style="--d:0.45s">{b.intro}</p>
+      <div class="bp-ctas intro-up" style="--d:0.55s" data-sticky-after>
+        <a class="btn btn-signal" href="#bestellen" data-magnetic>{b.ctaButton}<Icon name="arrow-right" /></a>
       </div>
     </div>
   </section>
 
-  {/* ---- Ergernissen + wat ik ervoor bouw ---- */}
-  <section class="bg-cream py-16 text-ink sm:py-24" data-reveal-section>
-    <div class="mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-16">
-      <div data-reveal>
-        <h2 class="font-display text-h3 font-semibold">{branche.painTitle}</h2>
-        <ul class="mt-5 grid gap-3">
-          {branche.pain.map((regel) => (
-            <li class="text-muted flex gap-3 text-sm leading-relaxed">
-              <span class="text-accent shrink-0" aria-hidden="true">—</span>
-              {regel}
+  <section class="bp-demo" aria-labelledby="bp-demo-title">
+    <div class="wrap">
+      <h2 id="bp-demo-title" class="bp-h2" data-reveal="title">{b.demoTitle}</h2>
+      <p class="lead bp-demo-lead" data-reveal="up">{b.demoLead}</p>
+      <div class="bp-device">
+        <Upgrade id="upgrade" trade={b.trade} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad bp-pain" aria-labelledby="bp-pain-title">
+    <div class="wrap bp-two">
+      <h2 id="bp-pain-title" class="display bp-h2-big" data-reveal="title">{b.painTitle}</h2>
+      <ul class="bp-list">
+        {
+          b.pain.map((item) => (
+            <li data-reveal="up">
+              <Icon name="x" />
+              <span>{item}</span>
             </li>
-          ))}
-        </ul>
-      </div>
-
-      <div data-reveal>
-        <h2 class="font-display text-h3 font-semibold">{branche.bodyTitle}</h2>
-        <div class="mt-5 grid gap-4">
-          {branche.body.map((alinea) => <p class="text-muted text-lead">{alinea}</p>)}
-        </div>
-      </div>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
-  {/* ---- De drie demo's die er voor dit vak toe doen ---- */}
-  <section class="bg-cream pt-8 text-ink" id="demos" data-reveal-section>
-    <div class="mx-auto max-w-6xl px-5">
-      <header class="max-w-2xl" data-reveal>
-        <h2 class="font-display text-h2 font-semibold text-balance">{branche.demoTitle}</h2>
-        <p class="text-muted text-lead mt-3">{branche.demoLead}</p>
-      </header>
-    </div>
-  </section>
-
-  {branche.demos.map((id, i) => {
-    const demo = demoRegister[id];
-    return (
-      <MenuSection
-        id={demo.id}
-        index={demo.index}
-        intrinsic={demo.intrinsic}
-        kicker={demo.kicker}
-        title={demo.title}
-        lead={demo.lead}
-        addonIds={[id]}
-        pacing={pacings[i % pacings.length]}
-      >
-        {id === 'agenda' && <DemoAgenda />}
-        {id === 'intake' && <DemoIntake />}
-        {id === 'portaal' && <DemoPortaal />}
-      </MenuSection>
-    );
-  })}
-
-  {/* ---- De prijs van precies deze samenstelling ---- */}
-  <section class="bg-cream pb-16 text-ink sm:pb-24" id="prijs" data-reveal-section>
-    <div class="mx-auto max-w-6xl px-5">
-      <header class="max-w-2xl" data-reveal>
-        <h2 class="font-display text-h2 font-semibold text-balance">{branche.priceTitle}</h2>
-        <p class="text-muted text-lead mt-3">{branche.priceLead}</p>
-      </header>
-
-      <div class="mt-8 max-w-2xl rounded-2xl border border-line bg-white p-6 shadow-card" data-reveal>
-        <p class="font-display text-xl font-semibold">{label.quoteTitle}</p>
-        <ul class="mt-4 grid gap-2 text-sm">
-          <li class="flex justify-between gap-3">
-            <span class="text-muted min-w-0">{pricing.base[basis.id].name}</span>
-            <span class="tabular-nums whitespace-nowrap">
-              {eur(basis.upfront, taal)} + {eur(basis.monthly, taal)}{perMaand(taal)}
-            </span>
-          </li>
-          {inbegrepenAddons.map((a) => (
-            <li class="flex justify-between gap-3">
-              <span class="text-muted min-w-0">{pricing.addons[a.id].name}</span>
-              <span class="text-accent whitespace-nowrap">{quote.included}</span>
-            </li>
-          ))}
-          {extraAddons.map((a) => {
-            const kosten = addonCost(preset.base, a);
-            return (
-              <li class="flex justify-between gap-3">
-                <span class="text-muted min-w-0">{pricing.addons[a.id].name}</span>
-                <span class="tabular-nums whitespace-nowrap">
-                  {kosten.monthly > 0
-                    ? `${eur(kosten.upfront, taal)} + ${eur(kosten.monthly, taal)}${perMaand(taal)}`
-                    : eur(kosten.upfront, taal)}
-                </span>
-              </li>
-            );
-          })}
-          <li class="flex justify-between gap-3">
-            <span class="text-muted min-w-0">
-              {quote.care} {pricing.care[zorg.id].name}
-            </span>
-            <span class="text-accent whitespace-nowrap">{inbegrepen(taal)}</span>
-          </li>
-        </ul>
-
-        <div class="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-5">
-          <div>
-            <p class="text-muted text-xs tracking-wider uppercase">{configurator.upfrontLabel}</p>
-            <p class="font-display mt-1 text-3xl font-semibold tabular-nums">{eur(totalen.upfront, taal)}</p>
-          </div>
-          <div>
-            <p class="text-muted text-xs tracking-wider uppercase">{configurator.monthlyLabel}</p>
-            <p class="font-display mt-1 text-3xl font-semibold tabular-nums">
-              {eur(totalen.monthly, taal)}{perMaand(taal)}
+  <section class="section-pad bp-body" aria-labelledby="bp-body-title">
+    <div class="wrap bp-two">
+      <h2 id="bp-body-title" class="display bp-h2-big" data-reveal="title">{b.bodyTitle}</h2>
+      <div class="bp-text">
+        {
+          b.body.map((paragraph) => (
+            <p class="lead" data-reveal="up">
+              {paragraph}
             </p>
-          </div>
-        </div>
-        <p class="text-muted mt-3 text-xs">{configurator.vatNote} {label.adjustNote}</p>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  {/* De configurator staat er met deze samenstelling al in — zie de
-      preset-prop. De demo-links van opties die hier níet staan wijzen naar
-      de menukaart op de homepage, zodat er geen dode ankers ontstaan. */}
-  <Configurator preset={branche.preset} demoHome={home} localDemos={branche.demos} />
-
-  <About />
-  <Faq />
-
-  {/* ---- Afsluitende uitnodiging ---- */}
-  <section class="bg-cream py-16 text-ink sm:py-20" data-reveal-section>
-    <div class="mx-auto max-w-6xl px-5">
-      <div class="rounded-2xl border border-line bg-white p-8 shadow-card sm:p-10" data-reveal>
-        <h2 class="font-display text-h3 font-semibold text-balance">{branche.ctaTitle}</h2>
-        <p class="text-muted text-lead mt-3 max-w-2xl">{branche.ctaLead}</p>
-        <div class="mt-6 flex flex-wrap items-center gap-4">
-          <a
-            href="#configurator"
-            class="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            {branche.ctaButton}
-          </a>
-          <a
-            href={`${home}#menu`}
-            class="text-muted text-sm underline-offset-4 hover:text-ink hover:underline"
-          >
-            {branche.backLink}
-          </a>
-        </div>
+  <section class="bp-price" aria-labelledby="bp-price-title">
+    <div class="wrap bp-two">
+      <div>
+        <h2 id="bp-price-title" class="bp-price-q">{b.priceTitle}</h2>
+        <p class="bp-amount" aria-hidden="true"><span>€</span>{digits}</p>
+      </div>
+      <div class="bp-price-copy">
+        <p class="lead">{b.priceLead}</p>
+        <h3 class="bp-cta-title">{b.ctaTitle}</h3>
+        <p>{b.ctaLead}</p>
+        <a class="btn btn-ink" href="#bestellen" data-magnetic>{b.ctaButton}<Icon name="arrow-right" /></a>
       </div>
     </div>
   </section>
+
+  <Order trade={b.trade} />
+  <StickyCta />
 </main>
+<SiteFooter home={false} />
 
-<SiteFooter />
-<CartPill />
+<script>
+  import { initPage } from '../scripts/page';
+  initPage();
+</script>
+
+<style>
+  .bp-hero {
+    padding-top: calc(4.5rem + clamp(2.5rem, 8vh, 6rem));
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .bp-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .bp-eyebrow {
+    margin: 0;
+    color: var(--color-signal-text);
+  }
+  .bp-title {
+    max-width: 18ch;
+    margin: 0;
+    font-size: var(--text-display-l);
+  }
+  .bp-intro {
+    max-width: 40rem;
+    margin: 0.5rem 0 0;
+    color: var(--color-bone-2);
+  }
+  .bp-ctas {
+    margin-top: 1rem;
+  }
+  .bp-demo {
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+  }
+  .bp-h2 {
+    margin: 0;
+    font-size: var(--text-display-m);
+    font-weight: 700;
+    font-stretch: 112%;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .bp-demo-lead {
+    max-width: 36rem;
+    margin: 1rem 0 2.5rem;
+    color: var(--color-bone-2);
+  }
+  .bp-device {
+    width: min(100%, calc((100svh - 13.5rem) * 1.6));
+    margin-inline: auto;
+  }
+  .bp-pain,
+  .bp-body {
+    border-top: 1px solid var(--color-line);
+  }
+  .bp-two {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+  .bp-h2-big {
+    margin: 0;
+    font-size: var(--text-display-l);
+  }
+  .bp-list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+  .bp-list li {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-line);
+    font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+    font-weight: 560;
+    letter-spacing: -0.01em;
+  }
+  .bp-list :global(.icon) {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15em;
+    color: var(--color-signal-text);
+  }
+  .bp-text {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .bp-text .lead {
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .bp-price {
+    padding-block: clamp(5rem, 10vw, 8rem);
+    background: var(--color-paper);
+    color: var(--color-paper-ink);
+    color-scheme: light;
+  }
+  .bp-price :global(:focus-visible) {
+    outline-color: var(--color-paper-ink);
+  }
+  .bp-price-q {
+    margin: 0;
+    font-size: var(--text-display-m);
+    font-weight: 640;
+    font-stretch: 110%;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  .bp-amount {
+    display: flex;
+    align-items: flex-start;
+    margin: 1rem 0 0;
+    font-size: clamp(6rem, 16vw, 13rem);
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.055em;
+    line-height: 0.85;
+  }
+  .bp-amount span {
+    margin-right: 0.04em;
+    font-size: 0.42em;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+  .bp-price-copy {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+    align-content: end;
+  }
+  .bp-price-copy p {
+    max-width: 34rem;
+    margin: 0;
+  }
+  .bp-cta-title {
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-weight: 700;
+    font-stretch: 110%;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  @media (min-width: 64rem) {
+    .bp-two {
+      grid-template-columns: 5fr 7fr;
+      align-items: start;
+    }
+  }
+</style>

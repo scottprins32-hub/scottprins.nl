@@ -2,7 +2,7 @@
  * Eén ingang voor alle zichtbare tekst.
  *
  *   .astro-frontmatter :  const { hero } = content(Astro.currentLocale);
- *   client-script      :  const { demoChatbot } = content();
+ *   client-script      :  const { device } = content();
  *
  * Zonder argument leest hij de taal van <html lang>, zodat een script in de
  * browser niet hoeft te weten op welke pagina het draait.
@@ -11,26 +11,33 @@ import { nl } from './nl';
 import { en } from './en';
 import { nlLegal } from './nl-legal';
 import { enLegal } from './en-legal';
+import type { Widen } from './types';
 
 export type Locale = 'nl' | 'en';
 /** Nederlands is de standaard; /en/ is de vertaling. */
 export const DEFAULT_LOCALE: Locale = 'nl';
 export const LOCALES: Locale[] = ['nl', 'en'];
 
-const bundels = { nl, en } as const;
+export type Content = Widen<typeof nl>;
+
+const bundels: Record<Locale, Content> = { nl, en };
 
 /** Alles behalve 'nl' en 'en' valt terug op Nederlands. */
 export function toLocale(value: string | undefined | null): Locale {
   return value === 'en' ? 'en' : 'nl';
 }
 
-export function content(locale?: string | null) {
+export function content(locale?: string | null): Content {
   const gekozen =
     locale ?? (typeof document !== 'undefined' ? document.documentElement.lang : DEFAULT_LOCALE);
   return bundels[toLocale(gekozen)];
 }
 
-/** Pad naar dezelfde pagina in de andere taal. */
+/**
+ * Taalloos pad naar hetzelfde pad in de gevraagde taal, zonder base.
+ * Voor canonical en hreflang (met site.url ervoor) en, via url(), voor
+ * links op de pagina zelf.
+ */
 export function altPath(path: string, naar: Locale): string {
   /* Altijd mét afsluitende slash: de server 301't /voorwaarden naar
      /voorwaarden/, en een canonical die naar een redirect wijst kost
@@ -42,7 +49,7 @@ export function altPath(path: string, naar: Locale): string {
 
 /**
  * Juridische teksten, apart opvraagbaar. Alleen aanroepen vanuit Astro-
- * frontmatter (server-side) — niet vanuit een client-script, anders komen
+ * frontmatter (server-side), niet vanuit een client-script: anders komen
  * de volledige voorwaarden alsnog in de browserbundle terecht.
  */
 const juridisch = { nl: nlLegal, en: enLegal } as const;

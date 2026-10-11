@@ -1,0 +1,26 @@
+---
+/**
+ * Tekst die woord voor woord uit een masker omhoog komt, puur CSS. Zo staat
+ * een kop er bij de eerste paint al (goed voor LCP) en hoeft hij niet op
+ * JavaScript te wachten. Bij prefers-reduced-motion staat hij er meteen.
+ *
+ * `from` is het volgnummer van het eerste woord, zodat meerdere stukken
+ * (bijvoorbeeld voor en na een accent) één doorlopende reeks vormen.
+ */
+interface Props {
+  text: string;
+  from?: number;
+}
+const { text, from = 0 } = Astro.props;
+const words = text.split(/\s+/).filter(Boolean);
+---
+
+{
+  words.map((word, i) => (
+    <>
+      <span class="rise-w">
+        <span style={`--i:${from + i}`}>{word}</span>
+      </span>{i < words.length - 1 && ' '}
+    </>
+  ))
+}

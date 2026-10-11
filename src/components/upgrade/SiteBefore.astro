@@ -1,0 +1,80 @@
+---
+/**
+ * De verouderde voorbeeldsite: bewust zoals veel sites van kleine zaken er
+ * nog uitzien. Vaste breedte, verloop in de kop, blauwe links. Alles is een
+ * verzonnen zaak. Staat altijd binnen een aria-hidden laag.
+ */
+import { Image } from 'astro:assets';
+import { content, toLocale } from '../../data/content';
+import { tradePhotos, type TradeId } from '../../data/trades';
+import Naam from './Naam.astro';
+
+interface Props {
+  trade: TradeId;
+  name: string;
+  eager?: boolean;
+}
+const { trade, name, eager = false } = Astro.props;
+const t = content(toLocale(Astro.currentLocale));
+const b = t.trades[trade].before;
+const o = t.oldSite;
+const navItems = [o.nav[0], o.nav[1], b.nav, o.nav[2]];
+---
+
+<div class="old" data-old={trade}>
+  <div class="old-page">
+    <div class="old-head">
+      <div class="old-logo"><span data-naam>{name}</span></div>
+      <div class="old-tagline">{b.tagline}</div>
+    </div>
+    <div class="old-nav">
+      {
+        navItems.map((item, i) => (
+          <>
+            {i > 0 && <span class="old-sep">|</span>}
+            <span class="old-link">{item}</span>
+          </>
+        ))
+      }
+    </div>
+    <div class="old-body">
+      <div class="old-side">
+        <div class="old-box">
+          <div class="old-box-title">{o.hours}</div>
+          <table>
+            <tbody>
+              {
+                o.hoursRows.map(([dag, tijd]) => (
+                  <tr>
+                    <td>{dag}</td>
+                    <td>{tijd}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="old-counter">{o.visitors} <span class="old-digits">004217</span></div>
+      </div>
+      <div class="old-main">
+        <div class="old-h1"><Naam text={o.welcome} name={name} /></div>
+        <div class="old-news">{b.news}</div>
+        <div class="old-fig">
+          <Image
+            src={tradePhotos[trade].before}
+            alt=""
+            widths={[320, 560]}
+            sizes="260px"
+            loading={eager ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+          <div class="old-cap">{b.caption}</div>
+        </div>
+        <p><Naam text={b.p1} name={name} /></p>
+        <p>{b.p2}</p>
+        <p><span class="old-link">{o.link}</span></p>
+      </div>
+    </div>
+    <div class="old-foot"><Naam text={o.footer} name={name} /></div>
+  </div>
+</div>

@@ -1,77 +1,78 @@
 ---
 /**
- * Taalschakelaar NL | EN.
- *
- * Staat bewust op drie plekken: linksboven náást het logo in de hero (dus
- * meteen in beeld, nog vóór er gescrold is), in de navigatiebalk die ná de
- * hero binnenschuift, en op de privacypagina. Anders is hij op een telefoon
- * nergens te vinden zolang je nog boven in beeld staat — en dan scrolt een
- * Nederlandstalige bezoeker op /en/ helemaal niet verder.
- *
- * Het is een echte link naar de andere pagina, geen JavaScript-schakelaar:
- * werkt zonder JS, is deelbaar en Google ziet beide versies.
+ * Taalschakelaar NL | EN. Een echte link naar dezelfde pagina in de andere
+ * taal: werkt zonder JavaScript, is deelbaar en Google ziet beide versies.
  */
 import { content, toLocale, altPath, LOCALES } from '../data/content';
+import { url, stripBase } from '../lib/url';
 
 interface Props {
-  /** 'donker' staat op de ink-achtergrond, 'licht' op cream. */
-  variant?: 'donker' | 'licht';
   class?: string;
+  /** 'paper' op lichte achtergrond. */
+  tone?: 'ink' | 'paper';
 }
-const { variant = 'donker', class: className = '' } = Astro.props;
+const { class: className = '', tone = 'ink' } = Astro.props;
 
 const locale = toLocale(Astro.currentLocale);
 const { nav } = content(locale);
-/* Het pad zonder taalprefix, zodat je op /privacy blijft als je wisselt. */
-const kaal = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
-
-const donker = variant === 'donker';
+/* Het pad zonder base en zonder taalprefix: zo blijf je op /privacy als je wisselt. */
+const kaal = stripBase(Astro.url.pathname).replace(/^\/en(?=\/|$)/, '') || '/';
 ---
 
-<nav
-  class:list={[
-    'flex shrink-0 items-center gap-1 rounded-full p-1 text-xs font-semibold',
-    donker ? 'bg-white/10 text-cream ring-1 ring-white/15' : 'bg-ink/8 text-ink ring-1 ring-ink/10',
-    className,
-  ]}
-  aria-label={nav.langLabel}
->
-  {/* Wereldbol: maakt in één oogopslag duidelijk dat dit over taal gaat,
-      ook voor iemand die de afkortingen NL/EN niet herkent. */}
-  <svg
-    class="ml-1 h-3.5 w-3.5 opacity-70"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.8"
-    aria-hidden="true"
-  >
-    <circle cx="12" cy="12" r="9"></circle>
-    <path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"></path>
-  </svg>
+<div class:list={['lang', `lang-${tone}`, className]} role="group" aria-label={nav.langLabel}>
   {
     LOCALES.map((code) => {
       const actief = code === locale;
       return (
         <a
-          href={altPath(kaal, code)}
+          href={url(altPath(kaal, code))}
           hreflang={code}
+          lang={code}
           aria-current={actief ? 'true' : undefined}
-          class:list={[
-            'inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-3 uppercase transition-colors',
-            actief
-              ? donker
-                ? 'bg-cream text-ink'
-                : 'bg-ink text-cream'
-              : donker
-                ? 'text-cream/70 hover:text-cream'
-                : 'text-ink/60 hover:text-ink',
-          ]}
+          class:list={['lang-link', { 'is-active': actief }]}
         >
-          {code}
-          <span class="sr-only">{actief ? '' : ` — ${nav.langSwitchTo}`}</span>
+          <span aria-hidden="true">{code}</span>
+          <span class="sr-only">{actief ? (code === 'nl' ? 'Nederlands' : 'English') : nav.langSwitchTo}</span>
         </a>
       );
     })
   }
-</nav>
+</div>
+
+<style>
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .lang-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    color: var(--color-mute);
+    transition: color 0.2s;
+  }
+  .lang-link:hover {
+    color: var(--color-bone);
+  }
+  .lang-link.is-active {
+    color: var(--color-bone);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+  }
+  .lang-paper .lang-link {
+    color: var(--color-paper-mute);
+  }
+  .lang-paper .lang-link:hover,
+  .lang-paper .lang-link.is-active {
+    color: var(--color-paper-ink);
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+/**
+ * Iconen uit één set: Phosphor (regular), als inline SVG. Alleen de iconen
+ * die de site echt gebruikt worden geïmporteerd; ze kleuren mee met de
+ * tekst (currentColor).
+ */
+import arrowRight from '@phosphor-icons/core/regular/arrow-right.svg?raw';
+import arrowLeft from '@phosphor-icons/core/regular/arrow-left.svg?raw';
+import arrowUpRight from '@phosphor-icons/core/regular/arrow-up-right.svg?raw';
+import arrowDown from '@phosphor-icons/core/regular/arrow-down.svg?raw';
+import arrowCounterClockwise from '@phosphor-icons/core/regular/arrow-counter-clockwise.svg?raw';
+import arrowClockwise from '@phosphor-icons/core/regular/arrow-clockwise.svg?raw';
+import check from '@phosphor-icons/core/regular/check.svg?raw';
+import x from '@phosphor-icons/core/regular/x.svg?raw';
+import list from '@phosphor-icons/core/regular/list.svg?raw';
+import plus from '@phosphor-icons/core/regular/plus.svg?raw';
+import whatsapp from '@phosphor-icons/core/regular/whatsapp-logo.svg?raw';
+import phone from '@phosphor-icons/core/regular/phone.svg?raw';
+import envelope from '@phosphor-icons/core/regular/envelope-simple.svg?raw';
+import globe from '@phosphor-icons/core/regular/globe-simple.svg?raw';
+import handTap from '@phosphor-icons/core/regular/hand-tap.svg?raw';
+import cursorClick from '@phosphor-icons/core/regular/cursor-click.svg?raw';
+import eye from '@phosphor-icons/core/regular/eye.svg?raw';
+import mapPin from '@phosphor-icons/core/regular/map-pin.svg?raw';
+
+const icons = {
+  'arrow-right': arrowRight,
+  'arrow-left': arrowLeft,
+  'arrow-up-right': arrowUpRight,
+  'arrow-down': arrowDown,
+  'arrow-counter-clockwise': arrowCounterClockwise,
+  'arrow-clockwise': arrowClockwise,
+  check,
+  x,
+  list,
+  plus,
+  whatsapp,
+  phone,
+  envelope,
+  globe,
+  'hand-tap': handTap,
+  'cursor-click': cursorClick,
+  eye,
+  'map-pin': mapPin,
+} as const;
+
+export type IconName = keyof typeof icons;
+
+interface Props {
+  name: IconName;
+  class?: string;
+  /** Alleen meegeven als het icoon de enige inhoud is; anders is het decoratie. */
+  label?: string;
+}
+
+const { name, class: className = 'icon', label } = Astro.props;
+const a11y = label ? `role="img" aria-label="${label.replace(/"/g, '&quot;')}"` : 'aria-hidden="true"';
+const svg = icons[name].replace('<svg ', `<svg class="${className}" ${a11y} focusable="false" `);
+---
+
+<Fragment set:html={svg} />

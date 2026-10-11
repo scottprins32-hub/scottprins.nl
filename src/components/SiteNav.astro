@@ -1,130 +1,246 @@
 ---
 /**
- * Zwevende navigatie. Verschijnt pas zodra de bezoeker de hero voorbij is
- * (daar staan de knoppen al) en verdwijnt weer bovenaan. Zonder deze balk
- * is een one-pager van deze lengte een eenrichtingsstraat.
- *
- * Ook zonder JavaScript bruikbaar: dan staat hij gewoon altijd in beeld.
+ * Vaste navigatie. Schuift weg bij naar beneden scrollen en komt terug bij
+ * omhoog scrollen; met toetsenbordfocus erin blijft hij altijd staan.
+ * Op de telefoon opent het menu als <dialog>: focus blijft erin en Esc
+ * sluit hem, zonder eigen focus-val.
  */
 import { site } from '../data/site';
-import { content } from '../data/content';
-const { nav } = content(Astro.currentLocale);
+import { content, toLocale, altPath } from '../data/content';
+import { url } from '../lib/url';
+import Logo from './Logo.astro';
 import LangSwitch from './LangSwitch.astro';
+import Icon from './Icon.astro';
 
 interface Props {
-  /** Andere sectielinks dan die van de homepage — zie BranchePage.astro. */
-  links?: readonly { label: string; href: string }[];
+  /** Op de homepage zijn de ankers lokaal (#prijs); elders wijzen ze naar de homepage. */
+  home?: boolean;
 }
-const { links = nav.links } = Astro.props;
+const { home = true } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const { nav } = content(locale);
+const homeUrl = url(altPath('/', locale));
+const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
 ---
 
-<header
-  class="site-nav fixed inset-x-0 top-0 z-40 transition-transform duration-300 motion-reduce:transition-none"
-  data-site-nav
->
-  <nav
-    class="mx-auto mt-3 flex w-[min(100%-1.5rem,72rem)] items-center gap-2 rounded-2xl bg-ink/90 px-3 py-2.5 ring-1 ring-white/12 backdrop-blur-md sm:gap-4 sm:px-4"
-    aria-label={nav.menuLabel}
-  >
-    <a href="#main" class="font-display text-sm font-semibold tracking-[0.08em] whitespace-nowrap text-cream uppercase sm:tracking-[0.18em]">
-      Scott<span class="text-accent">Prins</span>
+<header class="nav" data-site-nav>
+  <div class="wrap nav-inner">
+    <a class="nav-home" href={home ? '#main' : homeUrl} aria-label={nav.home}>
+      <Logo />
     </a>
-
-    <ul class="ml-auto hidden items-center gap-1 md:flex">
-      {
-        links.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="rounded-lg px-3 py-2 text-sm font-medium text-muted-dark transition-colors hover:bg-white/8 hover:text-cream"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-
-    {/* Sectiemenu voor mobiel. Een <details> werkt zonder JavaScript en
-        houdt de 33 schermen navigeerbaar. */}
-    <details class="relative ml-auto md:hidden" data-nav-menu>
-      <summary
-        class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-lg text-cream [&::-webkit-details-marker]:hidden"
-        aria-label={nav.menuLabel}
-      >
-        <span aria-hidden="true">☰</span>
-      </summary>
-      <ul class="absolute right-0 z-50 mt-2 w-56 rounded-xl bg-ink/95 p-2 ring-1 ring-white/15 backdrop-blur-md">
+    <nav class="nav-links" aria-label={nav.label}>
+      <ul>
         {
-          links.map((link) => (
+          nav.links.map((link) => (
             <li>
-              <a href={link.href} class="block rounded-lg px-3 py-3 text-sm text-cream hover:bg-white/8">
-                {link.label}
-              </a>
+              <a href={href(link.href)}>{link.label}</a>
             </li>
           ))
         }
       </ul>
-    </details>
+    </nav>
+    <div class="nav-end">
+      <LangSwitch class="nav-lang" />
+      <a class="btn btn-signal nav-cta" href={href('#bestellen')} data-magnetic>{nav.cta}</a>
+      <button type="button" class="nav-menu" aria-haspopup="dialog" aria-controls="menu" data-menu-open>
+        <Icon name="list" />
+        <span>{nav.menu}</span>
+      </button>
+    </div>
+  </div>
 
-    <LangSwitch class="md:ml-0" />
-    <a
-      href={`https://wa.me/${site.whatsapp}`}
-      target="_blank"
-      rel="noopener"
-      class="hidden rounded-lg px-2 py-2 text-sm font-medium text-muted-dark transition-colors hover:text-cream sm:inline sm:px-3"
-    >
-      <span aria-hidden="true">💬</span>
-      {/* sr-only i.p.v. hidden: op mobiel blijft de naam voor schermlezers bestaan. */}
-      <span class="sr-only sm:not-sr-only">WhatsApp</span>
-    </a>
-    <a
-      href="#configurator"
-      class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:px-4"
-    >
-      {nav.cta}
-    </a>
-  </nav>
+  <dialog id="menu" class="menu" aria-label={nav.label} data-menu>
+    <div class="menu-inner wrap">
+      <div class="menu-top">
+        <Logo />
+        <button type="button" class="nav-menu" data-menu-close>
+          <Icon name="x" />
+          <span>{nav.close}</span>
+        </button>
+      </div>
+      <nav aria-label={nav.label}>
+        <ul class="menu-links">
+          {
+            nav.links.map((link) => (
+              <li>
+                <a href={href(link.href)} data-menu-link>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div class="menu-bottom">
+        <a class="btn btn-signal" href={href('#bestellen')} data-menu-link>
+          {nav.cta}<Icon name="arrow-right" />
+        </a>
+        <a class="menu-contact" href={`https://wa.me/${site.whatsapp}`} rel="noopener" target="_blank">
+          <Icon name="whatsapp" />{site.whatsappDisplay}
+        </a>
+        <LangSwitch />
+      </div>
+    </div>
+  </dialog>
 </header>
 
-{/* De toon/verberg-regels staan in global.css: een selector die begint
-    met `.js` (op <html>) overleeft Astro's scoping niet. */}
-
 <script>
-  const navEl = document.querySelector<HTMLElement>('[data-site-nav]');
-  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  import { initNav } from '../scripts/nav';
+  initNav();
+</script>
 
-  if (navEl && hero) {
-    /*
-     * Bewust géén ScrollTrigger en geen IntersectionObserver: de hero
-     * wordt gepind, en beide zijn dan gevoelig voor het moment waarop ze
-     * meten (module-vololgorde, of een hero die nog geen hoogte heeft).
-     * Eén meting per frame op de échte positie is simpel en klopt altijd:
-     * zolang de onderkant van de hero nog in beeld is — ook tijdens de
-     * pin — blijft de balk weg.
-     */
-    let queued = false;
-    const update = () => {
-      queued = false;
-      navEl.toggleAttribute('data-visible', hero.getBoundingClientRect().bottom <= 60);
-    };
-    const onScroll = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(update);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    update();
-  } else {
-    navEl?.setAttribute('data-visible', '');
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    transition:
+      transform 0.5s var(--ease-out-expo),
+      background-color 0.3s,
+      border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.is-scrolled {
+    background: rgb(18 17 15 / 0.94);
+    border-bottom-color: var(--color-line);
+  }
+  .nav.is-hidden:not(:focus-within) {
+    transform: translateY(-100%);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 4.5rem;
+  }
+  .nav-home {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-bone);
+  }
+  .nav-links {
+    margin-left: auto;
+  }
+  .nav-links ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.85rem;
+    color: var(--color-bone-2);
+    font-size: 0.9375rem;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover {
+    color: var(--color-bone);
+  }
+  .nav-end {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .nav-cta {
+    min-height: 2.75rem;
+    padding: 0 1.15rem;
+    font-size: 0.9375rem;
+  }
+  .nav-menu {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.25rem 0 0.5rem;
+    border: 0;
+    background: none;
+    color: var(--color-bone);
+    font: inherit;
+    font-size: 0.9375rem;
+  }
+  .nav-menu :global(.icon) {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  @media (max-width: 63.99rem) {
+    .nav-links,
+    .nav-cta {
+      display: none;
+    }
+    .nav-end {
+      margin-left: auto;
+    }
+    .nav-menu {
+      display: inline-flex;
+    }
   }
 
-  /* Menu dichtklappen zodra er een sectie gekozen is. */
-  const menu = document.querySelector<HTMLDetailsElement>('[data-nav-menu]');
-  menu?.querySelectorAll('a').forEach((a) =>
-    a.addEventListener('click', () => {
-      menu.open = false;
-    }),
-  );
-</script>
+  /* ------------------------------------------------------------ menu -- */
+  .menu {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+  .menu::backdrop {
+    background: var(--color-ink);
+  }
+  .menu-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  .menu-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.5rem;
+  }
+  .menu-top .nav-menu {
+    display: inline-flex;
+  }
+  .menu-links {
+    margin: 2.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .menu-links a {
+    display: block;
+    padding: 0.35rem 0;
+    font-size: clamp(2.25rem, 10vw, 3.5rem);
+    font-weight: 720;
+    font-stretch: 112%;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--color-bone);
+  }
+  .menu-bottom {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    margin-top: auto;
+    padding-top: 2.5rem;
+  }
+  .menu-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    color: var(--color-bone-2);
+  }
+  .menu-contact :global(.icon) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+</style>

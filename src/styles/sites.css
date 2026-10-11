@@ -1,0 +1,771 @@
+/* ======================================================================
+   De voorbeeldsites in het upgrade-ding (en op /voorbeeld/).
+
+   Beide soorten zijn ontworpen op een virtuele breedte: 1280 px (desktop)
+   of 390 px (telefoon). Het ding schaalt ze met transform naar de echte
+   maat; op /voorbeeld/ staan ze op ware grootte. Container queries op
+   `vp` laten de layout meebewegen met die virtuele breedte.
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- oud --
+   Een typische site van rond 2014: vaste breedte van 960 px, verloop in de
+   kop, Verdana, blauwe onderstreepte links. Op een telefoon is hij niet
+   responsive: je krijgt de hele desktoppagina, piepklein. Precies zoals
+   het in het echt gaat. */
+.old {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #d3d7dd;
+  color: #333;
+  font-family: Verdana, Geneva, Tahoma, 'DejaVu Sans', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  --old-top: #2f6db5;
+  --old-bottom: #174a8b;
+  --old-rule: #f2c200;
+  --old-shadow: #0b2a52;
+}
+.old-page {
+  width: 960px;
+  min-height: 1100px;
+  margin: 0 auto;
+  background: #fff;
+  border-inline: 1px solid #9aa3ad;
+  transform-origin: 0 0;
+}
+@container vp (width < 700px) {
+  .old-page {
+    min-height: 1600px;
+    margin: 0;
+    /* 390 / 960: de hele desktoppagina op een telefoonscherm. */
+    transform: scale(0.40625);
+  }
+}
+.old-head {
+  height: 118px;
+  padding: 24px 24px 0;
+  background: linear-gradient(var(--old-top), var(--old-bottom));
+  border-bottom: 3px solid var(--old-rule);
+}
+.old-logo {
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 40px;
+  font-weight: bold;
+  font-style: italic;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--old-shadow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.old-tagline {
+  margin-top: 6px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #ffe680;
+}
+.old-nav {
+  padding: 7px 24px;
+  background: linear-gradient(#f7f7f7, #d9d9d9);
+  border-bottom: 1px solid #aaa;
+}
+.old-link {
+  color: #0033cc;
+  text-decoration: underline;
+}
+.old-sep {
+  margin: 0 8px;
+  color: #888;
+}
+.old-body {
+  display: flex;
+  gap: 20px;
+  padding: 20px 24px;
+}
+.old-side {
+  flex: none;
+  width: 200px;
+}
+.old-box {
+  border: 1px solid #9db3cf;
+  background: #eef3fa;
+}
+.old-box-title {
+  padding: 4px 8px;
+  background: #9db3cf;
+  color: #fff;
+  font-weight: bold;
+}
+.old-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.old-box td {
+  padding: 3px 8px;
+  vertical-align: top;
+}
+.old-counter {
+  margin-top: 14px;
+  font-size: 11px;
+  color: #555;
+}
+.old-digits {
+  padding: 2px 4px;
+  background: #111;
+  color: #3f3;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 2px;
+}
+.old-main {
+  flex: 1;
+  min-width: 0;
+}
+.old-h1 {
+  margin-bottom: 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: bold;
+  color: #003399;
+}
+.old-news {
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #d40000;
+}
+.old-fig {
+  float: right;
+  width: 260px;
+  margin: 0 0 10px 16px;
+  padding: 4px;
+  border: 1px solid #999;
+  background: #f4f4f4;
+}
+.old-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: saturate(0.72) contrast(0.92);
+}
+.old-cap {
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: italic;
+  color: #666;
+  text-align: center;
+}
+.old-main p {
+  margin: 0 0 10px;
+}
+.old-foot {
+  clear: both;
+  margin: 0 24px;
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+  font-size: 10px;
+  color: #777;
+  text-align: center;
+}
+/* Elke branche had destijds zijn eigen 'thema'. */
+.old[data-old='bakker'] { --old-top: #8a4b1f; --old-bottom: #5e3010; --old-rule: #e8b04b; --old-shadow: #3a1d08; }
+.old[data-old='kapper'] { --old-top: #7b3f8c; --old-bottom: #4e1f5c; --old-rule: #e6a3d1; --old-shadow: #2a0d33; }
+.old[data-old='restaurant'] { --old-top: #8c1d1d; --old-bottom: #5a0e0e; --old-rule: #e8c25b; --old-shadow: #2e0505; }
+.old[data-old='bouw'] { --old-top: #1f3b64; --old-bottom: #0e2140; --old-rule: #f2c200; --old-shadow: #050d1a; }
+.old[data-old='praktijk'] { --old-top: #2a8a8a; --old-bottom: #136060; --old-rule: #9de0d0; --old-shadow: #073030; }
+.old[data-old='sport'] { --old-top: #2449c9; --old-bottom: #142c85; --old-rule: #ff7a00; --old-shadow: #0a1640; }
+
+/* ---------------------------------------------------------------- nieuw --
+   Zes eigen ontwerpen met één skelet: kop, hero met beeld, drie feiten.
+   Wat per branche verschilt, staat in de variabelen onderaan. */
+.new {
+  --bg: #f4f1ea;
+  --ink: #1d1b18;
+  --mute: #6d685f;
+  --accent: #1d1b18;
+  --accent-ink: #f4f1ea;
+  --line: rgb(29 27 24 / 0.16);
+  --radius: 999px;
+  --radius-media: 24px;
+  --title-font: var(--font-sans);
+  --title-stretch: 100%;
+  --title-weight: 600;
+  --title-size: clamp(44px, 8cqi, 112px);
+  --title-size-m: 46px;
+  --title-leading: 0.95;
+  --title-tracking: -0.03em;
+  --title-case: none;
+  --pad: 56px;
+
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+}
+.new-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px var(--pad);
+}
+.new-logo {
+  font-weight: 700;
+  font-size: 20px;
+  font-stretch: 110%;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+}
+.new-nav {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+  font-size: 15px;
+}
+.new-nav a,
+.new-nav span {
+  color: inherit;
+  text-decoration: none;
+}
+.new-navcta {
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.new-burger {
+  display: none;
+  width: 26px;
+  height: 12px;
+  margin-left: auto;
+  border-block: 2px solid currentColor;
+}
+.new-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: end;
+  height: 560px;
+  padding: 16px var(--pad) 0;
+}
+.new-copy {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 36px;
+}
+.new-eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.new-title {
+  margin: 18px 0 0;
+  font-family: var(--title-font);
+  font-size: var(--title-size);
+  font-weight: var(--title-weight);
+  font-stretch: var(--title-stretch);
+  line-height: var(--title-leading);
+  letter-spacing: var(--title-tracking);
+  text-transform: var(--title-case);
+  text-wrap: balance;
+}
+.new-title .w {
+  display: inline-block;
+}
+.new-title em {
+  font-style: normal;
+  color: var(--accent);
+}
+.new-sub {
+  max-width: 30em;
+  margin: 22px 0 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+.new-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.new-btn,
+.new-btn2 {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 26px;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.new-btn {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.new-btn2 {
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.new-media {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-media) var(--radius-media) 0 0;
+}
+.new-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.new-facts {
+  display: flex;
+  margin: 0 var(--pad);
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.new-facts li {
+  flex: 1;
+  padding: 22px 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+.new-facts li + li {
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
+}
+@container vp (width < 700px) {
+  .new {
+    --pad: 20px;
+  }
+  .new-head {
+    padding: 18px var(--pad);
+  }
+  .new-logo {
+    max-width: 70%;
+    font-size: 18px;
+  }
+  .new-nav,
+  .new-navcta {
+    display: none;
+  }
+  .new-burger {
+    display: block;
+  }
+  .new-hero {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    height: auto;
+    padding: 6px var(--pad) 0;
+  }
+  .new-copy {
+    padding-bottom: 0;
+  }
+  .new-title {
+    margin-top: 12px;
+    font-size: var(--title-size-m);
+  }
+  .new-sub {
+    margin-top: 14px;
+    font-size: 16px;
+  }
+  .new-ctas {
+    margin-top: 20px;
+  }
+  .new-btn2 {
+    display: none;
+  }
+  .new-media {
+    height: 230px;
+    border-radius: var(--radius-media);
+  }
+  .new-facts {
+    display: none;
+  }
+}
+
+/* Bakker: warm ambacht. Bloemwit, korstbruin, een schreef met karakter. */
+.new[data-look='bakker'] {
+  --bg: #efe6d8;
+  --ink: #2b1d12;
+  --mute: #6e5a49;
+  --accent: #b5562b;
+  --accent-ink: #fff8ef;
+  --line: rgb(43 29 18 / 0.18);
+  --title-font: var(--font-serif);
+  --title-weight: 400;
+  --title-size: clamp(44px, 6.8cqi, 96px);
+  --title-size-m: 48px;
+  --title-leading: 0.94;
+  --title-tracking: -0.015em;
+  --radius-media: 30px;
+}
+.new[data-look='bakker'] .new-title em {
+  font-style: italic;
+}
+.new[data-look='bakker'] .new-logo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 26px;
+  font-stretch: normal;
+  letter-spacing: 0;
+}
+
+/* Kapper: redactioneel. Beeld links, dunne letter, cursief accent. */
+.new[data-look='kapper'] {
+  --bg: #e8ddd4;
+  --ink: #1f1a17;
+  --mute: #6d5f57;
+  --accent: #1f1a17;
+  --accent-ink: #e8ddd4;
+  --line: rgb(31 26 23 / 0.2);
+  --radius: 0;
+  --radius-media: 0;
+  --title-weight: 300;
+  --title-size: clamp(46px, 8cqi, 112px);
+  --title-size-m: 52px;
+  --title-leading: 0.9;
+  --title-tracking: -0.045em;
+}
+.new[data-look='kapper'] .new-hero {
+  grid-template-columns: 0.9fr 1.1fr;
+}
+.new[data-look='kapper'] .new-media {
+  order: -1;
+}
+.new[data-look='kapper'] .new-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.new[data-look='kapper'] .new-nav {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+@container vp (width < 700px) {
+  .new[data-look='kapper'] .new-media {
+    order: 0;
+  }
+}
+
+/* Restaurant: kaarslicht. Beeld over de hele breedte, tekst in het midden. */
+.new[data-look='restaurant'] {
+  --bg: #14110d;
+  --ink: #f1e6d2;
+  --mute: #c4b49a;
+  --accent: #d9a35b;
+  --accent-ink: #14110d;
+  --line: rgb(241 230 210 / 0.22);
+  --radius: 2px;
+  --title-font: var(--font-serif);
+  --title-weight: 400;
+  --title-size: clamp(48px, 8.6cqi, 120px);
+  --title-size-m: 50px;
+  --title-leading: 0.92;
+  --title-tracking: -0.01em;
+}
+.new[data-look='restaurant'] .new-head {
+  justify-content: center;
+}
+.new[data-look='restaurant'] .new-hero {
+  grid-template-columns: 1fr;
+  align-items: end;
+  justify-items: center;
+  text-align: center;
+}
+.new[data-look='restaurant'] .new-media {
+  position: absolute;
+  inset: -90px 0 0;
+  border-radius: 0;
+}
+.new[data-look='restaurant'] .new-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #14110d 8%, rgb(20 17 13 / 0.55) 55%, rgb(20 17 13 / 0.35));
+}
+.new[data-look='restaurant'] .new-copy {
+  max-width: 900px;
+}
+.new[data-look='restaurant'] .new-sub {
+  margin-inline: auto;
+}
+.new[data-look='restaurant'] .new-ctas {
+  justify-content: center;
+}
+.new[data-look='restaurant'] .new-title em {
+  font-style: italic;
+}
+.new[data-look='restaurant'] .new-navcta {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.new[data-look='restaurant'] .new-logo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 24px;
+  font-stretch: normal;
+  letter-spacing: 0;
+}
+@container vp (width < 700px) {
+  .new[data-look='restaurant'] .new-hero {
+    min-height: 470px;
+    padding-bottom: 24px;
+  }
+  .new[data-look='restaurant'] .new-media {
+    inset: -70px 0 0;
+    height: auto;
+  }
+}
+
+/* Bouw: industrieel. Veiligheidsgeel, smalle zware kapitalen, harde randen. */
+.new[data-look='bouw'] {
+  --bg: #f4c430;
+  --ink: #111;
+  --mute: #3d3300;
+  --accent: #111;
+  --accent-ink: #f4c430;
+  --line: #111;
+  --radius: 0;
+  --radius-media: 0;
+  --title-stretch: 62%;
+  --title-weight: 860;
+  --title-size: clamp(56px, 10cqi, 140px);
+  --title-size-m: 64px;
+  --title-leading: 0.84;
+  --title-tracking: -0.01em;
+  --title-case: uppercase;
+}
+.new[data-look='bouw'] .new-hero {
+  grid-template-columns: 1.25fr 0.75fr;
+}
+.new[data-look='bouw'] .new-title em {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+}
+.new[data-look='bouw'] .new-media {
+  height: 86%;
+  align-self: center;
+  border: 6px solid var(--ink);
+  box-shadow: 14px 14px 0 var(--ink);
+}
+.new[data-look='bouw'] .new-logo {
+  font-stretch: 70%;
+  font-weight: 860;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+.new[data-look='bouw'] .new-facts {
+  border-top-width: 3px;
+}
+.new[data-look='bouw'] .new-facts li {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-stretch: 80%;
+}
+@container vp (width < 700px) {
+  .new[data-look='bouw'] .new-media {
+    height: 200px;
+    margin-right: 10px;
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+}
+
+/* Praktijk: rust. Veel lucht, zacht groen, ronde vormen. */
+.new[data-look='praktijk'] {
+  --bg: #f3f5f1;
+  --ink: #1e2b26;
+  --mute: #5d6e66;
+  --accent: #2f5d4e;
+  --accent-ink: #f3f5f1;
+  --line: rgb(30 43 38 / 0.14);
+  --radius-media: 36px;
+  --title-weight: 500;
+  --title-size: clamp(42px, 6.6cqi, 92px);
+  --title-size-m: 42px;
+  --title-leading: 1;
+  --title-tracking: -0.035em;
+}
+.new[data-look='praktijk'] .new-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.new[data-look='praktijk'] .new-media {
+  height: 92%;
+  align-self: end;
+  border-radius: var(--radius-media);
+  margin-bottom: 24px;
+}
+.new[data-look='praktijk'] .new-navcta {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+@container vp (width < 700px) {
+  .new[data-look='praktijk'] .new-media {
+    height: 220px;
+    margin-bottom: 0;
+  }
+}
+
+/* Sport: kinetisch. Breed, zwaar, zuurgroen op bijna-zwart. */
+.new[data-look='sport'] {
+  --bg: #0f1110;
+  --ink: #f2f2ee;
+  --mute: #a3a9a2;
+  --accent: #c8f25a;
+  --accent-ink: #0f1110;
+  --line: rgb(242 242 238 / 0.18);
+  --radius: 6px;
+  --radius-media: 0;
+  --title-stretch: 125%;
+  --title-weight: 860;
+  --title-size: clamp(42px, 6.4cqi, 90px);
+  --title-size-m: 40px;
+  --title-leading: 0.88;
+  --title-tracking: -0.025em;
+  --title-case: uppercase;
+}
+.new[data-look='sport'] .new-hero {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+.new[data-look='sport'] .new-media {
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
+}
+.new[data-look='sport'] .new-media img {
+  filter: grayscale(1) contrast(1.15);
+}
+.new[data-look='sport'] .new-logo {
+  font-stretch: 125%;
+  font-weight: 860;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+.new[data-look='sport'] .new-navcta {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+@container vp (width < 700px) {
+  .new[data-look='sport'] .new-media {
+    clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+  }
+}
+
+/* ---------------------------------------------------- als echte pagina --
+   Op /voorbeeld/ staat de nieuwe site op ware grootte, met een paar extra
+   blokken eronder zodat hij als een echte site scrolt. */
+.new.is-page {
+  min-height: 100svh;
+}
+.new.is-page .new-hero {
+  height: auto;
+  min-height: calc(100svh - 190px);
+}
+.new.is-page .new-head {
+  max-width: 1440px;
+  margin-inline: auto;
+}
+.new.is-page .new-hero,
+.new.is-page .new-facts,
+.new-more {
+  max-width: 1440px;
+  margin-inline: auto;
+}
+.new.is-page .new-facts {
+  margin-inline: max(var(--pad), calc((100% - 1440px) / 2 + var(--pad)));
+}
+.new-more {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  padding: 96px var(--pad);
+}
+.new-more h2 {
+  margin: 0;
+  font-family: var(--title-font);
+  font-size: clamp(32px, 4cqi, 56px);
+  font-weight: var(--title-weight);
+  font-stretch: var(--title-stretch);
+  line-height: 1;
+  letter-spacing: var(--title-tracking);
+  text-transform: var(--title-case);
+}
+.new-hours {
+  width: 100%;
+  max-width: 420px;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+.new-hours td {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.new-hours td + td {
+  text-align: right;
+  color: var(--mute);
+}
+.new-foot {
+  padding: 28px var(--pad) 40px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--mute);
+}
+@container vp (width < 700px) {
+  .new.is-page .new-hero {
+    min-height: 0;
+  }
+  .new.is-page .new-facts {
+    display: block;
+    margin-inline: var(--pad);
+  }
+  .new.is-page .new-facts li + li {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .new-more {
+    grid-template-columns: 1fr;
+    padding-block: 64px;
+  }
+}
+
+/* Op de telefoon altijd één kolom, ook bij de looks die op desktop een
+   eigen verdeling hebben. Staat bewust onderaan: gelijke specificiteit,
+   dus de laatste regel wint. */
+@container vp (width < 700px) {
+  .new[data-look] .new-hero {
+    grid-template-columns: 1fr;
+  }
+}

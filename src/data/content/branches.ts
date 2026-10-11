@@ -9,19 +9,11 @@
  * één uitgewisseld woord zijn doorway pages en daar rekent Google op af.
  * Vandaar: eerst deze ene, meten, en pas dan de volgende.
  *
- * `preset` verwijst naar een preset in pricing.ts, zodat de prijs en de
- * voorgeselecteerde configuratie nooit uit de pas lopen met de rest.
+ * `trade` kiest welk voorbeeld het upgrade-ding bovenaan laat zien.
  */
-import type { AddonId, PresetId } from '../pricing';
-
-/**
- * De demo's die een branchepagina kan tonen. Bewust een korte union en niet
- * `AddonId`: BranchePage.astro importeert alleen déze componenten, en elke
- * import sleept het bijbehorende script mee de pagina in. Heeft een nieuwe
- * branche een andere demo nodig, breid dan deze union én het register in
- * BranchePage.astro uit — TypeScript dwingt af dat je dat allebei doet.
- */
-export type BrancheDemoId = Extract<AddonId, 'agenda' | 'intake' | 'portaal'>;
+import type { TradeId } from '../trades';
+import { offer } from '../offer';
+import { eur } from '../../lib/format';
 
 export interface Branche {
   /**
@@ -29,16 +21,12 @@ export interface Branche {
    * Nederlandse zoekterm, en zo blijven de hreflang-paren één-op-één.
    */
   slug: string;
-  preset: PresetId;
-  /** Welke drie demo-secties van de menukaart hier het meest toe doen. */
-  demos: BrancheDemoId[];
-  /** Korte linktekst, gebruikt in de snelstart-rij van de configurator. */
-  linkLabel: string;
+  trade: TradeId;
   meta: { title: string; description: string };
   eyebrow: string;
   h1: string;
   intro: string;
-  /** De herkenbare dagelijkse ergernissen — geen features. */
+  /** De herkenbare dagelijkse ergernissen, geen features. */
   painTitle: string;
   pain: string[];
   bodyTitle: string;
@@ -53,91 +41,82 @@ export interface Branche {
   backLink: string;
 }
 
+const PRIJS = eur(offer.price, 'nl');
+const PRICE = eur(offer.price, 'en');
+
 export const branchesNl: Branche[] = [
   {
     slug: 'website-laten-maken-fysiotherapie',
-    preset: 'praktijk',
-    demos: ['agenda', 'intake', 'portaal'],
-    linkLabel: 'Alles over een fysiosite',
+    trade: 'praktijk',
     meta: {
-      title: 'Website laten maken voor je fysiopraktijk — vanaf € 995',
-      description:
-        'Een praktijksite waarin patiënten zelf plannen en de intake al binnen is voor ze binnenlopen. Vaste prijs, live in 5 werkdagen. Webdesigner uit Badhoevedorp.',
+      title: `Website laten maken voor je fysiopraktijk voor ${PRIJS} | Scott Prins`,
+      description: `Een praktijksite die vertrouwen geeft voordat iemand belt. Eigen ontwerp, snel op elke telefoon, binnen ${offer.deliveryDays} werkdagen live. ${PRIJS} eenmalig. Webdesigner uit Badhoevedorp.`,
     },
     eyebrow: 'Voor fysiotherapie- en behandelpraktijken',
-    h1: 'Een praktijksite waarin patiënten zelf plannen.',
+    h1: 'Een praktijksite die vertrouwen geeft voordat iemand belt.',
     intro:
-      'De meeste praktijksites zijn een digitaal visitekaartje: openingstijden, een routebeschrijving en een telefoonnummer. Alles wat daarna komt — plannen, verzetten, intakes, vragen over vergoedingen — belandt alsnog bij de balie of op jouw voicemail. Dat kan anders, en het hoeft geen praktijksoftware van duizenden euro’s te zijn.',
+      'Iemand met rugpijn zoekt ’s avonds op de bank naar een fysiotherapeut in de buurt en opent drie sites. Eén ziet eruit alsof hij uit 2014 komt, één laadt niet op de telefoon, en één voelt rustig, duidelijk en verzorgd. Raad eens wie de volgende ochtend gebeld wordt.',
     painTitle: 'Herkenbaar?',
     pain: [
-      'De telefoon gaat tijdens een behandeling, en je patiënt op de bank hoort mee.',
-      'Nieuwe patiënten vullen hun intake in de wachtkamer in, op papier, met een pen die het half doet.',
-      'Iemand wil verzetten en dat kost drie keer heen en weer bellen.',
-      'De vraag "wordt dit vergoed?" beantwoord je elke week opnieuw.',
-      'No-shows: het uur is weg en je kunt niemand meer inplannen.',
+      'Je site is ooit gemaakt door een neef, een bureau of een bouwpakket, en sindsdien niet meer aangeraakt.',
+      'Op de telefoon moet je inzoomen om het telefoonnummer te vinden.',
+      'De vraag “wordt dit vergoed?” beantwoord je elke week opnieuw aan de telefoon.',
+      'Nieuwe patiënten weten niet of ze een verwijzing nodig hebben, en bellen dus maar.',
+      'Je praktijk is beter dan je site laat zien.',
     ],
     bodyTitle: 'Wat ik daarvoor bouw',
     body: [
-      'Een site waarop patiënten zelf een afspraak inplannen, ook om elf uur ’s avonds. Jij bepaalt welke behandelingen op welke dagen open staan en hoe lang ze duren; de rest gaat vanzelf. Wie verzet of annuleert doet dat via de link in zijn bevestiging, zonder jou te storen.',
-      'De intake staat klaar vóór het eerste consult. Klachtomschrijving, verwijzing, verzekering, eerdere behandelingen: allemaal ingevuld in stappen, thuis, op de telefoon. Jij begint het gesprek dus voorbereid in plaats van met een leeg formulier.',
-      'En achter een eigen inlog kan een patiënt zijn oefeningen, afspraken en documenten terugvinden. Dat scheelt niet alleen mailtjes met bijlagen, het is ook een reden om terug te komen naar jouw site in plaats van naar een zoekmachine.',
-      'Wat ik níet doe: jouw dossiersysteem vervangen. Dit is de laag ervoor — de plek waar de patiënt binnenkomt, plant en zijn gegevens achterlaat.',
+      'Een rustige, verzorgde site die laat zien wie je bent en hoe je werkt. Eén pagina waar alles op staat: je behandelingen, je team, vergoedingen, openingstijden en hoe je een afspraak maakt.',
+      'De vragen die je nu elke week aan de telefoon beantwoordt, staan er helder op: heb ik een verwijzing nodig, wordt het vergoed, hoe lang duurt een behandeling.',
+      'Werk je al met een online agenda in je praktijksoftware? Dan zet ik de afspraakknop daar direct naartoe. Zo kiest een patiënt ook om elf uur ’s avonds nog een plek.',
+      'Wat ik níet doe: je dossiersysteem vervangen of medische beloftes verzinnen. De teksten schrijf ik op basis van een gesprek met jou, en jij leest alles na voordat het live gaat.',
     ],
-    demoTitle: 'Probeer het hieronder',
-    demoLead:
-      'Dit zijn geen screenshots. De drie onderdelen die voor een praktijk het meest uitmaken staan hier live. Probeer ze gerust.',
-    priceTitle: 'Wat kost zo’n praktijksite?',
-    priceLead:
-      'Deze samenstelling — het pakket Interactief met de agenda, de digitale intake, het klantenportaal en sms-herinneringen — staat hieronder al voor je klaar. Verander gerust wat je niet nodig hebt; de prijs rekent live mee.',
+    demoTitle: 'Zo kan jouw praktijksite eruitzien',
+    demoLead: 'Typ de naam van je praktijk en houd de site ingedrukt. Dit is het soort site dat je krijgt.',
+    priceTitle: 'Wat kost een praktijksite?',
+    priceLead: `${PRIJS} eenmalig, exclusief btw. Alles erin: ontwerp, motion, teksten, domein en hosting. Geen abonnement nodig.`,
     ctaTitle: 'Zelf zien hoe het voor jouw praktijk wordt?',
-    ctaLead:
-      'Vertel me kort over je praktijk. Binnen 48 uur heb je een vaste prijs én een gratis proefpagina met jouw naam, kleuren en teksten erin.',
-    ctaButton: 'Stel je praktijksite samen',
-    backLink: '← Naar de hele menukaart',
+    ctaLead: `Vraag een gratis proefpagina aan. Binnen ${offer.responseHours} uur zie je de bovenkant van je nieuwe site, met de naam en kleuren van je praktijk. Bevalt hij niet, dan betaal je niets.`,
+    ctaButton: 'Vraag je gratis proefpagina aan',
+    backLink: 'Naar de homepage',
   },
 ];
 
 export const branchesEn: Branche[] = [
   {
     slug: 'website-laten-maken-fysiotherapie',
-    preset: 'praktijk',
-    demos: ['agenda', 'intake', 'portaal'],
-    linkLabel: 'All about a practice site',
+    trade: 'praktijk',
     meta: {
-      title: 'A website for your physiotherapy practice — from €995',
-      description:
-        'A practice site where patients book themselves and the intake is in before they walk through the door. Fixed price, live in 5 working days.',
+      title: `A website for your physiotherapy practice for ${PRICE} | Scott Prins`,
+      description: `A practice site that builds trust before anyone calls. Original design, fast on every phone, live within ${offer.deliveryDays} working days. ${PRICE} one-off. Web designer near Amsterdam.`,
     },
     eyebrow: 'For physiotherapy and treatment practices',
-    h1: 'A practice site where patients book themselves.',
+    h1: 'A practice site that builds trust before anyone calls.',
     intro:
-      'Most practice websites are a digital business card: opening hours, directions and a phone number. Everything after that — booking, rescheduling, intake forms, questions about reimbursement — still lands at the front desk or on your voicemail. It can work differently, and it does not need practice software costing thousands.',
+      'Someone with back pain is on the sofa one evening, looking for a physiotherapist nearby, and opens three sites. One looks like it was made in 2014, one won’t load on the phone, and one feels calm, clear and well cared for. Guess who gets the call the next morning.',
     painTitle: 'Sound familiar?',
     pain: [
-      'The phone rings during a treatment, and the patient on the table hears every word.',
-      'New patients fill in their intake in the waiting room, on paper, with a pen that half works.',
-      'Someone wants to reschedule and it takes three calls back and forth.',
-      'You answer “is this reimbursed?” again every single week.',
-      'No-shows: the hour is gone and you cannot fill it any more.',
+      'Your site was once made by a nephew, an agency or a site builder, and hasn’t been touched since.',
+      'On a phone you have to zoom in to find the phone number.',
+      'You answer “is this covered by insurance?” on the phone every single week.',
+      'New patients don’t know whether they need a referral, so they just call.',
+      'Your practice is better than your site shows.',
     ],
     bodyTitle: 'What I build for that',
     body: [
-      'A site where patients book their own appointment, including at eleven at night. You decide which treatments are open on which days and how long they take; the rest runs itself. Anyone rescheduling or cancelling does so through the link in their confirmation, without disturbing you.',
-      'The intake is done before the first consultation. Complaint description, referral, insurance, previous treatment: filled in step by step, at home, on their phone. So you start the conversation prepared instead of with a blank form.',
-      'And behind their own login a patient finds their exercises, appointments and documents. That saves emails with attachments, and it gives them a reason to come back to your site rather than to a search engine.',
-      'What I do not do: replace your patient record system. This is the layer in front of it — where the patient arrives, books and leaves their details.',
+      'A calm, well-crafted site that shows who you are and how you work. One page with everything on it: your treatments, your team, insurance, opening hours and how to book.',
+      'The questions you now answer on the phone every week are clearly on the page: do I need a referral, is it covered, how long does a treatment take.',
+      'Already using an online calendar in your practice software? Then I point the booking button straight at it. That way a patient can still pick a slot at eleven at night.',
+      'What I don’t do: replace your patient record system or make up medical promises. I write the copy from a conversation with you, and you read everything before it goes live.',
     ],
-    demoTitle: 'Try it below',
-    demoLead:
-      'These are not screenshots. The three parts that matter most for a practice are live right here. Try them for yourself.',
-    priceTitle: 'What does a practice site like this cost?',
-    priceLead:
-      'This build — the Interactive package with booking, the digital intake, the customer portal and SMS reminders — is already loaded for you below. Change whatever you do not need; the price recalculates live.',
+    demoTitle: 'What your practice site could look like',
+    demoLead: 'Type the name of your practice and press and hold the site. This is the kind of site you get.',
+    priceTitle: 'What does a practice site cost?',
+    priceLead: `${PRICE} one-off, excluding VAT. Everything included: design, motion, copy, domain and hosting. No subscription needed.`,
     ctaTitle: 'Want to see how it would look for your practice?',
-    ctaLead:
-      'Tell me briefly about your practice. Within 48 hours you have a fixed price and a free sample page with your name, colours and copy in it.',
-    ctaButton: 'Build your practice site',
-    backLink: '← To the full menu',
+    ctaLead: `Request a free sample page. Within ${offer.responseHours} hours you see the top of your new site, with your practice’s name and colours. Don’t like it? Then you pay nothing.`,
+    ctaButton: 'Request your free sample page',
+    backLink: 'To the homepage',
   },
 ];
 

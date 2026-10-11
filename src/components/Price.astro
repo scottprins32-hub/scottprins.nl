@@ -1,0 +1,287 @@
+---
+/**
+ * De prijs. Eén bedrag, groot, op papier: het is het enige lichte vlak
+ * naast de bestelbon, zodat het oog er vanzelf heen gaat. Het bedrag staat
+ * er altijd; de animatie laat alleen de cijfers omhoog komen.
+ */
+import { content, toLocale } from '../data/content';
+import { offer } from '../data/offer';
+import { eur } from '../lib/format';
+import Icon from './Icon.astro';
+
+const locale = toLocale(Astro.currentLocale);
+const t = content(locale);
+const p = t.price;
+const digits = String(offer.price).split('');
+---
+
+<section class="price" id="prijs" aria-labelledby="price-title">
+  <div class="wrap price-grid">
+    <div class="price-head">
+      <p class="label price-label">{p.label}</p>
+      <h2 id="price-title" class="price-question">{p.question}</h2>
+      <p class="price-amount" data-price-amount>
+        <span class="sr-only">{eur(offer.price, locale)} {t.order.slip.exVat}</span>
+        <span class="price-visual" aria-hidden="true">
+          <span class="price-cur">€</span>{
+            digits.map((digit) => (
+              <span class="price-digit">
+                <span>{digit}</span>
+              </span>
+            ))
+          }
+        </span>
+        <span class="price-vat" aria-hidden="true">{t.order.slip.exVat}</span>
+      </p>
+      <p class="price-once">{p.once}</p>
+      <a class="btn btn-ink price-cta" href="#bestellen" data-magnetic>
+        {p.cta}<Icon name="arrow-right" />
+      </a>
+      <p class="price-terms">{p.terms}</p>
+    </div>
+
+    <div class="price-body">
+      <div class="price-block">
+        <h3 class="label price-sub">{p.compareLabel}</h3>
+        <ul class="price-compare">
+          {
+            p.compare.map((row) => (
+              <li class:list={['price-row', { 'is-mine': row.mine }]} data-reveal="up">
+                <span class="price-who">{row.who}</span>
+                <span class="price-what">{row.what}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="price-block">
+        <h3 class="label price-sub">{p.includedLabel}</h3>
+        <ul class="price-included" data-checklist>
+          {
+            p.included.map((item) => (
+              <li>
+                <span class="price-check">
+                  <Icon name="check" />
+                </span>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="price-block price-why" id="waarom">
+        <h3 class="price-why-title">{p.whyTitle}</h3>
+        {p.why.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+
+      <p class="price-care">{p.care}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initPrice } from '../scripts/price';
+  initPrice();
+</script>
+
+<style>
+  .price {
+    background: var(--color-paper);
+    color: var(--color-paper-ink);
+    padding-block: clamp(5rem, 10vw, 9rem);
+    color-scheme: light;
+  }
+  .price :global(:focus-visible) {
+    outline-color: var(--color-paper-ink);
+  }
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(3rem, 6vw, 5rem) clamp(1rem, 2vw, 2rem);
+  }
+  .price-head,
+  .price-body {
+    grid-column: 1 / -1;
+  }
+  .price-label,
+  .price-sub {
+    margin: 0 0 1.25rem;
+    color: var(--color-paper-mute);
+  }
+  .price-question {
+    margin: 0;
+    font-size: var(--text-display-m);
+    font-weight: 640;
+    font-stretch: 110%;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  .price-amount {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    margin: 1.5rem 0 0;
+  }
+  .price-visual {
+    display: inline-flex;
+    align-items: flex-start;
+    font-size: clamp(6.5rem, 19vw, 16rem);
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.055em;
+    line-height: 0.82;
+  }
+  .price-cur {
+    margin-right: 0.04em;
+    font-size: 0.42em;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  .price-digit {
+    display: inline-block;
+    overflow: clip;
+    padding-bottom: 0.04em;
+  }
+  .price-digit > span {
+    display: inline-block;
+  }
+  .price-vat {
+    align-self: flex-end;
+    padding-bottom: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-paper-mute);
+  }
+  .price-once {
+    max-width: 22rem;
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-weight: 600;
+    font-stretch: 108%;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  .price-cta {
+    margin-top: 2rem;
+  }
+  .price-terms {
+    max-width: 24rem;
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--color-paper-mute);
+  }
+
+  .price-body {
+    display: grid;
+    gap: clamp(3rem, 5vw, 4.5rem);
+  }
+  .price-compare,
+  .price-included {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .price-row {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid rgb(29 27 24 / 0.14);
+  }
+  .price-who {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-paper-mute);
+  }
+  .price-what {
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    font-weight: 560;
+    font-stretch: 106%;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-paper-mute);
+  }
+  .price-row.is-mine {
+    border-top: 2px solid var(--color-signal);
+  }
+  .price-row.is-mine .price-who {
+    color: var(--color-paper-ink);
+  }
+  .price-row.is-mine .price-what {
+    color: var(--color-paper-ink);
+    font-weight: 700;
+  }
+  .price-included {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.25rem 2rem;
+  }
+  .price-included li {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgb(29 27 24 / 0.1);
+    font-size: 1.0625rem;
+    font-weight: 520;
+  }
+  .price-check {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: var(--color-signal);
+    color: var(--color-signal-ink);
+  }
+  .price-check :global(.icon) {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+  .price-why-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-weight: 680;
+    font-stretch: 110%;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .price-why p {
+    max-width: 36rem;
+    margin: 0 0 1rem;
+    font-size: var(--text-lead);
+    line-height: 1.55;
+  }
+  .price-care {
+    max-width: 36rem;
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(29 27 24 / 0.14);
+    color: var(--color-paper-mute);
+  }
+  @media (min-width: 40rem) {
+    .price-included {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 64rem) {
+    .price-head {
+      grid-column: 1 / span 6;
+      align-self: start;
+      position: sticky;
+      top: 6.5rem;
+    }
+    .price-body {
+      grid-column: 8 / -1;
+      padding-top: 0.25rem;
+    }
+  }
+</style>

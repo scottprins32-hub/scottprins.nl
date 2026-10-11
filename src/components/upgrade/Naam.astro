@@ -1,0 +1,21 @@
+---
+/**
+ * Zet een tekst met {naam} neer, met de naam in een eigen <span data-naam>
+ * zodat het script hem live kan vervangen als de bezoeker typt.
+ */
+interface Props {
+  text: string;
+  name: string;
+}
+const { text, name } = Astro.props;
+const parts = text.split('{naam}');
+---
+
+{
+  parts.map((part, i) => (
+    <>
+      {i > 0 && <span data-naam>{name}</span>}
+      {part}
+    </>
+  ))
+}

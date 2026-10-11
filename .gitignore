@@ -18,3 +18,7 @@ node_modules/
 
 # Lighthouse-rapporten (log.md blijft wel bewaard)
 perf/*.json
+
+# GitHub Pages-preview
+dist-preview/
+.preview-api-parked/

@@ -1,30 +1,31 @@
 /**
- * POST /api/lead — de enige serverless route van de site.
- * Ontvangt het offerteformulier, herrekent de totalen server-side en
- * mailt de aanvraag via Resend naar Scott.
+ * POST /api/lead: de enige serverless route van de site.
+ * Ontvangt de bestelbon, controleert hem opnieuw en mailt hem via Resend
+ * naar Scott. De bezoeker krijgt een kopie (als dat lukt).
  *
- * Zonder RESEND_API_KEY antwoordt deze route 503; de client toont dan
- * de mailto:/WhatsApp-fallback. De site blijft dus altijd werken.
+ * Zonder RESEND_API_KEY antwoordt deze route 503; de browser zet de bon
+ * dan klaar voor WhatsApp of mail. De site blijft dus altijd werken.
  */
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
 import { site } from '../../data/site';
-import { calcTotals } from '../../lib/calc';
-import { validateLead, type LeadPayload } from '../../lib/lead';
-import { summarizeSelection } from '../../lib/quote';
-import { eur, perMaand } from '../../lib/format';
+import { offer } from '../../data/offer';
+import { TRADE_IDS } from '../../data/trade-ids';
+import { validateLead, leadSummary, type LeadLabels, type LeadPayload } from '../../lib/lead';
+import { eur } from '../../lib/format';
 import { nl } from '../../data/content/nl';
+import { en } from '../../data/content/en';
 
-const TO_ADDRESS = 'scottprins32@gmail.com';
+const TO_ADDRESS = site.email;
 // Zonder geverifieerd domein staat Resend alleen dit afzenderadres toe.
-// Na domein-verificatie (zie README) kun je dit wijzigen naar bijv. site@scottprins.nl.
+// Na domeinverificatie kan dit bijvoorbeeld site@scottprins.nl worden.
 const FROM_ADDRESS = 'Scott Prins Webdesign <onboarding@resend.dev>';
 
-/* Simpele limiter per IP: vijf aanvragen per uur is ruim voor een mens en
-   onbruikbaar voor een bot. In-memory, dus per serverless-instantie — genoeg
-   om spam te temperen zonder een externe store. */
+/* Simpele limiter per IP: vijf bonnen per uur is ruim voor een mens en
+   onbruikbaar voor een bot. In-memory, dus per serverless-instantie: genoeg
+   om spam te temperen zonder externe opslag. */
 const hits = new Map<string, number[]>();
 function rateLimited(ip: string): boolean {
   const now = Date.now();
@@ -40,24 +41,55 @@ const json = (status: number, body: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-/* Deze mail komt in Scotts eigen inbox, dus altijd Nederlands — ook als de
-   bezoeker de Engelse site gebruikte. De taal van de bezoeker staat er wel
-   bij, zodat hij weet in welke taal hij moet terugmailen. */
-function emailText(lead: LeadPayload): string {
+function labelsFor(bundle: typeof nl | typeof en): LeadLabels {
+  const o = bundle.order;
+  return {
+    name: o.fields.name,
+    email: o.fields.email,
+    phone: o.fields.phone,
+    company: o.fields.company,
+    trade: o.fields.trade,
+    message: o.fields.message,
+    trades: {
+      ...(Object.fromEntries(TRADE_IDS.map((id) => [id, bundle.trades[id].tab])) as Record<
+        (typeof TRADE_IDS)[number],
+        string
+      >),
+      anders: o.tradeOther,
+    },
+  };
+}
+
+/* Deze mail komt in Scotts eigen inbox, dus altijd Nederlands. De taal van
+   de bezoeker staat erbij, zodat hij weet hoe hij moet terugmailen. */
+function mailToScott(lead: LeadPayload): string {
   return [
-    'Nieuwe offerte-aanvraag via scottprins.nl',
+    `Nieuwe bestelbon via scottprins.nl: gratis proefpagina gevraagd.`,
     '',
-    `Naam:     ${lead.name}`,
-    `Bedrijf:  ${lead.company || '—'}`,
-    `Telefoon: ${lead.phone || '—'}`,
-    `E-mail:   ${lead.email}`,
-    `Taal:     ${lead.locale === 'en' ? 'Engels — antwoord in het Engels' : 'Nederlands'}`,
+    leadSummary(lead, labelsFor(nl)),
     '',
-    lead.message ? `Opmerking:\n${lead.message}\n` : '',
-    summarizeSelection(lead.selection, 'nl'),
-  ]
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n');
+    `Taal: ${lead.locale === 'en' ? 'Engels, antwoord in het Engels' : 'Nederlands'}`,
+    `Prijs op de bon: ${eur(offer.price, 'nl')} excl. btw`,
+  ].join('\n');
+}
+
+function copyToVisitor(lead: LeadPayload): { subject: string; text: string } {
+  const bundle = lead.locale === 'en' ? en : nl;
+  const english = lead.locale === 'en';
+  return {
+    subject: english ? 'Your order slip via scottprins.nl' : 'Je bestelbon via scottprins.nl',
+    text: [
+      english ? `Hi ${lead.name},` : `Hoi ${lead.name},`,
+      '',
+      bundle.order.success.text,
+      '',
+      leadSummary(lead, labelsFor(bundle)),
+      '',
+      english
+        ? `Questions? Call or message Scott on ${site.whatsappDisplay}.`
+        : `Vragen? Bel of app Scott op ${site.whatsappDisplay}.`,
+    ].join('\n'),
+  };
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -74,92 +106,44 @@ export const POST: APIRoute = async ({ request }) => {
   }
   const lead = result.lead;
 
-  // Honeypot ingevuld → spambot. Doe alsof alles gelukt is.
+  // Honeypot ingevuld: spambot. Doe alsof alles gelukt is.
   if (lead.website !== '') {
     return json(200, { ok: true });
   }
 
-  // getSecret leest runtime-omgeving (Vercel) én .env (lokaal): een key die
-  // je later op Vercel toevoegt werkt direct, zonder rebuild.
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
   if (rateLimited(ip)) return json(429, { ok: false, error: 'rate_limited' });
 
+  // getSecret leest de runtime-omgeving (Vercel) én .env (lokaal): een key die
+  // later op Vercel wordt toegevoegd, werkt meteen, zonder nieuwe build.
   const apiKey = getSecret('RESEND_API_KEY');
   if (!apiKey) {
     return json(503, { ok: false, error: 'email_not_configured' });
   }
 
-  const totals = calcTotals(lead.selection);
-  const baseName = nl.pricing.base[lead.selection.base]?.name ?? 'Onbekend';
-  const bedrag = `${eur(totals.upfront, 'nl')} + ${eur(totals.monthly, 'nl')}${perMaand('nl')}`;
-  const subject =
-    lead.intent === 'selfcopy'
-      ? `Prijslijst opgevraagd: ${baseName} — ${bedrag}`
-      : lead.intent === 'call'
-        ? `BELAFSPRAAK: ${lead.name || lead.email} — ${bedrag}`
-        : `Aanvraag: ${baseName} + ${lead.selection.addons.length} opties — ${bedrag}`;
-
-  /* De bezoeker krijgt zijn eigen samenstelling terug: bij een self-copy is
-     dat het hele punt, en bij een gewone aanvraag is het een bevestiging. */
-  const kopieTaal = lead.locale;
-  const kopie = {
-    from: FROM_ADDRESS,
-    to: [lead.email],
-    reply_to: TO_ADDRESS,
-    subject:
-      kopieTaal === 'en'
-        ? `Your build via scottprins.nl — ${eur(totals.upfront, 'en')} + ${eur(totals.monthly, 'en')}${perMaand('en')}`
-        : `Jouw samenstelling via scottprins.nl — ${bedrag}`,
-    text: [
-      summarizeSelection(lead.selection, kopieTaal),
-      '',
-      kopieTaal === 'en'
-        ? `Questions? Call or message Scott on ${site.whatsappDisplay}.`
-        : `Vragen? Bel of app Scott op ${site.whatsappDisplay}.`,
-      lead.intent === 'selfcopy'
-        ? ''
-        : kopieTaal === 'en'
-          ? 'Within 48 hours you get a fixed price and a free sample page for your business.'
-          : 'Binnen 48 uur krijg je een vaste prijs en een gratis proefpagina voor jouw zaak.',
-    ]
-      .join('\n')
-      .trim(),
-  };
-
-  try {
-    const verstuur = (body: unknown) =>
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(8000),
-      });
-
-    /* De kopie naar de bezoeker mag de aanvraag nooit blokkeren: zolang het
-       domein niet in Resend geverifieerd is, weigert die tweede mail. */
-    if (lead.intent !== 'call') void verstuur(kopie).catch(() => {});
-
-    const res = await fetch('https://api.resend.com/emails', {
+  const send = (payload: unknown) =>
+    fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      /* Zonder timeout blijft de functie hangen als Resend traag is en ziet
-         de bezoeker een spinner die nooit stopt. De catch geeft dan 502 en
-         de client toont de mailto-fallback. */
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      /* Zonder timeout blijft de functie hangen als Resend traag is; de
+         browser valt dan na de 502 terug op WhatsApp of mail. */
       signal: AbortSignal.timeout(8000),
-      body: JSON.stringify({
-        from: FROM_ADDRESS,
-        to: [TO_ADDRESS],
-        reply_to: lead.email,
-        subject,
-        text: emailText(lead),
-      }),
     });
 
+  const tradeLabel = labelsFor(nl).trades[lead.trade];
+  const subject = `Proefpagina: ${lead.company || lead.name} (${tradeLabel})`;
+
+  try {
+    const res = await send({
+      from: FROM_ADDRESS,
+      to: [TO_ADDRESS],
+      reply_to: lead.email,
+      subject,
+      text: mailToScott(lead),
+    });
     if (!res.ok) {
-      // Details alleen in de serverlogs — nooit richting de bezoeker lekken.
+      // Details alleen in de serverlogs, nooit richting de bezoeker.
       console.error('Resend-fout', res.status, await res.text());
       return json(502, { ok: false, error: 'email_failed' });
     }
@@ -167,6 +151,13 @@ export const POST: APIRoute = async ({ request }) => {
     console.error('Resend-request mislukt', err);
     return json(502, { ok: false, error: 'email_failed' });
   }
+
+  /* Pas als Scott de bon heeft, krijgt de bezoeker een kopie. Die mag nooit
+     een fout opleveren: zolang het domein niet in Resend geverifieerd is,
+     weigert Resend deze tweede mail. We wachten er wel op, want na het
+     antwoord kan een serverless functie meteen bevriezen. */
+  const copy = copyToVisitor(lead);
+  await send({ from: FROM_ADDRESS, to: [lead.email], reply_to: TO_ADDRESS, ...copy }).catch(() => undefined);
 
   return json(200, { ok: true });
 };

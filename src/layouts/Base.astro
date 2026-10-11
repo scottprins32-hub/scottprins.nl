@@ -1,37 +1,55 @@
 ---
 /**
  * Basis-layout: <head> met SEO, structured data en fonts.
- * Elke pagina (index, privacy) wikkelt zichzelf hierin.
+ * Elke pagina wikkelt zichzelf hierin.
  */
 import { site } from '../data/site';
+import { offer } from '../data/offer';
 import { content, toLocale, altPath } from '../data/content';
-import { basePackages } from '../data/pricing';
+import { url } from '../lib/url';
+import archivo from '../assets/fonts/Archivo-Variable.woff2?url';
+import serifItalic from '../assets/fonts/InstrumentSerif-Italic.woff2?url';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
-  /** Pad voor de canonical, bijv. '/privacy'. */
+  /** Taalloos pad voor canonical en hreflang, bijv. '/' of '/privacy'. */
   path?: string;
+  /** FAQPage-structured data meesturen (alleen waar de vragen echt staan). */
+  faq?: boolean;
+  /** Niet indexeren, bijvoorbeeld voor de voorbeeldsites. */
+  noindex?: boolean;
+  bodyClass?: string;
 }
 
 const locale = toLocale(Astro.currentLocale);
-const { meta } = content(locale);
-const { title = meta.title, description = meta.description, path = '/' } = Astro.props;
+const t = content(locale);
+const {
+  title = t.meta.title,
+  description = t.meta.description,
+  path = '/',
+  faq = false,
+  noindex = false,
+  bodyClass = '',
+} = Astro.props;
 
-/* `path` is het taalloze pad ('/' of '/privacy'); de canonical en de
-   hreflang-verwijzingen leiden we daar allebei uit af, zodat ze nooit uit
-   elkaar kunnen lopen. */
+/* De preview op GitHub Pages hoort nooit in Google te komen. */
+const robots = noindex || import.meta.env.PREVIEW ? 'noindex, nofollow' : undefined;
+
+/* canonical en hreflang komen uit hetzelfde taalloze pad, zodat ze nooit uit
+   elkaar kunnen lopen. Altijd het productiedomein. */
 const canonical = new URL(altPath(path, locale), site.url).href;
 const alternates = [
   { hreflang: 'nl', href: new URL(altPath(path, 'nl'), site.url).href },
   { hreflang: 'en', href: new URL(altPath(path, 'en'), site.url).href },
   { hreflang: 'x-default', href: new URL(altPath(path, 'nl'), site.url).href },
 ];
+const ogImage = new URL('/og.png', site.url).href;
 
-// Structured data: wie ben ik (Person) + wat lever ik (ProfessionalService).
 /* '1171 MG Badhoevedorp' → postcode + plaats, voor het PostalAddress-blok. */
 const [, postcode, plaats] = site.addressCity.match(/^(\d{4}\s?[A-Z]{2})\s+(.+)$/) ?? [];
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -39,7 +57,7 @@ const jsonLd = {
       '@type': 'Person',
       '@id': `${site.url}/#scott`,
       name: site.name,
-      jobTitle: 'Webdesigner & developer',
+      jobTitle: locale === 'en' ? 'Web designer' : 'Webdesigner',
       email: site.email,
       url: site.url,
     },
@@ -51,10 +69,10 @@ const jsonLd = {
       url: site.url,
       email: site.email,
       telephone: `+${site.whatsapp}`,
-      image: new URL('/og.png', site.url).href,
+      image: ogImage,
       identifier: { '@type': 'PropertyValue', name: 'KVK', value: '89874994' },
       sameAs: ['https://modernpitching.nl'],
-      description: meta.description,
+      description: t.meta.description,
       areaServed: [
         { '@type': 'City', name: 'Badhoevedorp' },
         { '@type': 'City', name: 'Hoofddorp' },
@@ -62,21 +80,24 @@ const jsonLd = {
         { '@type': 'City', name: 'Amsterdam' },
         { '@type': 'Country', name: 'Nederland' },
       ],
-      priceRange: '€495-€1500',
+      priceRange: `€${offer.price}`,
       knowsLanguage: ['nl', 'en'],
-      /* Het aanbod komt uit pricing.ts, dus het kan nooit uit de pas lopen
-         met wat er op de pagina staat. */
-      hasOfferCatalog: {
-        '@type': 'OfferCatalog',
-        name: meta.title,
-        itemListElement: basePackages.map((pkg) => ({
-          '@type': 'Offer',
-          name: content(locale).pricing.base[pkg.id].name,
-          description: content(locale).pricing.base[pkg.id].description,
-          price: pkg.upfront,
-          priceCurrency: 'EUR',
-          category: 'Webdesign',
-        })),
+      /* Het aanbod komt uit offer.ts, dus het loopt nooit uit de pas met de pagina. */
+      makesOffer: {
+        '@type': 'Offer',
+        '@id': `${site.url}/#offer`,
+        name: locale === 'en' ? 'Custom website' : 'Website op maat',
+        description: t.order.slip.detail,
+        category: 'Webdesign',
+        price: offer.price,
+        priceCurrency: offer.currency,
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: offer.price,
+          priceCurrency: offer.currency,
+          valueAddedTaxIncluded: false,
+        },
+        seller: { '@id': `${site.url}/#service` },
       },
       ...(site.addressStreet && postcode
         ? {
@@ -90,13 +111,12 @@ const jsonLd = {
           }
         : {}),
     },
-    /* FAQPage alleen op de homepage: daar staan de vragen ook echt. */
-    ...(path === '/'
+    ...(faq
       ? [
           {
             '@type': 'FAQPage',
-            '@id': `${site.url}/#faq`,
-            mainEntity: content(locale).faq.items.map((item) => ({
+            '@id': `${canonical}#faq`,
+            mainEntity: t.faq.items.map((item) => ({
               '@type': 'Question',
               name: item.q,
               acceptedAnswer: { '@type': 'Answer', text: item.a },
@@ -112,13 +132,14 @@ const jsonLd = {
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#0B0E11" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <meta name="theme-color" content="#12110f" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -126,67 +147,28 @@ const jsonLd = {
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={locale === 'en' ? 'en_GB' : 'nl_NL'} />
     <meta property="og:site_name" content={site.legalName} />
-    {/* Zonder og:image is elke WhatsApp- of LinkedIn-deling een kale link. */}
-    <meta property="og:image" content={new URL('/og.png', site.url).href} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={title} />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={new URL('/og.png', site.url).href} />
+    <meta name="twitter:image" content={ogImage} />
 
-    {/* Alleen het display-font preloaden: dat bepaalt de first paint van de hero. */}
-    <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link
-      rel="preload"
-      href="/fonts/ClashDisplay-Semibold.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+    {/* De twee lettertypes van de kop: die bepalen de eerste paint. */}
+    <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifItalic} as="font" type="font/woff2" crossorigin />
 
     {/*
-      Blokkeert één regel lang, en dat is precies de bedoeling: component-scripts
-      zijn modules (deferred) en draaien pas ná de eerste paint. Zonder deze vlag
-      flitst de statische eindtoestand van de hero kort in beeld. Met `.js` op
-      <html> weet de CSS meteen dat JavaScript het overneemt.
+      Eén regel die blokkeert, en dat is de bedoeling: de module-scripts
+      draaien pas na de eerste paint. Met `.js` op <html> weet de CSS meteen
+      dat JavaScript de intro overneemt; zonder JS blijft alles gewoon staan.
     */}
-    <script is:inline>
-      document.documentElement.classList.add('js');
-
-      /*
-       * Ankerlinks + content-visibility: secties die nog niet gerenderd
-       * zijn hebben alleen een geschatte hoogte, dus de browser rekent de
-       * sprong mis. Vóór elke sprong maken we daarom alles tot en met het
-       * doel echt zichtbaar en forceren we één layout — daarna klopt de
-       * positie exact. Inline en met capture, zodat dit gebeurt vóórdat de
-       * browser zelf de scroll inzet.
-       */
-      document.addEventListener(
-        'click',
-        (event) => {
-          const link = event.target.closest?.('a[href^="#"]');
-          if (!link) return;
-          const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-          if (!target) return;
-          for (const section of document.querySelectorAll('.defer-render')) {
-            section.style.contentVisibility = 'visible';
-            if (section === target || section.contains(target)) break;
-          }
-          target.getBoundingClientRect();
-        },
-        true,
-      );
-    </script>
+    <script is:inline>document.documentElement.classList.add('js');</script>
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
-  <body>
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-accent focus:px-4 focus:py-2 focus:text-white"
-    >
-      {content(locale).nav.skipToContent}
-    </a>
+  <body class={bodyClass}>
+    <a href="#main" class="skip-link btn btn-signal">{t.nav.skip}</a>
     <slot />
   </body>
 </html>
