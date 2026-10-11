@@ -52,13 +52,13 @@ src/
 Het logo is Scotts eigen `</>`-merk (`src/components/Logo.astro`); het accentbolletje volgt de accentkleur. Alle kleuren staan als tokens bovenaan `src/styles/global.css`. Een andere accentkleur zijn vier regels:
 
 ```css
---color-signal: #f0532c;      /* vlak van de hoofdknop */
---color-signal-hi: #ff6b46;   /* hover van dat vlak */
---color-signal-text: #ff6b46; /* accent als tekst/icoon op donker (AA-contrast) */
---color-signal-ink: #12110f;  /* tekst op het vlak */
+--color-signal: #4f46e5;      /* vlak van de hoofdknop */
+--color-signal-hi: #4338ca;   /* hover van dat vlak */
+--color-signal-text: #8b85ff; /* accent als tekst/icoon op donker (AA-contrast) */
+--color-signal-ink: #ffffff;  /* tekst op het vlak */
 ```
 
-Terug naar de vorige indigo-huisstijl: `#4f46e5` / `#4338ca` / `#8b85ff` / `#ffffff`, en voor de koele inkt en crème `--color-ink: #0b0e11`, `--color-ink-2: #161b22`, `--color-ink-3: #1f2630`, `--color-bone: #faf8f4`, `--color-bone-2: #c3c9d2`, `--color-mute: #9aa3b0`, `--color-paper: #faf8f4`, `--color-paper-ink: #0b0e11`, `--color-paper-mute: #5c6470`. Pas dan ook `theme-color` in `Base.astro` en de kleuren in `public/favicon.svg` aan.
+De warme variant (rood-oranje op warme inkt) die eerder is uitgeprobeerd: `#f0532c` / `#ff6b46` / `#ff6b46` / `#12110f`, met `--color-ink: #12110f`, `--color-ink-2: #1b1a17`, `--color-ink-3: #282622`, `--color-bone: #efebe4`, `--color-bone-2: #cec8bd`, `--color-mute: #938e84`, `--color-paper: #f5f1ea`, `--color-paper-ink: #1d1b18`, `--color-paper-mute: #6d685f`. Pas dan ook `theme-color` in `Base.astro` en de kleuren in `public/favicon.svg` aan.
 
 ## Prijs of termijn aanpassen
 

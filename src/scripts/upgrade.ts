@@ -86,7 +86,7 @@ export function initUpgrade(root: HTMLElement): void {
     H = stage!.clientHeight;
     const virtueel = root.clientWidth < 640 ? 390 : 1280;
     stage!.style.setProperty('--s-js', String(W / virtueel));
-    lensR = Math.max(58, Math.min(W, H) * 0.17);
+    lensR = Math.max(80, Math.min(W, H) * 0.24);
     /* Vanaf elk punt ligt de verste hoek binnen de diagonaal; de marge
        vangt de golven op, zodat er aan de rand niets van de oude site
        doorschemert. */

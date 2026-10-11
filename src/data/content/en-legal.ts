@@ -12,7 +12,6 @@ import { eur } from '../../lib/format';
 
 const PRICE = eur(offer.price, 'en');
 const DAYS = offer.deliveryDays;
-const PENALTY = eur(offer.latePenaltyPerDay, 'en');
 const PLUS = eur(offer.care[0].monthly, 'en');
 const PREMIUM = eur(offer.care[1].monthly, 'en');
 
@@ -86,7 +85,7 @@ const voorwaarden = {
     {
       title: 'How a project starts',
       body: [
-        'My offer is for business clients: business owners, practices and associations. You request a free sample page through the order slip on this site, or we talk by email, phone or WhatsApp. If you like the sample page, you get a confirmation with the fixed price. All prices exclude VAT.',
+        'My offer is for business clients: business owners, practices and associations. You request a free sample page through the order slip on this site, or we talk by email, phone or WhatsApp. If you like the sample page, you get a confirmation with the fixed price. All prices exclude 21% VAT.',
         'That confirmation is valid for 30 days. If you say yes in writing (an email or a message counts), that is the starting signal and these terms apply. If you say no or I don’t hear back, you pay nothing, not even for the sample page.',
       ],
     },
@@ -94,7 +93,7 @@ const voorwaarden = {
       title: `What you get for ${PRICE}`,
       body: [
         'A custom website on one page: an original design with motion, made for phone and desktop, a clean foundation for Google, copy based on a conversation, connecting your domain, the launch and hosting. Exactly what goes on it is set out in the confirmation.',
-        `Your site is live within ${DAYS} working days, counted from the moment all your material is in (copy or our call, photos, logo and access). If I don’t make that, ${PENALTY} per working day comes off the final invoice.`,
+        `Your site is live within ${DAYS} working days, counted from the moment all your material is in (copy or our call, photos, logo and access). If that unexpectedly doesn’t work out, you hear about it straight away, with a new date.`,
         `Before launch we look at the result together. ${offer.revisionRounds} rounds of changes are included in the price. After that, changes fall under maintenance or extra work, and you always hear the fixed price up front.`,
       ],
     },

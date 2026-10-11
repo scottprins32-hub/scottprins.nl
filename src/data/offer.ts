@@ -2,7 +2,7 @@
  * Het aanbod in getallen. Eén bron: de prijs op de pagina, de bestelbon,
  * de structured data en de mails lezen allemaal hieruit.
  *
- * Prijzen zijn exclusief btw (zakelijke klanten).
+ * Prijzen zijn exclusief 21% btw; het aanbod is alleen voor bedrijven.
  */
 export const offer = {
   /** Een complete website, eenmalig. */
@@ -15,8 +15,8 @@ export const offer = {
   deliveryDays: 5,
   /** Reactietijd op een aanvraag, en de termijn voor de gratis proefpagina. */
   responseHours: 48,
-  /** Afslag per werkdag te laat, van de eindfactuur (zie FAQ). */
-  latePenaltyPerDay: 50,
+  /** Btw-tarief; alle prijzen op de site zijn exclusief. */
+  vatRate: 0.21,
   /** Optioneel onderhoud per maand; maandelijks opzegbaar. */
   care: [
     { id: 'plus', monthly: 19 },

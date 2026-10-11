@@ -15,7 +15,8 @@ const PRIJS = eur(offer.price, 'nl');
 const DAGEN = offer.deliveryDays;
 const UUR = offer.responseHours;
 const PLUS = eur(offer.care[0].monthly, 'nl');
-const BOETE = eur(offer.latePenaltyPerDay, 'nl');
+const BTW = `${Math.round(offer.vatRate * 100)}% btw`;
+const PRIJS_INCL = eur(Math.round(offer.price * (1 + offer.vatRate)), 'nl');
 
 const meta = {
   title: `Website laten maken voor ${PRIJS} | Scott Prins`,
@@ -317,7 +318,7 @@ const price = {
     'Omdat ik niet elke site vanaf nul bouw. Ik werk met een eigen systeem van ontwerpen en animaties, en dat maak ik per klant op maat.',
     'En ik werk met moderne AI-tooling. Wat níet door AI gebeurt: nadenken over jouw zaak, keuzes maken en kwaliteit bewaken. Dat doe ik.',
   ],
-  terms: 'Prijs exclusief btw. De helft bij de start, de helft bij oplevering.',
+  terms: `Prijs exclusief ${BTW} (${PRIJS_INCL} inclusief). Alleen voor bedrijven. De helft bij de start, de helft bij oplevering.`,
   care: `Geen abonnement nodig. Wil je dat ik je site bijhoud? Dat kan vanaf ${PLUS} per maand, maandelijks opzegbaar.`,
   cta: `Claim je site voor ${PRIJS}`,
 } as const;
@@ -352,7 +353,7 @@ const process = {
       text: 'Je site staat online en je domein is gekoppeld. Pas dan betaal je de tweede helft.',
     },
   ],
-  note: `De ${DAGEN} werkdagen tellen vanaf het moment dat je materiaal binnen is. Sta je dan niet op tijd live, dan gaat er ${BOETE} per werkdag van de eindfactuur af.`,
+  note: `De ${DAGEN} werkdagen tellen vanaf het moment dat je materiaal binnen is: je teksten (of ons gesprek), foto’s en logo.`,
 } as const;
 
 const about = {
@@ -410,10 +411,6 @@ const faq = {
       a: `Binnen ${DAGEN} werkdagen, gerekend vanaf het moment dat jouw teksten (of ons gesprek), foto’s en logo binnen zijn.`,
     },
     {
-      q: `Wat als de site niet af is binnen ${DAGEN} werkdagen?`,
-      a: `Dan kost het mij geld, niet jou. De klok start zodra jouw materiaal binnen is. Sta je daarna niet binnen ${DAGEN} werkdagen live, dan gaat er ${BOETE} per werkdag van de eindfactuur af.`,
-    },
-    {
       q: 'Wat als ik het niet mooi vind?',
       a: `Daarom begin je met een gratis proefpagina. Bevalt die niet, dan stopt het daar en betaal je niets. Ga je door, dan heb je nog ${offer.revisionRounds} rondes om bij te sturen voordat de site live gaat.`,
     },
@@ -458,7 +455,7 @@ const order = {
     free: 'gratis',
     totalLabel: 'Nu te betalen',
     totalNote: 'Je betaalt pas na akkoord op je proefpagina.',
-    exVat: 'excl. btw',
+    exVat: `excl. ${BTW}`,
   },
   fields: {
     name: 'Je naam',

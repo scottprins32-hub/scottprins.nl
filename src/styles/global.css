@@ -60,25 +60,25 @@
   --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Warm, niet puur zwart of wit, met één signaalkleur.
+  /* Scotts huisstijl: inkt, crème en indigo. Niet puur zwart of wit.
      signal      = het vlak van de hoofdknop (met signal-ink als tekst)
      signal-text = accent als tekst, icoon of lijn op donker (AA-contrast)
      Andere accentkleur? Alleen deze vier regels; zie README. */
-  --color-ink: #12110f;
-  --color-ink-2: #1b1a17;
-  --color-ink-3: #282622;
-  --color-bone: #efebe4;
-  --color-bone-2: #cec8bd;
-  --color-mute: #938e84;
-  --color-signal: #f0532c;
-  --color-signal-hi: #ff6b46;
-  --color-signal-text: #ff6b46;
-  --color-signal-ink: #12110f;
-  --color-paper: #f5f1ea;
-  --color-paper-ink: #1d1b18;
-  --color-paper-mute: #6d685f;
-  --color-line: rgb(239 235 228 / 0.12);
-  --color-line-strong: rgb(239 235 228 / 0.26);
+  --color-ink: #0b0e11;
+  --color-ink-2: #161b22;
+  --color-ink-3: #1f2630;
+  --color-bone: #faf8f4;
+  --color-bone-2: #c3c9d2;
+  --color-mute: #9aa3b0;
+  --color-signal: #4f46e5;
+  --color-signal-hi: #4338ca;
+  --color-signal-text: #8b85ff;
+  --color-signal-ink: #ffffff;
+  --color-paper: #faf8f4;
+  --color-paper-ink: #0b0e11;
+  --color-paper-mute: #5c6470;
+  --color-line: rgb(250 248 244 / 0.12);
+  --color-line-strong: rgb(250 248 244 / 0.26);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);

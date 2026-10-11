@@ -10,7 +10,6 @@ import { eur } from '../../lib/format';
 
 const PRIJS = eur(offer.price, 'nl');
 const DAGEN = offer.deliveryDays;
-const BOETE = eur(offer.latePenaltyPerDay, 'nl');
 const PLUS = eur(offer.care[0].monthly, 'nl');
 const PREMIUM = eur(offer.care[1].monthly, 'nl');
 
@@ -84,7 +83,7 @@ const voorwaarden = {
     {
       title: 'Zo start een opdracht',
       body: [
-        'Mijn aanbod is voor zakelijke klanten: ondernemers, praktijken en verenigingen. Je vraagt via de bestelbon op deze site een gratis proefpagina aan, of we overleggen via mail, telefoon of WhatsApp. Bevalt de proefpagina, dan krijg je een bevestiging met de vaste prijs. Alle prijzen zijn exclusief btw.',
+        'Mijn aanbod is voor zakelijke klanten: ondernemers, praktijken en verenigingen. Je vraagt via de bestelbon op deze site een gratis proefpagina aan, of we overleggen via mail, telefoon of WhatsApp. Bevalt de proefpagina, dan krijg je een bevestiging met de vaste prijs. Alle prijzen zijn exclusief 21% btw.',
         'Die bevestiging is 30 dagen geldig. Zeg je schriftelijk ja (een mailtje of appje telt ook), dan is dat het startschot en gelden deze voorwaarden. Zeg je nee of hoor ik niets, dan betaal je niets, ook niet voor de proefpagina.',
       ],
     },
@@ -92,7 +91,7 @@ const voorwaarden = {
       title: `Wat je krijgt voor ${PRIJS}`,
       body: [
         'Een website op maat op één pagina: een eigen ontwerp met motion, gemaakt voor telefoon en desktop, een nette basis voor Google, teksten op basis van een gesprek, het koppelen van je domein, de livegang en hosting. Wat er precies op komt, staat in de bevestiging.',
-        `Je site staat binnen ${DAGEN} werkdagen live, gerekend vanaf het moment dat al jouw materiaal binnen is (teksten of ons gesprek, foto’s, logo en toegangen). Lukt dat door mij niet, dan gaat er ${BOETE} per werkdag van de eindfactuur af.`,
+        `Je site staat binnen ${DAGEN} werkdagen live, gerekend vanaf het moment dat al jouw materiaal binnen is (teksten of ons gesprek, foto’s, logo en toegangen). Lukt dat onverhoopt niet, dan hoor je dat meteen, met een nieuwe datum.`,
         `Vóór de livegang kijken we samen naar het resultaat. ${offer.revisionRounds} rondes aanpassingen horen bij de prijs. Daarna vallen wijzigingen onder onderhoud of onder meerwerk, en dat hoor je altijd vooraf, met een vaste prijs.`,
       ],
     },

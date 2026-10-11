@@ -19,7 +19,8 @@ const PRICE = eur(offer.price, 'en');
 const DAYS = offer.deliveryDays;
 const HOURS = offer.responseHours;
 const PLUS = eur(offer.care[0].monthly, 'en');
-const PENALTY = eur(offer.latePenaltyPerDay, 'en');
+const VAT = `${Math.round(offer.vatRate * 100)}% VAT`;
+const PRICE_INCL = eur(Math.round(offer.price * (1 + offer.vatRate)), 'en');
 
 const meta = {
   title: `A website for ${PRICE}, all in | Scott Prins`,
@@ -321,7 +322,7 @@ const price = {
     'Because I don’t build every site from scratch. I work with my own system of designs and animations, and tailor it to each client.',
     'And I work with modern AI tooling. What AI does not do: think about your business, make the calls and guard the quality. That’s me.',
   ],
-  terms: 'Price excludes VAT. Half at the start, half on delivery.',
+  terms: `Price excludes ${VAT} (${PRICE_INCL} including VAT). For businesses only. Half at the start, half on delivery.`,
   care: `No subscription needed. Want me to look after your site? From ${PLUS} a month, cancel any month.`,
   cta: `Claim your site for ${PRICE}`,
 };
@@ -356,7 +357,7 @@ const process = {
       text: 'Your site is online and your domain is connected. Only then do you pay the second half.',
     },
   ],
-  note: `The ${DAYS} working days count from the moment your material is in. Not live on time? Then ${PENALTY} per working day comes off the final invoice.`,
+  note: `The ${DAYS} working days count from the moment your material is in: your copy (or our call), photos and logo.`,
 };
 
 const about = {
@@ -414,10 +415,6 @@ const faq = {
       a: `Within ${DAYS} working days, counted from the moment your copy (or our call), photos and logo are in.`,
     },
     {
-      q: `What if the site isn’t finished within ${DAYS} working days?`,
-      a: `Then it costs me money, not you. The clock starts as soon as your material is in. If you’re not live within ${DAYS} working days after that, ${PENALTY} per working day comes off the final invoice.`,
-    },
-    {
       q: 'What if I don’t like it?',
       a: `That’s why you start with a free sample page. If you don’t like it, it ends there and you pay nothing. If you go ahead, you still have ${offer.revisionRounds} rounds to steer before the site goes live.`,
     },
@@ -462,7 +459,7 @@ const order = {
     free: 'free',
     totalLabel: 'Due now',
     totalNote: 'You only pay after approving your sample page.',
-    exVat: 'excl. VAT',
+    exVat: `excl. ${VAT}`,
   },
   fields: {
     name: 'Your name',

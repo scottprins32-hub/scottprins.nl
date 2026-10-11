@@ -81,8 +81,27 @@ const t = content(toLocale(Astro.currentLocale));
     text-transform: uppercase;
     color: var(--color-mute);
   }
+  .sticky-price small {
+    white-space: nowrap;
+  }
   .sticky-btn {
     min-height: 2.75rem;
+  }
+  @media (max-width: 23rem) {
+    .sticky {
+      gap: 0.5rem;
+      padding-left: 0.9rem;
+    }
+    .sticky-price {
+      font-size: 1rem;
+    }
+    .sticky-price small {
+      font-size: 0.625rem;
+      letter-spacing: 0.02em;
+    }
+    .sticky-btn {
+      padding: 0 1rem;
+    }
   }
   @media (max-width: 63.99rem) {
     .sticky {

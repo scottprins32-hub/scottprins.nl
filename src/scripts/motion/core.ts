@@ -38,10 +38,20 @@ export function smoothScroll(): Lenis | null {
 export const getLenis = (): Lenis | null => lenis;
 
 /** Scrolt naar een element, met of zonder Lenis. De ruimte voor de
-    navigatie komt uit scroll-margin-top (global.css); Lenis leest die zelf. */
+    navigatie komt uit scroll-margin-top (global.css).
+    Het doel rekenen we zelf uit vanaf de échte scrollpositie, en Lenis
+    zetten we daar eerst op gelijk: na native scrollen (toetsenbord, zoeken
+    in de pagina) kan Lenis nog een oude positie onthouden hebben, en dan
+    landde de sprong honderden pixels ernaast. */
 export function scrollToEl(el: HTMLElement): void {
-  if (lenis) lenis.scrollTo(el, { duration: 1.25 });
-  else el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  const margin = Number.parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+  const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - margin);
+  if (lenis) {
+    lenis.scrollTo(window.scrollY, { immediate: true, force: true });
+    lenis.scrollTo(y, { duration: 1.25, force: true });
+  } else {
+    window.scrollTo({ top: y, behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
 }
 
 /** Interne hashlinks: soepel scrollen én focus meeverhuizen. */
