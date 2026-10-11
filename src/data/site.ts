@@ -8,9 +8,10 @@ export const site = {
   legalName: 'Scott Prins Webdesign',
   url: 'https://scottprins.nl',
   email: 'scottprins32@gmail.com',
-  /** Internationaal formaat zonder '+', voor wa.me-links. */
-  whatsapp: '31619900444',
-  whatsappDisplay: '+31 6 19 90 04 44',
+  /** Zakelijk nummer (Voys, 020), ook voor WhatsApp Business.
+      Internationaal formaat zonder '+', voor wa.me- en tel-links. */
+  whatsapp: '31202617143',
+  whatsappDisplay: '+31 20 261 7143',
   /** Straat + huisnummer en postcode + plaats. Leeg = niet tonen.
       Het is een woonadres, geen bezoekadres: de footer zegt erbij dat Scott
       alleen online werkt, en de structured data noemt alleen de plaats.
