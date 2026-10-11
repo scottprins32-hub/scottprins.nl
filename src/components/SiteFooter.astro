@@ -48,6 +48,7 @@ const hasBtw = !footer.btw.startsWith('{');
               <br />
               {site.addressCity}
             </p>
+            <p class="footer-note">{footer.addressNote}</p>
           </div>
         )
       }
@@ -157,6 +158,12 @@ const hasBtw = !footer.btw.startsWith('{');
     width: 1.15rem;
     height: 1.15rem;
     flex: none;
+  }
+  .footer-note {
+    max-width: 18rem;
+    margin-top: 0.75rem !important;
+    font-size: 0.875rem;
+    color: var(--color-mute) !important;
   }
   .footer-legal {
     display: flex;

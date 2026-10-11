@@ -498,6 +498,7 @@ const footer = {
   phoneLabel: 'Call or message',
   emailLabel: 'Email',
   addressLabel: 'Address',
+  addressNote: 'Not a visiting address. I work online only: by phone, WhatsApp and email.',
   detailsLabel: 'Details',
   kvkLabel: 'Chamber of Commerce',
   kvk: '89874994',

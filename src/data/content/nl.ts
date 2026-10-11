@@ -494,6 +494,7 @@ const footer = {
   phoneLabel: 'Bellen of appen',
   emailLabel: 'Mail',
   addressLabel: 'Adres',
+  addressNote: 'Geen bezoekadres. Ik werk alleen online: via telefoon, WhatsApp en mail.',
   detailsLabel: 'Gegevens',
   kvkLabel: 'KvK',
   kvk: '89874994',

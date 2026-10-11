@@ -11,8 +11,11 @@ export const site = {
   /** Internationaal formaat zonder '+', voor wa.me-links. */
   whatsapp: '31619900444',
   whatsappDisplay: '+31 6 19 90 04 44',
-  /** Straat + huisnummer en postcode + plaats. Leeg = niet tonen;
-      Scott levert het adres nog aan, daarna is dit de enige plek. */
+  /** Straat + huisnummer en postcode + plaats. Leeg = niet tonen.
+      Het is een woonadres, geen bezoekadres: de footer zegt erbij dat Scott
+      alleen online werkt, en de structured data noemt alleen de plaats.
+      Wettelijk verplicht op de site (art. 3:15d BW) zolang dit het
+      vestigingsadres is. */
   addressStreet: 'Orchideelaan 197',
   addressCity: '1171 MG Badhoevedorp',
 } as const;
