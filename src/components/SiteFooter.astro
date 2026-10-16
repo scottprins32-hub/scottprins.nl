@@ -21,7 +21,7 @@ const orderHref = home ? '#bestellen' : `${url(altPath('/', locale))}#bestellen`
 const hasBtw = !footer.btw.startsWith('{');
 ---
 
-<footer class="footer">
+<footer class="footer" data-sticky-hide>
   <div class="wrap">
     <div class="footer-closer">
       <p class="display footer-title" data-reveal="title">{footer.closer}</p>

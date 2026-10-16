@@ -1,8 +1,7 @@
 ---
 /**
  * Op de telefoon: de prijs en de knop altijd één tik weg, zodra de knoppen
- * bovenin uit beeld zijn. Maakt plaats voor het upgrade-ding, de bestelbon
- * en de footer.
+ * bovenin uit beeld zijn. Maakt plaats voor alles met data-sticky-hide.
  */
 import { content, toLocale } from '../data/content';
 
@@ -21,16 +20,13 @@ const t = content(toLocale(Astro.currentLocale));
   const bar = document.querySelector<HTMLElement>('[data-sticky]');
   /* Zodra de knoppen bovenin uit beeld zijn, neemt deze balk het over. */
   const hero = document.querySelector<HTMLElement>('[data-sticky-after]');
-  const order = document.getElementById('bestellen');
-  const footer = document.querySelector<HTMLElement>('footer.footer');
-  const device = document.querySelector<HTMLElement>('[data-device]');
-  if (bar && hero && order) {
+  if (bar && hero) {
     let pastHero = false;
-    let atOrder = false;
-    let atFooter = false;
-    let atDevice = false;
+    /* Waar de pagina zelf knoppen heeft (het upgrade-ding, de 50 ms-test, de
+       bestelbon, de footer), gaat de balk opzij in plaats van ze af te dekken. */
+    const busy = new Set<Element>();
     const update = () => {
-      const show = pastHero && !atOrder && !atFooter && !atDevice;
+      const show = pastHero && busy.size === 0;
       bar.classList.toggle('is-visible', show);
       bar.inert = !show;
     };
@@ -38,24 +34,14 @@ const t = content(toLocale(Astro.currentLocale));
       pastHero = !entry.isIntersecting && entry.boundingClientRect.top < 0;
       update();
     }).observe(hero);
-    new IntersectionObserver(([entry]) => {
-      atOrder = entry.isIntersecting;
+    const zones = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) busy.add(entry.target);
+        else busy.delete(entry.target);
+      }
       update();
-    }, { rootMargin: '0px 0px -30% 0px' }).observe(order);
-    /* De footer heeft een eigen knop, en de balk zou de links eronder afdekken. */
-    if (footer) {
-      new IntersectionObserver(([entry]) => {
-        atFooter = entry.isIntersecting;
-        update();
-      }).observe(footer);
-    }
-    /* Het upgrade-ding heeft eigen knoppen onder de site: daar niet overheen. */
-    if (device) {
-      new IntersectionObserver(([entry]) => {
-        atDevice = entry.isIntersecting;
-        update();
-      }, { rootMargin: '0px 0px -20% 0px' }).observe(device);
-    }
+    });
+    for (const zone of document.querySelectorAll('[data-sticky-hide]')) zones.observe(zone);
   }
 </script>
 
