@@ -263,11 +263,24 @@ const vijftig = {
   sourceHref: 'https://doi.org/10.1080/01449290500330448',
 } as const;
 
-const included = {
-  label: 'Wat je krijgt',
-  title: 'Alles wat je hier ziet, krijg jij ook.',
-  lead: 'Geen bouwpakket met je logo erop. Een site die vanaf de eerste seconde laat zien wat je zaak waard is.',
-  items: [
+const price = {
+  label: 'De prijs',
+  question: 'Wat kost zo’n site?',
+  once: 'Eenmalig. Alles erin. Daarna is hij van jou.',
+  compareLabel: 'Vergelijk het maar',
+  compare: [
+    { who: 'Een bureau', what: 'Vaak duizenden euro’s, en weken wachten.', mine: false },
+    { who: 'Een websitebouwer', what: 'Elke maand betalen, en je lijkt op iedereen.', mine: false },
+    { who: 'Scott Prins', what: `${PRIJS} eenmalig. Binnen ${DAGEN} werkdagen live.`, mine: true },
+  ],
+  /* Wat erin zit: één lijst, naast de prijs. Was eerst twee lijsten (een
+     eigen sectie 'Wat je krijgt' en een korte afvinklijst hier). */
+  includedTitle: 'Alles wat je hier ziet, krijg jij ook.',
+  included: [
+    {
+      term: 'Eén pagina, alles erop',
+      text: 'Wat je doet, je aanbod, wie je bent en hoe je bereikbaar bent, op één vloeiende pagina.',
+    },
     {
       term: 'Een eigen ontwerp',
       text: 'Geen template die je concurrent ook heeft. Jouw kleuren, jouw beelden, jouw toon.',
@@ -277,12 +290,8 @@ const included = {
       text: 'Vloeiend scrollen, tekst die binnenkomt en details die reageren op je bezoeker. Zoveel als bij je zaak past, en nergens in de weg.',
     },
     {
-      term: 'Snel, ook op 4G',
-      text: 'Geen loodzware bouwpakketten. Je site laadt vlot, ook buiten op de telefoon.',
-    },
-    {
-      term: 'Ontworpen voor de duim',
-      text: 'Geen kleiner gemaakte desktopsite, maar een site die op de telefoon begint.',
+      term: 'Snel, ook op je telefoon',
+      text: 'Geen kleiner gemaakte desktopsite: hij begint op de telefoon en laadt vlot, ook op 4G.',
     },
     {
       term: 'Gevonden worden',
@@ -297,33 +306,13 @@ const included = {
       text: 'Geen zin om te schrijven? In een gesprek van een half uur vertel jij over je zaak, en ik maak er de teksten van.',
     },
     {
-      term: 'Domein en livegang',
-      text: 'Ik koppel je domein en zet alles live. Jij hoeft niets technisch te doen.',
+      term: 'Domein, hosting en livegang',
+      text: 'Ik koppel je domein, host je site en zet alles live. Jij hoeft niets technisch te doen.',
     },
-  ],
-} as const;
-
-const price = {
-  label: 'De prijs',
-  question: 'Wat kost zo’n site?',
-  once: 'Eenmalig. Alles erin. Daarna is hij van jou.',
-  compareLabel: 'Vergelijk het maar',
-  compare: [
-    { who: 'Een bureau', what: 'Vaak duizenden euro’s, en weken wachten.', mine: false },
-    { who: 'Een websitebouwer', what: 'Elke maand betalen, en je lijkt op iedereen.', mine: false },
-    { who: 'Scott Prins', what: `${PRIJS} eenmalig. Binnen ${DAGEN} werkdagen live.`, mine: true },
-  ],
-  includedLabel: 'Erin zit',
-  included: [
-    'Eén pagina, alles erop',
-    'Eigen ontwerp',
-    'Motion en animaties',
-    'Mobiel en snel',
-    'Basis voor Google',
-    'Teksten na een belgesprek',
-    'Domein koppelen',
-    'Hosting',
-    `${offer.revisionRounds} rondes aanpassingen`,
+    {
+      term: `${offer.revisionRounds} rondes aanpassingen`,
+      text: 'Je kijkt mee terwijl ik bouw. Klopt er iets niet, dan pas ik het aan.',
+    },
   ],
   whyTitle: `Waarom maar ${PRIJS}?`,
   why: [
@@ -447,6 +436,9 @@ const faq = {
       a: 'Standaard bouw ik zonder trackingcookies, dus meestal is er geen cookiebanner nodig. Wil je statistieken of een Google-kaart, dan kijken we samen of een melding nodig is; cookieloze statistieken kunnen ook. Formulieren verlopen versleuteld en je krijgt een passende privacyverklaring bij je site.',
     },
   ],
+  moreTitle: 'Staat je vraag er niet bij?',
+  moreText: `App me. Je hebt binnen ${UUR} uur antwoord.`,
+  moreCta: 'App me je vraag',
 } as const;
 
 const order = {
@@ -540,6 +532,14 @@ const voorbeeld = {
   titleSuffix: 'voorbeeldsite door Scott Prins',
 } as const;
 
+/** 404: een link die nergens heen gaat. */
+const notFound = {
+  title: 'Onder deze link zit niets.',
+  text: 'Deze pagina bestaat niet (meer). De betere site staat gewoon op de homepage.',
+  home: 'Naar de homepage',
+  other: 'English homepage',
+} as const;
+
 export const nl = {
   meta,
   nav,
@@ -548,7 +548,6 @@ export const nl = {
   trades,
   oldSite,
   vijftig,
-  included,
   price,
   process,
   about,
@@ -558,4 +557,5 @@ export const nl = {
   sticky,
   whatsapp,
   voorbeeld,
+  notFound,
 } as const;

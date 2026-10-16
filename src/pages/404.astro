@@ -1,0 +1,64 @@
+---
+/**
+ * Een link die nergens heen gaat. Vercel en GitHub Pages serveren allebei
+ * 404.html; de knoppen gaan via url(), dus ook onder /scottprins.nl/ goed.
+ */
+import Base from '../layouts/Base.astro';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { content } from '../data/content';
+import { url } from '../lib/url';
+
+const { notFound } = content('nl');
+---
+
+<Base title={`${notFound.title} | ${site.legalName}`} description={notFound.text} noindex>
+  <SiteNav home={false} />
+  <main id="main" tabindex="-1" class="lost">
+    <div class="wrap">
+      <p class="label lost-code">404</p>
+      <h1 class="display lost-title">{notFound.title}</h1>
+      <p class="lead lost-text">{notFound.text}</p>
+      <div class="lost-actions">
+        <a class="btn btn-signal" href={url('/')} data-magnetic>{notFound.home}<Icon name="arrow-right" /></a>
+        <a class="btn btn-ghost" href={url('/en/')} lang="en">{notFound.other}</a>
+      </div>
+    </div>
+  </main>
+  <SiteFooter home={false} />
+
+  <script>
+    import { initPage } from '../scripts/page';
+    initPage();
+  </script>
+</Base>
+
+<style>
+  .lost {
+    min-height: 70svh;
+    padding-top: calc(4.5rem + clamp(3rem, 10vh, 7rem));
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+  }
+  .lost-code {
+    margin: 0 0 1.25rem;
+    color: var(--color-mute);
+  }
+  .lost-title {
+    max-width: 14ch;
+    margin: 0;
+    font-size: var(--text-display-l);
+  }
+  .lost-text {
+    max-width: 30rem;
+    margin: 1.75rem 0 0;
+    color: var(--color-bone-2);
+  }
+  .lost-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+</style>

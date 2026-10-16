@@ -3,6 +3,10 @@
  * De prijs. Eén bedrag, groot, op papier: het is het enige lichte vlak
  * naast de bestelbon, zodat het oog er vanzelf heen gaat. Het bedrag staat
  * er altijd; de animatie laat alleen de cijfers omhoog komen.
+ *
+ * Wat erin zit staat hier ook, als één lijst met uitleg per punt, direct
+ * naast het bedrag. (Tot oktober 2026 was dat een eigen sectie erboven plus
+ * een korte afvinklijst hier: twee keer hetzelfde, vlak na elkaar.)
  */
 import { content, toLocale } from '../data/content';
 import { offer } from '../data/offer';
@@ -42,6 +46,23 @@ const digits = String(offer.price).split('');
 
     <div class="price-body">
       <div class="price-block">
+        <h3 class="price-subtitle">{p.includedTitle}</h3>
+        <ul class="price-included" data-checklist>
+          {
+            p.included.map((item) => (
+              <li>
+                <span class="price-check">
+                  <Icon name="check" />
+                </span>
+                <span class="price-term">{item.term}</span>
+                <span class="price-text">{item.text}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="price-block">
         <h3 class="label price-sub">{p.compareLabel}</h3>
         <ul class="price-compare">
           {
@@ -55,24 +76,8 @@ const digits = String(offer.price).split('');
         </ul>
       </div>
 
-      <div class="price-block">
-        <h3 class="label price-sub">{p.includedLabel}</h3>
-        <ul class="price-included" data-checklist>
-          {
-            p.included.map((item) => (
-              <li>
-                <span class="price-check">
-                  <Icon name="check" />
-                </span>
-                {item}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
       <div class="price-block price-why" id="waarom">
-        <h3 class="price-why-title">{p.whyTitle}</h3>
+        <h3 class="price-subtitle">{p.whyTitle}</h3>
         {p.why.map((paragraph) => <p>{paragraph}</p>)}
       </div>
 
@@ -221,21 +226,22 @@ const digits = String(offer.price).split('');
   .price-included {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.25rem 2rem;
+    column-gap: 2rem;
+    border-top: 1px solid rgb(11 14 17 / 0.14);
   }
+  /* Vinkje links, naam en uitleg ernaast. */
   .price-included li {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.6rem 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-content: start;
+    gap: 0.3rem 0.9rem;
+    padding: 1.1rem 0;
     border-bottom: 1px solid rgb(11 14 17 / 0.1);
-    font-size: 1.0625rem;
-    font-weight: 520;
   }
   .price-check {
+    grid-row: span 2;
     display: inline-grid;
     place-items: center;
-    flex: none;
     width: 1.6rem;
     height: 1.6rem;
     border-radius: 999px;
@@ -246,13 +252,31 @@ const digits = String(offer.price).split('');
     width: 0.95rem;
     height: 0.95rem;
   }
-  .price-why-title {
-    margin: 0 0 1rem;
+  .price-term {
+    align-self: center;
+    font-size: 1.125rem;
+    font-weight: 650;
+    font-stretch: 106%;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .price-text {
+    grid-column: 2;
+    max-width: 34rem;
+    font-size: 0.975rem;
+    line-height: 1.5;
+    color: var(--color-paper-mute);
+  }
+  .price-subtitle {
+    margin: 0 0 1.25rem;
     font-size: clamp(1.5rem, 2.6vw, 2.25rem);
     font-weight: 680;
     font-stretch: 110%;
     letter-spacing: -0.025em;
     line-height: 1.1;
+  }
+  .price-why .price-subtitle {
+    margin-bottom: 1rem;
   }
   .price-why p {
     max-width: 36rem;
@@ -267,7 +291,8 @@ const digits = String(offer.price).split('');
     border-top: 1px solid rgb(11 14 17 / 0.14);
     color: var(--color-paper-mute);
   }
-  @media (min-width: 40rem) {
+  /* Twee kolommen alleen waar de lijst de volle breedte heeft (tablet). */
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
     .price-included {
       grid-template-columns: 1fr 1fr;
     }

@@ -267,11 +267,22 @@ const vijftig = {
   sourceHref: 'https://doi.org/10.1080/01449290500330448',
 };
 
-const included = {
-  label: 'What you get',
-  title: 'Everything you see here, you get too.',
-  lead: 'Not a template kit with your logo on it. A site that shows what your business is worth from the very first second.',
-  items: [
+const price = {
+  label: 'The price',
+  question: 'What does a site like this cost?',
+  once: 'One-off. Everything included. After that, it’s yours.',
+  compareLabel: 'Compare it',
+  compare: [
+    { who: 'An agency', what: 'Often thousands of euros, and weeks of waiting.', mine: false },
+    { who: 'A site builder', what: 'A monthly fee forever, and you look like everyone else.', mine: false },
+    { who: 'Scott Prins', what: `${PRICE} one-off. Live within ${DAYS} working days.`, mine: true },
+  ],
+  includedTitle: 'Everything you see here, you get too.',
+  included: [
+    {
+      term: 'One page, everything on it',
+      text: 'What you do, your offer, who you are and how to reach you, on one flowing page.',
+    },
     {
       term: 'An original design',
       text: 'Not a template your competitor also uses. Your colours, your images, your voice.',
@@ -281,12 +292,8 @@ const included = {
       text: 'Smooth scrolling, text that glides in and details that respond to your visitor. As much as suits your business, and never in the way.',
     },
     {
-      term: 'Fast, even on 4G',
-      text: 'No bloated site builders. Your site loads quickly, even outdoors on a phone.',
-    },
-    {
-      term: 'Designed for thumbs',
-      text: 'Not a shrunken desktop site, but a site that starts on the phone.',
+      term: 'Fast, even on your phone',
+      text: 'Not a shrunken desktop site: it starts on the phone and loads quickly, even on 4G.',
     },
     {
       term: 'Getting found',
@@ -301,33 +308,13 @@ const included = {
       text: 'No time to write? In a half-hour conversation you tell me about your business, and I turn it into the copy.',
     },
     {
-      term: 'Domain and launch',
-      text: 'I connect your domain and put everything live. You don’t have to do anything technical.',
+      term: 'Domain, hosting and launch',
+      text: 'I connect your domain, host your site and put everything live. You don’t have to do anything technical.',
     },
-  ],
-};
-
-const price = {
-  label: 'The price',
-  question: 'What does a site like this cost?',
-  once: 'One-off. Everything included. After that, it’s yours.',
-  compareLabel: 'Compare it',
-  compare: [
-    { who: 'An agency', what: 'Often thousands of euros, and weeks of waiting.', mine: false },
-    { who: 'A site builder', what: 'A monthly fee forever, and you look like everyone else.', mine: false },
-    { who: 'Scott Prins', what: `${PRICE} one-off. Live within ${DAYS} working days.`, mine: true },
-  ],
-  includedLabel: 'Included',
-  included: [
-    'One page, everything on it',
-    'Original design',
-    'Motion and animation',
-    'Mobile and fast',
-    'Foundation for Google',
-    'Copy after one phone call',
-    'Domain connected',
-    'Hosting',
-    `${offer.revisionRounds} rounds of changes`,
+    {
+      term: `${offer.revisionRounds} rounds of changes`,
+      text: 'You watch while I build. If something isn’t right, I change it.',
+    },
   ],
   whyTitle: `Why only ${PRICE}?`,
   why: [
@@ -451,6 +438,9 @@ const faq = {
       a: 'By default I build without tracking cookies, so usually no cookie banner is needed. If you want statistics or a Google map, we check together whether a notice is needed; cookieless statistics are an option too. Forms are sent encrypted and you get a suitable privacy statement with your site.',
     },
   ],
+  moreTitle: 'Question not listed?',
+  moreText: `Send me a WhatsApp. You’ll have an answer within ${HOURS} hours.`,
+  moreCta: 'WhatsApp me your question',
 };
 
 const order = {
@@ -542,6 +532,13 @@ const voorbeeld = {
   titleSuffix: 'example site by Scott Prins',
 };
 
+const notFound = {
+  title: 'Nothing under this link.',
+  text: 'This page doesn’t exist (anymore). The better site is right on the homepage.',
+  home: 'To the homepage',
+  other: 'Nederlandse homepage',
+};
+
 export const en: Widen<typeof nl> = {
   meta,
   nav,
@@ -550,7 +547,6 @@ export const en: Widen<typeof nl> = {
   trades,
   oldSite,
   vijftig,
-  included,
   price,
   process,
   about,
@@ -560,4 +556,5 @@ export const en: Widen<typeof nl> = {
   sticky,
   whatsapp,
   voorbeeld,
+  notFound,
 };

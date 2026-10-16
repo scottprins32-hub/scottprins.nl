@@ -2,12 +2,14 @@
 /**
  * Vragen, als native <details>: werkt zonder JavaScript en met elk
  * hulpmiddel. Openklappen beweegt waar de browser dat kan
- * (interpolate-size), anders gaat het gewoon meteen open.
+ * (interpolate-size), anders gaat het gewoon meteen open. Onderaan de weg
+ * voor wie zijn vraag niet terugziet: WhatsApp, met een bericht klaar.
  */
 import { content, toLocale } from '../data/content';
+import { waHref } from '../lib/whatsapp';
 import Icon from './Icon.astro';
 
-const { faq } = content(toLocale(Astro.currentLocale));
+const { faq, whatsapp } = content(toLocale(Astro.currentLocale));
 ---
 
 <section class="faq section-pad" id="vragen" aria-labelledby="faq-title">
@@ -28,6 +30,15 @@ const { faq } = content(toLocale(Astro.currentLocale));
           </details>
         ))
       }
+      <div class="faq-more">
+        <p>
+          <strong>{faq.moreTitle}</strong>
+          {faq.moreText}
+        </p>
+        <a class="btn btn-ghost" href={waHref(whatsapp.generic)} data-wa={whatsapp.named} target="_blank" rel="noopener">
+          <Icon name="whatsapp" />{faq.moreCta}
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -95,6 +106,26 @@ const { faq } = content(toLocale(Astro.currentLocale));
     margin: 0;
     padding: 0 0 1.5rem;
     color: var(--color-bone-2);
+  }
+  .faq-more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 2rem 0 0;
+  }
+  .faq-more p {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    color: var(--color-bone-2);
+  }
+  .faq-more strong {
+    color: var(--color-bone);
+    font-size: 1.125rem;
+    font-weight: 650;
+    font-stretch: 106%;
   }
   @supports (interpolate-size: allow-keywords) {
     .faq-item {
