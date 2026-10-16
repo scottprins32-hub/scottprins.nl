@@ -524,6 +524,11 @@ const footer = {
   credits: 'Photos in the demos: StockSnap (CC0).',
 };
 
+const whatsapp = {
+  generic: 'Hi Scott, I have a question about a website.',
+  named: 'Hi Scott, I would like a website for {name}.',
+};
+
 const sticky = {
   price: PRICE,
   cta: 'Claim your site',
@@ -553,5 +558,6 @@ export const en: Widen<typeof nl> = {
   order,
   footer,
   sticky,
+  whatsapp,
   voorbeeld,
 };

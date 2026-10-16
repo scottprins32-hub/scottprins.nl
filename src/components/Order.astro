@@ -15,6 +15,7 @@ import { TRADE_IDS, DEFAULT_TRADE, MAX_NAME, type TradeId } from '../data/trade-
 import { eur } from '../lib/format';
 import { url } from '../lib/url';
 import Icon from './Icon.astro';
+import { waHref } from '../lib/whatsapp';
 
 interface Props {
   trade?: TradeId;
@@ -58,7 +59,7 @@ const privacyHref = url(altPath('/privacy', locale));
         }
       </ul>
       <p class="order-direct" data-reveal="up">
-        <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">
+        <a href={waHref(t.whatsapp.generic)} data-wa={t.whatsapp.named} target="_blank" rel="noopener">
           <Icon name="whatsapp" />{site.whatsappDisplay}
         </a>
         <a href={`mailto:${site.email}`}><Icon name="envelope" />{site.email}</a>
@@ -183,7 +184,7 @@ const privacyHref = url(altPath('/privacy', locale));
           <span class="slip-stamp" aria-hidden="true">OK</span>
           <h3 class="slip-success-title">{o.success.title}</h3>
           <p>{o.success.text}</p>
-          <a class="btn btn-ink" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">
+          <a class="btn btn-ink" href={waHref(t.whatsapp.generic)} data-wa={t.whatsapp.named} target="_blank" rel="noopener">
             <Icon name="whatsapp" />{site.whatsappDisplay}
           </a>
         </div>

@@ -11,6 +11,7 @@ import { url } from '../lib/url';
 import Logo from './Logo.astro';
 import LangSwitch from './LangSwitch.astro';
 import Icon from './Icon.astro';
+import { waHref } from '../lib/whatsapp';
 
 interface Props {
   /** Op de homepage zijn de ankers lokaal (#prijs); elders wijzen ze naar de homepage. */
@@ -18,7 +19,7 @@ interface Props {
 }
 const { home = true } = Astro.props;
 const locale = toLocale(Astro.currentLocale);
-const { nav } = content(locale);
+const { nav, whatsapp } = content(locale);
 const homeUrl = url(altPath('/', locale));
 const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
 ---
@@ -75,7 +76,7 @@ const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
         <a class="btn btn-signal" href={href('#bestellen')} data-menu-link>
           {nav.cta}<Icon name="arrow-right" />
         </a>
-        <a class="menu-contact" href={`https://wa.me/${site.whatsapp}`} rel="noopener" target="_blank">
+        <a class="menu-contact" href={waHref(whatsapp.generic)} data-wa={whatsapp.named} rel="noopener" target="_blank">
           <Icon name="whatsapp" />{site.whatsappDisplay}
         </a>
         <LangSwitch />
@@ -101,7 +102,7 @@ const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
     border-bottom: 1px solid transparent;
   }
   .nav.is-scrolled {
-    background: rgb(18 17 15 / 0.94);
+    background: color-mix(in srgb, var(--color-ink) 94%, transparent);
     border-bottom-color: var(--color-line);
   }
   .nav.is-hidden:not(:focus-within) {
@@ -130,6 +131,7 @@ const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
     list-style: none;
   }
   .nav-links a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
@@ -138,8 +140,30 @@ const href = (hash: string) => (home ? hash : `${homeUrl}${hash}`);
     font-size: 0.9375rem;
     transition: color 0.2s;
   }
-  .nav-links a:hover {
+  .nav-links a:hover,
+  .nav-links a[aria-current='true'] {
     color: var(--color-bone);
+  }
+  /* Een streepje onder de sectie waar je nu bent (nav.ts zet aria-current). */
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.45rem;
+    height: 1px;
+    background: var(--color-signal-text);
+    scale: 0 1;
+    transform-origin: left center;
+    transition: scale 0.45s var(--ease-out-quart);
+  }
+  .nav-links a[aria-current='true']::after {
+    scale: 1 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-links a::after {
+      transition: none;
+    }
   }
   .nav-end {
     display: flex;

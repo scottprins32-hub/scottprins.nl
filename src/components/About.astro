@@ -2,14 +2,23 @@
 /**
  * Over Scott. Echte foto, echte cijfers (die Scott zelf onderschrijft) en
  * twee sites waar je zelf doorheen kunt klikken. Geen verzonnen klanten.
+ * Bij modernpitching.nl staan echte schermafbeeldingen van de live site
+ * (laptop en telefoon, oktober 2026): bewijs dat je ziet, niet alleen leest.
  */
 import { Image } from 'astro:assets';
-import { site } from '../data/site';
 import { content, toLocale } from '../data/content';
 import Icon from './Icon.astro';
+import { waHref } from '../lib/whatsapp';
 import scott from '../assets/img/scott.webp';
+import mpDesktop from '../assets/proof/modernpitching-desktop.webp';
+import mpPhone from '../assets/proof/modernpitching-phone.webp';
 
-const { about } = content(toLocale(Astro.currentLocale));
+/** Schermafbeeldingen per site uit de lijst; sites zonder blijven tekst. */
+const shots: Record<string, { desktop: ImageMetadata; phone: ImageMetadata }> = {
+  'modernpitching.nl': { desktop: mpDesktop, phone: mpPhone },
+};
+
+const { about, whatsapp } = content(toLocale(Astro.currentLocale));
 ---
 
 <section class="about section-pad" aria-labelledby="about-title">
@@ -44,9 +53,28 @@ const { about } = content(toLocale(Astro.currentLocale));
         {
           about.proof.map((item) => {
             const external = item.href.startsWith('http');
+            const shot = shots[item.name];
             return (
               <li data-reveal="up">
                 <a href={item.href} {...(external ? { target: '_blank', rel: 'noopener' } : {})}>
+                  {shot && (
+                    <span class="proof-shots" aria-hidden="true">
+                      <Image
+                        class="proof-desktop"
+                        src={shot.desktop}
+                        alt=""
+                        widths={[560, 840, 1120]}
+                        sizes="(min-width: 1024px) 36vw, 82vw"
+                      />
+                      <Image
+                        class="proof-phone"
+                        src={shot.phone}
+                        alt=""
+                        widths={[160, 240, 320]}
+                        sizes="(min-width: 1024px) 10vw, 24vw"
+                      />
+                    </span>
+                  )}
                   <span class="about-proof-name">
                     {item.name}
                     <Icon name={external ? 'arrow-up-right' : 'arrow-right'} />
@@ -60,7 +88,7 @@ const { about } = content(toLocale(Astro.currentLocale));
         }
       </ul>
 
-      <a class="btn btn-ghost about-wa" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">
+      <a class="btn btn-ghost about-wa" href={waHref(whatsapp.generic)} data-wa={whatsapp.named} target="_blank" rel="noopener">
         <Icon name="whatsapp" />{about.whatsapp}
       </a>
     </div>
@@ -190,6 +218,49 @@ const { about } = content(toLocale(Astro.currentLocale));
   }
   .about-proof-text {
     color: var(--color-bone-2);
+  }
+  /* Laptop met de telefoon er schuin voor: de echte site, twee maten. */
+  .proof-shots {
+    position: relative;
+    display: block;
+    margin: 0.75rem 0 1.25rem;
+    padding: 0 13% 9% 0;
+  }
+  .proof-shots :global(img) {
+    display: block;
+    height: auto;
+    transition: translate 0.6s var(--ease-out-quart);
+  }
+  .proof-shots :global(.proof-desktop) {
+    width: 100%;
+    border-radius: 0.6rem;
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 32px 60px -32px rgb(0 0 0 / 0.7);
+  }
+  .proof-shots :global(.proof-phone) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 27%;
+    border-radius: 0.9rem;
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 24px 44px -18px rgb(0 0 0 / 0.8);
+  }
+  .about-proof a:hover .proof-shots :global(.proof-desktop) {
+    translate: 0 -4px;
+  }
+  .about-proof a:hover .proof-shots :global(.proof-phone) {
+    translate: 0 -10px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .proof-shots :global(img) {
+      transition: none;
+    }
+    .about-proof a:hover .proof-shots :global(img) {
+      translate: none;
+    }
   }
   .about-wa {
     margin-top: 2.5rem;

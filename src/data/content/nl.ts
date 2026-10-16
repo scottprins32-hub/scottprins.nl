@@ -520,6 +520,13 @@ const footer = {
   credits: 'Foto’s in de voorbeelden: StockSnap (CC0).',
 } as const;
 
+/** Het eerste bericht in WhatsApp, zodat niemand hoeft te bedenken wat hij typt.
+    {name} wordt de naam die de bezoeker in het upgrade-ding typte. */
+const whatsapp = {
+  generic: 'Hoi Scott, ik heb een vraag over een website.',
+  named: 'Hoi Scott, ik wil graag een website voor {name}.',
+} as const;
+
 const sticky = {
   price: PRIJS,
   cta: 'Claim je site',
@@ -549,5 +556,6 @@ export const nl = {
   order,
   footer,
   sticky,
+  whatsapp,
   voorbeeld,
 } as const;
