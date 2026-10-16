@@ -1,7 +1,8 @@
 ---
 /**
  * Op de telefoon: de prijs en de knop altijd één tik weg, zodra de knoppen
- * bovenin uit beeld zijn. Verdwijnt weer bij de bestelbon zelf.
+ * bovenin uit beeld zijn. Maakt plaats voor het upgrade-ding, de bestelbon
+ * en de footer.
  */
 import { content, toLocale } from '../data/content';
 
@@ -21,11 +22,15 @@ const t = content(toLocale(Astro.currentLocale));
   /* Zodra de knoppen bovenin uit beeld zijn, neemt deze balk het over. */
   const hero = document.querySelector<HTMLElement>('[data-sticky-after]');
   const order = document.getElementById('bestellen');
+  const footer = document.querySelector<HTMLElement>('footer.footer');
+  const device = document.querySelector<HTMLElement>('[data-device]');
   if (bar && hero && order) {
     let pastHero = false;
     let atOrder = false;
+    let atFooter = false;
+    let atDevice = false;
     const update = () => {
-      const show = pastHero && !atOrder;
+      const show = pastHero && !atOrder && !atFooter && !atDevice;
       bar.classList.toggle('is-visible', show);
       bar.inert = !show;
     };
@@ -37,6 +42,20 @@ const t = content(toLocale(Astro.currentLocale));
       atOrder = entry.isIntersecting;
       update();
     }, { rootMargin: '0px 0px -30% 0px' }).observe(order);
+    /* De footer heeft een eigen knop, en de balk zou de links eronder afdekken. */
+    if (footer) {
+      new IntersectionObserver(([entry]) => {
+        atFooter = entry.isIntersecting;
+        update();
+      }).observe(footer);
+    }
+    /* Het upgrade-ding heeft eigen knoppen onder de site: daar niet overheen. */
+    if (device) {
+      new IntersectionObserver(([entry]) => {
+        atDevice = entry.isIntersecting;
+        update();
+      }, { rootMargin: '0px 0px -20% 0px' }).observe(device);
+    }
   }
 </script>
 

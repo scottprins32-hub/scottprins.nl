@@ -11,7 +11,7 @@
 import { site } from '../data/site';
 import { offer } from '../data/offer';
 import { content, toLocale, altPath } from '../data/content';
-import { TRADE_IDS, SAMPLE_NAMES, DEFAULT_TRADE, MAX_NAME, type TradeId } from '../data/trade-ids';
+import { TRADE_IDS, DEFAULT_TRADE, MAX_NAME, type TradeId } from '../data/trade-ids';
 import { eur } from '../lib/format';
 import { url } from '../lib/url';
 import Icon from './Icon.astro';
@@ -92,7 +92,7 @@ const privacyHref = url(altPath('/privacy', locale));
               <span class="slip-qty">1 ×</span>
               <span class="slip-desc">
                 {slip.qtyLine}
-                {slip.forLabel} <strong data-slip-name>{SAMPLE_NAMES[trade]}</strong>
+                {slip.forLabel} <strong data-slip-name data-fallback={slip.yourBusiness}>{slip.yourBusiness}</strong>
                 <small>{slip.detail}</small>
               </span>
               <span class="slip-amt">{eur(offer.price, locale)}</span>

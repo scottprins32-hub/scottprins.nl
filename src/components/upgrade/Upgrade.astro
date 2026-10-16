@@ -122,13 +122,15 @@ const name = SAMPLE_NAMES[start];
         }
       </div>
     </div>
+    <p class="stage-chip" aria-hidden="true" data-chip>
+      <span class="chip-ring"></span>
+      <span class="hint-fine">{d.hintFine}</span>
+      <span class="hint-coarse">{d.hintCoarse}</span>
+      <span class="hint-longer">{d.hintLonger}</span>
+    </p>
   </div>
 
   <div class="device-bar">
-    <p class="device-hint">
-      <span class="hint-fine"><Icon name="cursor-click" />{d.hintFine}</span>
-      <span class="hint-coarse"><Icon name="hand-tap" />{d.hintCoarse}</span>
-    </p>
     <p class="device-result">
       {d.revealedBefore} <strong data-naam>{name}</strong>. {d.revealedAfter}
     </p>
@@ -183,6 +185,25 @@ const name = SAMPLE_NAMES[start];
   }
   .device-tabs::-webkit-scrollbar {
     display: none;
+  }
+  /* Past de rij niet, dan vervaagt de rand waar nog tabs achter zitten. */
+  .device-tabs[data-more-start],
+  .device-tabs[data-more-end] {
+    --fade-start: 0px;
+    --fade-end: 0px;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fade-start),
+      #000 calc(100% - var(--fade-end)),
+      transparent
+    );
+  }
+  .device-tabs[data-more-start] {
+    --fade-start: 2.5rem;
+  }
+  .device-tabs[data-more-end] {
+    --fade-end: 3rem;
   }
   .device-tab {
     flex: none;
@@ -326,6 +347,97 @@ const name = SAMPLE_NAMES[start];
   .site[hidden] {
     display: none;
   }
+
+  /* De aanwijzing staat op de site zelf, waar je moet drukken: ook als de
+     knop eronder buiten beeld valt. De ring loopt vol terwijl je vasthoudt. */
+  .stage-chip {
+    --chip-bg: var(--color-ink);
+    position: absolute;
+    left: 50%;
+    bottom: clamp(0.75rem, 2.5cqw, 1.25rem);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.5rem 1rem 0.5rem 0.55rem;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 12px 32px -12px rgb(0 0 0 / 0.55);
+    color: var(--color-bone);
+    font-size: 0.875rem;
+    font-weight: 520;
+    white-space: nowrap;
+    pointer-events: none;
+    translate: -50% 0;
+    transition:
+      opacity 0.3s var(--ease-out-quart),
+      translate 0.3s var(--ease-out-quart),
+      scale 0.3s var(--ease-out-quart);
+  }
+  .chip-ring {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, var(--color-signal-text) 34%, transparent 40%),
+      radial-gradient(closest-side, var(--chip-bg) calc(100% - 2.5px), transparent calc(100% - 2px)),
+      conic-gradient(var(--color-signal-text) calc(var(--p, 0) * 1turn), rgb(255 255 255 / 0.22) 0);
+  }
+  .hint-coarse,
+  .hint-longer {
+    display: none;
+  }
+  @media not ((hover: hover) and (pointer: fine)) {
+    .hint-fine {
+      display: none;
+    }
+    .hint-coarse {
+      display: inline;
+    }
+  }
+  /* Te kort gedrukt: zeg dat het langer moet. */
+  .device[data-nudge] .stage-chip > .hint-fine,
+  .device[data-nudge] .stage-chip > .hint-coarse {
+    display: none;
+  }
+  .device[data-nudge] .hint-longer {
+    display: inline;
+  }
+  .device[data-nudge] .stage-chip {
+    animation: chip-nudge 0.5s var(--ease-out-quart);
+  }
+  @keyframes chip-nudge {
+    40% {
+      scale: 1.07;
+    }
+  }
+  .device[data-holding] .stage-chip {
+    scale: 1.04;
+  }
+  .device[data-pouring] .stage-chip,
+  .device[data-state='revealed'] .stage-chip {
+    opacity: 0;
+    translate: -50% 0.5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-chip {
+      transition: opacity 0.2s linear;
+    }
+    .device[data-nudge] .stage-chip {
+      animation: none;
+    }
+    .device[data-holding] .stage-chip {
+      scale: none;
+    }
+    .device[data-pouring] .stage-chip,
+    .device[data-state='revealed'] .stage-chip {
+      translate: -50% 0;
+    }
+  }
   @container device (width < 640px) {
     .stage {
       aspect-ratio: 390 / 640;
@@ -346,37 +458,9 @@ const name = SAMPLE_NAMES[start];
     gap: 1rem 1.5rem;
     margin-top: 1.25rem;
   }
-  .device-hint,
-  .device-result {
-    margin: 0;
-  }
-  .device-hint {
-    color: var(--color-bone-2);
-  }
-  .device-hint > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .device-hint :global(.icon) {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex: none;
-    color: var(--color-signal-text);
-  }
-  .hint-coarse {
-    display: none !important;
-  }
-  @media not ((hover: hover) and (pointer: fine)) {
-    .hint-fine {
-      display: none !important;
-    }
-    .hint-coarse {
-      display: inline-flex !important;
-    }
-  }
   .device-result {
     display: none;
+    margin: 0;
     font-size: clamp(1.25rem, 2vw, 1.6rem);
     font-weight: 560;
     font-stretch: 108%;
@@ -392,6 +476,7 @@ const name = SAMPLE_NAMES[start];
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
+    margin-left: auto;
   }
   .device-claim,
   .device-open,
@@ -406,13 +491,12 @@ const name = SAMPLE_NAMES[start];
   .device[data-state='revealed'] .device-reset {
     display: inline-flex;
   }
-  .device[data-state='revealed'] .device-hint,
   .device[data-state='revealed'] .device-upgrade {
     display: none;
   }
   /* Zonder JavaScript: geen knop die niets doet, wel de weg naar de echte site. */
   :global(html:not(.js)) .device-upgrade,
-  :global(html:not(.js)) .device-hint {
+  :global(html:not(.js)) .stage-chip {
     display: none;
   }
   :global(html:not(.js)) .device-open {

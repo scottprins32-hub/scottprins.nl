@@ -3,7 +3,8 @@
  *
  * - Rekent mee met het upgrade-ding: de naam op de bon, het veld 'Naam van
  *   je zaak' en de branche volgen wat de bezoeker daar koos, tot hij hier
- *   zelf iets aanpast. Andersom werkt het ook.
+ *   zelf iets aanpast. Andersom werkt het ook. Zonder getypte naam staat er
+ *   'jouw zaak' op de bon.
  * - Valideert in de browser (dezelfde regels als de server, lib/lead.ts).
  * - Verstuurt naar /api/lead. Lukt dat niet, of is dit de preview zonder
  *   server, dan staat dezelfde bon klaar voor WhatsApp en mail.
@@ -48,7 +49,9 @@ export function initOrder(root: HTMLElement): void {
   function sync(): void {
     const state = getState();
     if (slipName) {
-      const name = currentName();
+      /* Nog niets getypt: dan 'jouw zaak', niet de voorbeeldnaam uit het
+         upgrade-ding. Op de bon staat alleen wat van de bezoeker zelf is. */
+      const name = state.typed.trim() ? currentName() : (slipName.dataset.fallback ?? '');
       if (slipName.textContent !== name) {
         slipName.textContent = name;
         /* Even oplichten (CSS-animatie, kleur uit de tokens). */

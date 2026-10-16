@@ -61,6 +61,7 @@ export function initUpgrade(root: HTMLElement): void {
   const live = root.querySelector<HTMLElement>('[data-live]');
   const input = root.querySelector<HTMLInputElement>('[data-name-input]');
   const domain = root.querySelector<HTMLElement>('[data-domain]');
+  const chip = root.querySelector<HTMLElement>('[data-chip]');
   const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
   if (!stage || !after || !upgradeBtn) return;
 
@@ -168,7 +169,19 @@ export function initUpgrade(root: HTMLElement): void {
   }
 
   function setFill(p: number): void {
-    upgradeBtn!.style.setProperty('--p', p.toFixed(3));
+    const v = p.toFixed(3);
+    upgradeBtn!.style.setProperty('--p', v);
+    chip?.style.setProperty('--p', v);
+  }
+
+  /** Te kort gedrukt: de aanwijzing zegt even dat het langer moet. */
+  let nudgeTimer = 0;
+  function nudge(): void {
+    delete root.dataset.nudge;
+    void chip?.offsetWidth;
+    root.dataset.nudge = '';
+    window.clearTimeout(nudgeTimer);
+    nudgeTimer = window.setTimeout(() => delete root.dataset.nudge, 2200);
   }
 
   function announce(message: string | undefined): void {
@@ -196,6 +209,8 @@ export function initUpgrade(root: HTMLElement): void {
     after!.style.clipPath = 'none';
     root.dataset.state = 'revealed';
     delete root.dataset.holding;
+    delete root.dataset.pouring;
+    delete root.dataset.nudge;
     setFill(0);
     s.p = 0;
     s.excite = 0;
@@ -213,6 +228,7 @@ export function initUpgrade(root: HTMLElement): void {
       return;
     }
     mode = 'tween';
+    root.dataset.pouring = '';
     start();
     gsap.to(s, {
       r: maxR,
@@ -287,8 +303,10 @@ export function initUpgrade(root: HTMLElement): void {
     start();
   }
 
-  function holdEnd(): void {
+  function holdEnd(e: PointerEvent): void {
     if (mode !== 'hold') return;
+    /* Losgelaten, niet weggescrold: dan was het gewoon te kort. */
+    if (e.type === 'pointerup' && s.p < 0.4) nudge();
     delete root.dataset.holding;
     mode = inside && fine && pointerType === 'mouse' && !reduce ? 'lens' : 'idle';
     s.p = 0;
@@ -362,6 +380,7 @@ export function initUpgrade(root: HTMLElement): void {
       s.cy = s.ty = H / 2;
     }
     mode = 'tween';
+    root.dataset.pouring = '';
     start();
     gsap.to(s, {
       r: maxR,
@@ -448,6 +467,19 @@ export function initUpgrade(root: HTMLElement): void {
     }
     setState({ trade: id });
     if (mode === 'revealed') playAfterIntro();
+  }
+
+  /* Past de tabrij niet (telefoon), dan laat een vervaagde rand zien dat
+     er nog meer branches zijn. */
+  const tablist = tabs[0]?.parentElement;
+  if (tablist) {
+    const edges = (): void => {
+      const rest = tablist.scrollWidth - tablist.clientWidth - tablist.scrollLeft;
+      tablist.toggleAttribute('data-more-start', tablist.scrollLeft > 4);
+      tablist.toggleAttribute('data-more-end', rest > 4);
+    };
+    tablist.addEventListener('scroll', edges, { passive: true });
+    new ResizeObserver(edges).observe(tablist);
   }
 
   tabs.forEach((tab, i) => {
