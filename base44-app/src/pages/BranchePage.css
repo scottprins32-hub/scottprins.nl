@@ -1,0 +1,147 @@
+/* Uit BranchePage.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.bp-hero {
+  padding-top: calc(4.5rem + clamp(2.5rem, 8vh, 6rem));
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.bp-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+.bp-eyebrow {
+  margin: 0;
+  color: var(--color-signal-text);
+}
+.bp-title {
+  max-width: 18ch;
+  margin: 0;
+  font-size: var(--text-display-l);
+}
+.bp-intro {
+  max-width: 40rem;
+  margin: 0.5rem 0 0;
+  color: var(--color-bone-2);
+}
+.bp-ctas {
+  margin-top: 1rem;
+}
+.bp-demo {
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+.bp-h2 {
+  margin: 0;
+  font-size: var(--text-display-m);
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.bp-demo-lead {
+  max-width: 36rem;
+  margin: 1rem 0 2.5rem;
+  color: var(--color-bone-2);
+}
+.bp-device {
+  width: min(100%, calc((100svh - 13.5rem) * 1.6));
+  margin-inline: auto;
+}
+.bp-pain,
+.bp-body {
+  border-top: 1px solid var(--color-line);
+}
+.bp-two {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+.bp-h2-big {
+  margin: 0;
+  font-size: var(--text-display-l);
+}
+.bp-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+.bp-list li {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+.bp-list .icon {
+  flex: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.15em;
+  color: var(--color-signal-text);
+}
+.bp-text {
+  display: grid;
+  gap: 1.25rem;
+}
+.bp-text .lead {
+  margin: 0;
+  color: var(--color-bone-2);
+}
+.bp-price {
+  padding-block: clamp(5rem, 10vw, 8rem);
+  background: var(--color-paper);
+  color: var(--color-paper-ink);
+  color-scheme: light;
+}
+.bp-price :focus-visible {
+  outline-color: var(--color-paper-ink);
+}
+.bp-price-q {
+  margin: 0;
+  font-size: var(--text-display-m);
+  font-weight: 640;
+  font-stretch: 110%;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+.bp-amount {
+  display: flex;
+  align-items: flex-start;
+  margin: 1rem 0 0;
+  font-size: clamp(6rem, 16vw, 13rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+}
+.bp-amount span {
+  margin-right: 0.04em;
+  font-size: 0.42em;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+.bp-price-copy {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  align-content: end;
+}
+.bp-price-copy p {
+  max-width: 34rem;
+  margin: 0;
+}
+.bp-cta-title {
+  margin: 1.5rem 0 0;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 700;
+  font-stretch: 110%;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+@media (min-width: 64rem) {
+  .bp-two {
+    grid-template-columns: 5fr 7fr;
+    align-items: start;
+  }
+}

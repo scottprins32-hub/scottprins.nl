@@ -1,0 +1,378 @@
+/* Uit Vijftig.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.vijftig-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 2vw, 2rem);
+}
+.vijftig-head {
+  grid-column: 1 / -1;
+}
+.vijftig-label {
+  margin: 0 0 1.25rem;
+  color: var(--color-mute);
+}
+.vijftig-title {
+  margin: 0;
+  font-size: var(--text-display-l);
+  max-width: 14ch;
+}
+.vijftig-test {
+  grid-column: 1 / -1;
+  container: flash / inline-size;
+}
+
+/* ------------------------------------------------------ het scherm -- */
+.flash-screen {
+  position: relative;
+  aspect-ratio: 1280 / 800;
+  overflow: hidden;
+  border-radius: 0.875rem;
+  background: var(--color-ink-2);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+@container flash (width < 640px) {
+  .flash-screen {
+    aspect-ratio: 390 / 640;
+  }
+}
+.flash-ghost {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 46cqi;
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-line);
+  user-select: none;
+}
+.flash-hud {
+  position: absolute;
+  top: clamp(0.9rem, 2.5cqi, 1.4rem);
+  left: clamp(1rem, 2.8cqi, 1.6rem);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+.flash-fix,
+.flash-center {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--color-signal-text);
+}
+.flash-fix {
+  font-size: 2.25rem;
+}
+.flash-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(2.25rem, 9cqi, 4.5rem);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Elke fase zijn eigen laag; wat niet aan de beurt is, is ook niet
+   bereikbaar met tab (visibility). */
+.flash-ghost,
+.flash-center,
+.flash-intro,
+.flash-ask,
+.flash-result {
+  transition:
+    opacity 0.35s var(--ease-out-quart),
+    visibility 0s linear 0.35s;
+}
+.vijftig-test:not([data-phase='idle']) .flash-ghost,
+.vijftig-test:not([data-phase='idle']) .flash-intro,
+.vijftig-test:not([data-phase='count']) .flash-center,
+.vijftig-test:not([data-phase='ask']) .flash-ask,
+.vijftig-test:not([data-phase='result']) .flash-result {
+  opacity: 0;
+  visibility: hidden;
+}
+.vijftig-test[data-phase='idle'] .flash-ghost,
+.vijftig-test[data-phase='idle'] .flash-intro,
+.vijftig-test[data-phase='count'] .flash-center,
+.vijftig-test[data-phase='ask'] .flash-ask,
+.vijftig-test[data-phase='result'] .flash-result {
+  transition: opacity 0.35s var(--ease-out-quart);
+}
+/* Tijdens de test: geen overvloeiers, het scherm moet echt leeg zijn. */
+.vijftig-test[data-phase='count'] *,
+.vijftig-test[data-phase='count'] .flash-ghost {
+  transition: none;
+}
+
+.flash-intro,
+.flash-ask {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.flash-intro-text {
+  max-width: 24rem;
+  margin: 0;
+  color: var(--color-bone-2);
+  text-wrap: balance;
+}
+.flash-reduced {
+  display: none;
+  max-width: 26rem;
+  margin: 0;
+  color: var(--color-bone-2);
+}
+html:not(.js) .flash-reduced {
+  display: block;
+}
+html:not(.js) .flash-play,
+html:not(.js) .flash-intro-text,
+html:not(.js) .flash-fix {
+  display: none;
+}
+
+.flash-question {
+  margin: 0;
+  font-size: clamp(1.35rem, 4.2cqi, 2rem);
+  font-weight: 640;
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.flash-choices {
+  display: flex;
+  gap: 0.875rem;
+}
+.flash-choice {
+  width: clamp(4.5rem, 14cqi, 6rem);
+  aspect-ratio: 1;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 1rem;
+  background: transparent;
+  color: var(--color-bone);
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 5cqi, 2.5rem);
+  transition:
+    background-color 0.2s var(--ease-out-quart),
+    color 0.2s var(--ease-out-quart),
+    border-color 0.2s var(--ease-out-quart);
+}
+.flash-choice:hover {
+  border-color: var(--color-bone);
+  background: var(--color-bone);
+  color: var(--color-ink);
+}
+
+/* ----------------------------------------------- de twee flitsen -- */
+.flash-stack {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.flash-stack .vp,
+.flash-frame .vp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 800px;
+  transform-origin: 0 0;
+  transform: scale(var(--s-js, 0.5));
+  container: vp / inline-size;
+}
+.flash-stack .vp {
+  visibility: hidden;
+}
+.flash-stack .vp.is-on {
+  visibility: visible;
+}
+@container flash (width < 640px) {
+  .flash-stack .vp,
+  .flash-frame .vp {
+    width: 390px;
+    height: 640px;
+  }
+}
+.flash-stack .site,
+.flash-frame .site {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------------------------------------------------- de uitslag -- */
+.flash-result {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  gap: clamp(0.75rem, 2.5cqi, 1.25rem);
+  padding: clamp(0.75rem, 3.5cqi, 2rem);
+}
+.flash-thumb {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+  transition:
+    opacity 0.6s var(--ease-out-expo),
+    translate 0.6s var(--ease-out-expo);
+}
+.vijftig-test:not([data-phase='result']) .flash-thumb {
+  opacity: 0;
+  translate: 0 0.75rem;
+}
+.vijftig-test[data-phase='result'] .flash-thumb + .flash-thumb {
+  transition-delay: 0.08s;
+}
+.flash-frame {
+  position: relative;
+  aspect-ratio: 1280 / 800;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  transition: box-shadow 0.3s var(--ease-out-quart);
+}
+@container flash (width < 640px) {
+  .flash-frame {
+    aspect-ratio: 390 / 640;
+  }
+}
+.flash-thumb.is-picked .flash-frame {
+  box-shadow: 0 0 0 2px var(--color-signal-text);
+}
+.flash-thumb figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  font-size: 0.9375rem;
+  color: var(--color-bone-2);
+}
+.flash-letter {
+  font-family: var(--font-mono);
+  color: var(--color-bone);
+}
+.flash-picked {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-signal-text);
+}
+.flash-thumb.is-picked .flash-picked {
+  display: inline;
+}
+
+/* Onder het scherm: pas iets bij de uitslag, daarvoor geen lege ruimte.
+   Het oordeel blijft wel in de DOM, anders leest een schermlezer hem niet voor. */
+.flash-verdict {
+  max-width: 34rem;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  font-weight: 560;
+  font-stretch: 106%;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+.flash-verdict:empty {
+  margin: 0;
+}
+.flash-actions {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.vijftig-test[data-phase='result'] .flash-verdict,
+.vijftig-test[data-phase='result'] .flash-actions {
+  animation: flash-after-in 0.6s var(--ease-out-expo) both;
+}
+.vijftig-test[data-phase='result'] .flash-actions {
+  display: flex;
+  animation-delay: 0.08s;
+}
+@keyframes flash-after-in {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+@container flash (width < 480px) {
+  .flash-actions .btn {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flash-thumb {
+    transition: opacity 0.3s linear;
+  }
+  .vijftig-test:not([data-phase='result']) .flash-thumb {
+    translate: none;
+  }
+  .vijftig-test[data-phase='result'] .flash-verdict,
+  .vijftig-test[data-phase='result'] .flash-actions {
+    animation-name: flash-after-fade;
+  }
+  @keyframes flash-after-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* ------------------------------------------------ de tekst eronder -- */
+.vijftig-body {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1.25rem;
+  max-width: 40rem;
+}
+.vijftig-body .lead {
+  margin: 0;
+  color: var(--color-bone-2);
+}
+.vijftig-punch {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 640;
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.vijftig-source {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-mute);
+}
+@media (min-width: 64rem) {
+  .vijftig-head {
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 2;
+    align-self: start;
+    position: sticky;
+    top: 7rem;
+  }
+  .vijftig-test {
+    grid-column: 6 / -1;
+    grid-row: 1;
+  }
+  .vijftig-body {
+    grid-column: 6 / span 6;
+    grid-row: 2;
+  }
+}

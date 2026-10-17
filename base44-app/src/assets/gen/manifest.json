@@ -1,0 +1,125 @@
+{
+  "bakker-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "bakker-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 720
+  },
+  "kapper-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "kapper-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 637
+  },
+  "restaurant-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "restaurant-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 638
+  },
+  "bouw-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 780
+  },
+  "bouw-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 720
+  },
+  "praktijk-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 857
+  },
+  "praktijk-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 641
+  },
+  "sport-na": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "sport-voor": {
+    "widths": [
+      320,
+      560
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "scott": {
+    "widths": [
+      400,
+      640,
+      800
+    ],
+    "width": 800,
+    "height": 1067
+  },
+  "modernpitching-desktop": {
+    "widths": [
+      560,
+      840,
+      1120
+    ],
+    "width": 1600,
+    "height": 1000
+  },
+  "modernpitching-phone": {
+    "widths": [
+      160,
+      240,
+      320
+    ],
+    "width": 780,
+    "height": 1688
+  }
+}

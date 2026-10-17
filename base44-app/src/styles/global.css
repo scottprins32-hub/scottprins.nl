@@ -1,0 +1,338 @@
+@import 'tailwindcss';
+
+/* ======================================================================
+   Lettertypes. Zelf gehost via src/assets, zodat Vite de paden herschrijft
+   (en ze dus ook onder de preview-submap kloppen).
+   Archivo is variabel in gewicht én breedte: 62% (smal) tot 125% (breed).
+   ====================================================================== */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/Archivo-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/fonts/DMMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/fonts/DMMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* Arial, bijgesteld naar de maten van Archivo: minder verspringen zolang
+   het echte lettertype nog laadt. Gemeten op een Nederlandse zin. */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 96.8%;
+  ascent-override: 90.7%;
+  descent-override: 21.7%;
+  line-gap-override: 0%;
+}
+
+/* ======================================================================
+   Tokens
+   ====================================================================== */
+@theme {
+  --font-sans: 'Archivo', 'Archivo Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Scotts huisstijl: inkt, crème en indigo. Niet puur zwart of wit.
+     signal      = het vlak van de hoofdknop (met signal-ink als tekst)
+     signal-text = accent als tekst, icoon of lijn op donker (AA-contrast)
+     Andere accentkleur? Alleen deze vier regels; zie README. */
+  --color-ink: #0b0e11;
+  --color-ink-2: #161b22;
+  --color-ink-3: #1f2630;
+  --color-bone: #faf8f4;
+  --color-bone-2: #c3c9d2;
+  --color-mute: #9aa3b0;
+  --color-signal: #4f46e5;
+  --color-signal-hi: #4338ca;
+  --color-signal-text: #8b85ff;
+  --color-signal-ink: #ffffff;
+  --color-paper: #faf8f4;
+  --color-paper-ink: #0b0e11;
+  --color-paper-mute: #5c6470;
+  --color-line: rgb(250 248 244 / 0.12);
+  --color-line-strong: rgb(250 248 244 / 0.26);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-inout-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-inout-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* Typeschaal. Groot, maar de hiërarchie zit in gewicht en kleur. */
+  --text-display-xl: clamp(2.9rem, 8.4vw, 9.5rem);
+  --text-display-l: clamp(2.25rem, 4.4vw, 4.5rem);
+  --text-display-m: clamp(1.6rem, 2.6vw, 2.6rem);
+  --text-lead: clamp(1.075rem, 1.3vw, 1.3rem);
+  --text-label: 0.75rem;
+
+  --breakpoint-xs: 26rem;
+}
+
+/* ======================================================================
+   Basis
+   ====================================================================== */
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-bone);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-stretch: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Korrel op de lege donkere vlakken. Statisch: kost niets bij scrollen. */
+    background-color: var(--color-ink);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-signal-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal-text);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+  button {
+    cursor: pointer;
+  }
+  /* Lenis: alleen actief zonder prefers-reduced-motion. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+/* ======================================================================
+   Typografie
+   ====================================================================== */
+@utility display {
+  font-family: var(--font-sans);
+  font-stretch: 112%;
+  font-weight: 760;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+@utility serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: normal;
+  letter-spacing: -0.012em;
+  /* Een cursieve schreef oogt kleiner dan een zware schreefloze: iets
+     groter zetten zodat de x-hoogtes optisch gelijk liggen. */
+  font-size: 1.1em;
+  line-height: 0.8;
+}
+@utility label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+@utility lead {
+  font-size: var(--text-lead);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ======================================================================
+   Layout
+   ====================================================================== */
+@utility wrap {
+  width: 100%;
+  max-width: 92rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+}
+@utility section-pad {
+  padding-block: clamp(5.5rem, 11vw, 10rem);
+}
+
+/* ======================================================================
+   Knoppen. De hoofdknop is het enige vlak in signaalkleur op de pagina.
+   ====================================================================== */
+@layer components {
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65em;
+    min-height: 3.25rem;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    font-weight: 620;
+    font-stretch: 106%;
+    font-size: 1rem;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      background-color 0.25s var(--ease-out-quart),
+      color 0.25s var(--ease-out-quart),
+      border-color 0.25s var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-signal {
+    background: var(--color-signal);
+    color: var(--color-signal-ink);
+  }
+  .btn-signal:hover {
+    background: var(--color-signal-hi);
+  }
+  .btn-ghost {
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-bone);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-bone);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+  .btn-ink:hover {
+    background: var(--color-ink-3);
+  }
+  .btn .icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+  .text-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--color-line-strong);
+    transition: text-decoration-color 0.2s;
+  }
+  .text-link:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* ======================================================================
+   Intro van de hero, puur CSS: de kop staat er bij de eerste paint en komt
+   woord voor woord uit een masker (zie Rise.jsx); de rest schuift erachter
+   aan. Geen wachten op JavaScript, en zonder JS werkt het net zo.
+   ====================================================================== */
+@keyframes rise {
+  from {
+    transform: translateY(108%);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}
+.rise-w {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: top;
+  /* Ruimte voor onderstokken en cursieve overhang binnen het masker. */
+  padding: 0 0.06em 0.1em 0;
+  margin: 0 -0.06em -0.1em 0;
+}
+.rise-w > span {
+  display: inline-block;
+  animation: rise 1.15s var(--ease-out-expo) both;
+  animation-delay: calc(0.1s + var(--i, 0) * 0.06s);
+}
+.intro-up {
+  animation: fade-up 1.2s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0.5s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise-w > span,
+  .intro-up {
+    animation: none;
+  }
+}
+
+/* SplitText-regels: de mask voorkomt dat onderstokken worden afgekapt. */
+.split-line-mask {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* ======================================================================
+   Toegankelijkheid
+   ====================================================================== */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  transition: transform 0.2s;
+}
+.skip-link:focus {
+  transform: none;
+}

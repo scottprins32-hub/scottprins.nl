@@ -1,0 +1,36 @@
+/* Uit LangSwitch.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lang-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  color: var(--color-mute);
+  transition: color 0.2s;
+}
+.lang-link:hover {
+  color: var(--color-bone);
+}
+.lang-link.is-active {
+  color: var(--color-bone);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+}
+.lang-paper .lang-link {
+  color: var(--color-paper-mute);
+}
+.lang-paper .lang-link:hover,
+.lang-paper .lang-link.is-active {
+  color: var(--color-paper-ink);
+}

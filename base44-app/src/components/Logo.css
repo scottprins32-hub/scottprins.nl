@@ -1,0 +1,24 @@
+/* Uit Logo.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.logo-mark {
+  width: auto;
+  height: 1.25rem;
+  flex: none;
+}
+.logo-word {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-stretch: 100%;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.logo-word b {
+  font-weight: 700;
+}

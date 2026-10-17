@@ -1,0 +1,100 @@
+/* Uit Process.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 5rem) clamp(1rem, 2vw, 2rem);
+}
+.process-head,
+.process-steps {
+  grid-column: 1 / -1;
+}
+.process-label {
+  margin: 0 0 1.25rem;
+  color: var(--color-mute);
+}
+.process-title {
+  margin: 0;
+  font-size: var(--text-display-l);
+}
+.process-note {
+  max-width: 28rem;
+  margin: 1.75rem 0 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-signal-text);
+  color: var(--color-bone-2);
+}
+.process-steps {
+  position: relative;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  margin: 0;
+  padding: 0 0 0 2.75rem;
+  list-style: none;
+}
+.process-line {
+  position: absolute;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  left: 0.6875rem;
+  width: 2px;
+  background: var(--color-line);
+}
+.process-line-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--color-signal-text);
+  transform-origin: top;
+}
+.process-step {
+  position: relative;
+}
+.process-dot {
+  position: absolute;
+  top: 0.3rem;
+  left: -2.75rem;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 999px;
+  background: var(--color-ink);
+  box-shadow: inset 0 0 0 2px var(--color-line-strong);
+  transition:
+    background-color 0.4s var(--ease-out-quart),
+    box-shadow 0.4s var(--ease-out-quart);
+}
+.process-step.is-active .process-dot,
+.no-motion .process-dot {
+  background: var(--color-signal-text);
+  box-shadow: inset 0 0 0 2px var(--color-signal-text);
+}
+.process-when {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-signal-text);
+}
+.process-step-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.process-text {
+  max-width: 32rem;
+  margin: 0.75rem 0 0;
+  color: var(--color-bone-2);
+}
+@media (min-width: 64rem) {
+  .process-head {
+    grid-column: 1 / span 5;
+    align-self: start;
+    position: sticky;
+    top: 7rem;
+  }
+  .process-steps {
+    grid-column: 7 / -1;
+  }
+}

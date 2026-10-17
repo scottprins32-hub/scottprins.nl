@@ -1,0 +1,49 @@
+/**
+ * Eén ingang voor alle zichtbare tekst.
+ *
+ *   .astro-frontmatter :  const { hero } = content(Astro.currentLocale);
+ *   client-script      :  const { device } = content();
+ *
+ * Zonder argument leest hij de taal van <html lang>, zodat een script in de
+ * browser niet hoeft te weten op welke pagina het draait.
+ */
+import { nl } from './nl';
+import { en } from './en';
+import type { Widen } from './types';
+
+export type Locale = 'nl' | 'en';
+/** Nederlands is de standaard; /en/ is de vertaling. */
+export const DEFAULT_LOCALE: Locale = 'nl';
+export const LOCALES: Locale[] = ['nl', 'en'];
+
+export type Content = Widen<typeof nl>;
+
+const bundels: Record<Locale, Content> = { nl, en };
+
+/** Alles behalve 'nl' en 'en' valt terug op Nederlands. */
+export function toLocale(value: string | undefined | null): Locale {
+  return value === 'en' ? 'en' : 'nl';
+}
+
+export function content(locale?: string | null): Content {
+  const gekozen =
+    locale ?? (typeof document !== 'undefined' ? document.documentElement.lang : DEFAULT_LOCALE);
+  return bundels[toLocale(gekozen)];
+}
+
+/**
+ * Taalloos pad naar hetzelfde pad in de gevraagde taal, zonder base.
+ * Voor canonical en hreflang (met site.url ervoor) en, via url(), voor
+ * links op de pagina zelf.
+ */
+export function altPath(path: string, naar: Locale): string {
+  /* Altijd mét afsluitende slash: de server 301't /voorwaarden naar
+     /voorwaarden/, en een canonical die naar een redirect wijst kost
+     crawlbudget en verwatert het signaal. */
+  const kaal = path.replace(/^\/en(?=\/|$)/, '') || '/';
+  const met = kaal.endsWith('/') ? kaal : `${kaal}/`;
+  return naar === 'en' ? (met === '/' ? '/en/' : `/en${met}`) : met;
+}
+
+/* De juridische teksten staan apart (nl-legal.ts, en-legal.ts) en worden
+   alleen door LegalPage geladen, zodat ze niet in elke pagina meekomen. */

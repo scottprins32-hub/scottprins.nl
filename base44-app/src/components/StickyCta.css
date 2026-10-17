@@ -1,0 +1,73 @@
+/* Uit StickyCta.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.sticky {
+  position: fixed;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.15rem;
+  border-radius: 999px;
+  background: var(--color-ink-3);
+  box-shadow:
+    0 0 0 1px var(--color-line-strong),
+    0 18px 40px -12px rgb(0 0 0 / 0.6);
+  color: var(--color-bone);
+  transform: translateY(calc(100% + 2rem));
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.sticky.is-visible {
+  transform: none;
+}
+.sticky-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 760;
+  font-stretch: 112%;
+  letter-spacing: -0.02em;
+}
+.sticky-price small {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+.sticky-price small {
+  white-space: nowrap;
+}
+.sticky-btn {
+  min-height: 2.75rem;
+}
+@media (max-width: 23rem) {
+  .sticky {
+    gap: 0.5rem;
+    padding-left: 0.9rem;
+  }
+  .sticky-price {
+    font-size: 1rem;
+  }
+  .sticky-price small {
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
+  }
+  .sticky-btn {
+    padding: 0 1rem;
+  }
+}
+@media (max-width: 63.99rem) {
+  .sticky {
+    display: flex;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky {
+    transition: none;
+  }
+}

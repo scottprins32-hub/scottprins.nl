@@ -1,0 +1,177 @@
+/* Uit SiteNav.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    background-color 0.3s,
+    border-color 0.3s;
+  border-bottom: 1px solid transparent;
+}
+.nav.is-scrolled {
+  background: color-mix(in srgb, var(--color-ink) 94%, transparent);
+  border-bottom-color: var(--color-line);
+}
+.nav.is-hidden:not(:focus-within) {
+  transform: translateY(-100%);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  min-height: 4.5rem;
+}
+.nav-home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--color-bone);
+}
+.nav-links {
+  margin-left: auto;
+}
+.nav-links ul {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nav-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.85rem;
+  color: var(--color-bone-2);
+  font-size: 0.9375rem;
+  transition: color 0.2s;
+}
+.nav-links a:hover,
+.nav-links a[aria-current='true'] {
+  color: var(--color-bone);
+}
+/* Een streepje onder de sectie waar je nu bent (nav.ts zet aria-current). */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.45rem;
+  height: 1px;
+  background: var(--color-signal-text);
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale 0.45s var(--ease-out-quart);
+}
+.nav-links a[aria-current='true']::after {
+  scale: 1 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-links a::after {
+    transition: none;
+  }
+}
+.nav-end {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-cta {
+  min-height: 2.75rem;
+  padding: 0 1.15rem;
+  font-size: 0.9375rem;
+}
+.nav-menu {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 0.25rem 0 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--color-bone);
+  font: inherit;
+  font-size: 0.9375rem;
+}
+.nav-menu .icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+@media (max-width: 63.99rem) {
+  .nav-links,
+  .nav-cta {
+    display: none;
+  }
+  .nav-end {
+    margin-left: auto;
+  }
+  .nav-menu {
+    display: inline-flex;
+  }
+}
+
+/* ------------------------------------------------------------ menu -- */
+.menu {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-ink);
+  color: var(--color-bone);
+}
+.menu::backdrop {
+  background: var(--color-ink);
+}
+.menu-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+.menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4.5rem;
+}
+.menu-top .nav-menu {
+  display: inline-flex;
+}
+.menu-links {
+  margin: 2.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.menu-links a {
+  display: block;
+  padding: 0.35rem 0;
+  font-size: clamp(2.25rem, 10vw, 3.5rem);
+  font-weight: 720;
+  font-stretch: 112%;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--color-bone);
+}
+.menu-bottom {
+  display: grid;
+  gap: 1.25rem;
+  justify-items: start;
+  margin-top: auto;
+  padding-top: 2.5rem;
+}
+.menu-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  color: var(--color-bone-2);
+}
+.menu-contact .icon {
+  width: 1.3rem;
+  height: 1.3rem;
+}

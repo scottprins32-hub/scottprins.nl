@@ -1,0 +1,119 @@
+/* Uit Hero.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.hero {
+  padding-top: calc(4.5rem + clamp(2.5rem, 7vh, 5.5rem));
+  padding-bottom: clamp(1rem, 3vw, 2.5rem);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+}
+.hero-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-display-xl);
+}
+.hero-accent {
+  position: relative;
+}
+.hero-accent-new {
+  display: inline-block;
+  color: var(--color-signal-text);
+  /* Ruimte voor de cursieve overhang, zonder gat voor de punt. */
+  padding-right: 0.05em;
+  margin-right: -0.09em;
+  animation: accent-in 1.05s var(--ease-inout-expo) 1.05s both;
+}
+@keyframes accent-in {
+  from {
+    clip-path: circle(0% at 0% 100%);
+  }
+  to {
+    clip-path: circle(160% at 0% 100%);
+  }
+}
+/* Eerst staat er een ouderwetse link (Times, linkblauw, onderstreept),
+   dan wordt het woord zelf geüpgraded. Gegenereerde inhoud met een lege
+   alt-tekst: schermlezers en zoekmachines zien het woord maar één keer. */
+.hero-accent::before {
+  content: attr(data-word) / '';
+  position: absolute;
+  left: 0;
+  bottom: 0.08em;
+  animation: old-out 0.35s ease-out 1.25s both;
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+  font-size: 0.78em;
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  color: #5ab0ff;
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.12em;
+  white-space: nowrap;
+}
+@keyframes old-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-accent::before {
+    display: none;
+  }
+  .hero-accent-new {
+    animation: none;
+  }
+}
+.hero-side {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1.75rem;
+  margin-top: clamp(1.75rem, 3.5vw, 3rem);
+}
+.hero-lead {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--color-bone-2);
+}
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+}
+.hero-why {
+  color: var(--color-bone-2);
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+.hero-why:hover {
+  color: var(--color-bone);
+}
+.hero-device {
+  grid-column: 1 / -1;
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+@media (min-width: 64rem) {
+  .hero-title {
+    grid-column: 1 / span 11;
+  }
+  .hero-side {
+    grid-column: 7 / -1;
+  }
+  .hero-device {
+    /* Zo groot mogelijk, maar het hele scherm moet in één keer in beeld
+       passen, met de keuzes erboven en de knop eronder. */
+    justify-self: center;
+    width: min(100%, calc((100svh - 13.5rem) * 1.6));
+  }
+}
+@media (max-width: 30rem) {
+  .hero-ctas .btn {
+    width: 100%;
+  }
+}

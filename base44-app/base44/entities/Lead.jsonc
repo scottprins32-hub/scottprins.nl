@@ -1,0 +1,21 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "Naam van de aanvrager" },
+    "email": { "type": "string", "format": "email", "description": "E-mailadres" },
+    "company": { "type": "string", "description": "Naam van de zaak" },
+    "phone": { "type": "string", "description": "Telefoon (optioneel)" },
+    "trade": { "type": "string", "description": "Branche uit het upgrade-ding (bakker, kapper, ...)" },
+    "message": { "type": "string", "description": "Nog iets wat Scott moet weten" },
+    "locale": { "type": "string", "enum": ["nl", "en"], "description": "Taal van de pagina" },
+    "page": { "type": "string", "description": "Pagina waarop de bon is ingevuld" },
+    "status": {
+      "type": "string",
+      "enum": ["Nieuw", "Proefpagina gestuurd", "Akkoord", "Live", "Geen deal"],
+      "default": "Nieuw",
+      "description": "Waar de aanvraag staat"
+    }
+  },
+  "required": ["name", "email"]
+}

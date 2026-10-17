@@ -1,0 +1,407 @@
+/* Uit Upgrade.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.device {
+  container: device / inline-size;
+  width: 100%;
+}
+
+/* -------------------------------------------------- keuzes erboven -- */
+.device-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: 1.25rem;
+}
+.device-tabs {
+  display: flex;
+  gap: 0.375rem;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Ruimte voor de focusring, die anders wordt afgekapt. */
+  padding: 4px;
+  margin: -4px;
+}
+.device-tabs::-webkit-scrollbar {
+  display: none;
+}
+/* Past de rij niet, dan vervaagt de rand waar nog tabs achter zitten. */
+.device-tabs[data-more-start],
+.device-tabs[data-more-end] {
+  --fade-start: 0px;
+  --fade-end: 0px;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent
+  );
+}
+.device-tabs[data-more-start] {
+  --fade-start: 2.5rem;
+}
+.device-tabs[data-more-end] {
+  --fade-end: 3rem;
+}
+.device-tab {
+  flex: none;
+  min-height: 2.75rem;
+  padding: 0 1.05rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-bone-2);
+  font-size: 0.9375rem;
+  font-weight: 520;
+  font-stretch: 104%;
+  transition:
+    background-color 0.25s var(--ease-out-quart),
+    color 0.25s var(--ease-out-quart),
+    border-color 0.25s var(--ease-out-quart);
+}
+.device-tab:hover {
+  border-color: var(--color-bone);
+  color: var(--color-bone);
+}
+.device-tab[aria-selected='true'] {
+  border-color: var(--color-bone);
+  background: var(--color-bone);
+  color: var(--color-ink);
+}
+.device-name {
+  display: grid;
+  gap: 0.4rem;
+  flex: 1 1 16rem;
+  max-width: 22rem;
+}
+.device-name-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+.device-name input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 0 0.25rem;
+  border: 0;
+  border-bottom: 1px solid var(--color-line-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-bone);
+  font: inherit;
+  font-size: 1.375rem;
+  font-weight: 560;
+  font-stretch: 108%;
+  letter-spacing: -0.01em;
+  transition: border-color 0.2s;
+}
+.device-name input::placeholder {
+  color: var(--color-mute);
+  opacity: 1;
+}
+.device-name input:focus {
+  outline: none;
+  border-bottom-color: var(--color-signal-text);
+}
+.device-name input:focus-visible {
+  outline: none;
+}
+
+/* ---------------------------------------------------- het scherm -- */
+.stage-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  color: var(--color-mute);
+}
+.stage-domain {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stage-tag {
+  flex: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.stage-tag-after,
+.device[data-state='revealed'] .stage-tag-before {
+  display: none;
+}
+.device[data-state='revealed'] .stage-tag-after {
+  display: inline;
+  color: var(--color-signal-text);
+}
+
+.stage {
+  position: relative;
+  aspect-ratio: 1280 / 800;
+  overflow: hidden;
+  border-radius: 0.875rem;
+  background: #d3d7dd;
+  box-shadow:
+    0 0 0 1px var(--color-line-strong),
+    0 48px 90px -50px rgb(0 0 0 / 0.75);
+  container: stage / inline-size;
+  isolation: isolate;
+  /* Verticaal scrollen blijft van de browser; vasthouden is van ons. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.layer-after {
+  clip-path: circle(0px at 50% 50%);
+}
+.device[data-state='revealed'] .layer-after {
+  clip-path: none;
+}
+.layer .vp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1280px;
+  height: 800px;
+  transform-origin: 0 0;
+  /* Het script zet --s-js; zonder script rekent CSS de schaal zelf uit. */
+  transform: scale(var(--s-js, tan(atan2(100cqw, 1280px))));
+  container: vp / inline-size;
+}
+.layer .site {
+  position: absolute;
+  inset: 0;
+}
+.layer .site[hidden] {
+  display: none;
+}
+
+/* De aanwijzing staat op de site zelf, waar je moet drukken: ook als de
+   knop eronder buiten beeld valt. De ring loopt vol terwijl je vasthoudt. */
+.stage-chip {
+  --chip-bg: var(--color-ink);
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.75rem, 2.5cqw, 1.25rem);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.5rem 1rem 0.5rem 0.55rem;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  box-shadow:
+    0 0 0 1px var(--color-line-strong),
+    0 12px 32px -12px rgb(0 0 0 / 0.55);
+  color: var(--color-bone);
+  font-size: 0.875rem;
+  font-weight: 520;
+  white-space: nowrap;
+  pointer-events: none;
+  translate: -50% 0;
+  transition:
+    opacity 0.3s var(--ease-out-quart),
+    translate 0.3s var(--ease-out-quart),
+    scale 0.3s var(--ease-out-quart);
+}
+.chip-ring {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--color-signal-text) 34%, transparent 40%),
+    radial-gradient(closest-side, var(--chip-bg) calc(100% - 2.5px), transparent calc(100% - 2px)),
+    conic-gradient(var(--color-signal-text) calc(var(--p, 0) * 1turn), rgb(255 255 255 / 0.22) 0);
+}
+.hint-coarse,
+.hint-longer {
+  display: none;
+}
+@media not ((hover: hover) and (pointer: fine)) {
+  .hint-fine {
+    display: none;
+  }
+  .hint-coarse {
+    display: inline;
+  }
+}
+/* Te kort gedrukt: zeg dat het langer moet. */
+.device[data-nudge] .stage-chip > .hint-fine,
+.device[data-nudge] .stage-chip > .hint-coarse {
+  display: none;
+}
+.device[data-nudge] .hint-longer {
+  display: inline;
+}
+.device[data-nudge] .stage-chip {
+  animation: chip-nudge 0.5s var(--ease-out-quart);
+}
+@keyframes chip-nudge {
+  40% {
+    scale: 1.07;
+  }
+}
+.device[data-holding] .stage-chip {
+  scale: 1.04;
+}
+.device[data-pouring] .stage-chip,
+.device[data-state='revealed'] .stage-chip {
+  opacity: 0;
+  translate: -50% 0.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-chip {
+    transition: opacity 0.2s linear;
+  }
+  .device[data-nudge] .stage-chip {
+    animation: none;
+  }
+  .device[data-holding] .stage-chip {
+    scale: none;
+  }
+  .device[data-pouring] .stage-chip,
+  .device[data-state='revealed'] .stage-chip {
+    translate: -50% 0;
+  }
+}
+@container device (width < 640px) {
+  .stage {
+    aspect-ratio: 390 / 640;
+  }
+  .layer .vp {
+    width: 390px;
+    height: 640px;
+    transform: scale(var(--s-js, tan(atan2(100cqw, 390px))));
+  }
+}
+
+/* ---------------------------------------------------- de balk eronder -- */
+.device-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-top: 1.25rem;
+}
+.device-result {
+  display: none;
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 560;
+  font-stretch: 108%;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.device-result strong {
+  font-weight: 760;
+  color: var(--color-bone);
+}
+.device-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+.device-claim,
+.device-open,
+.device-reset {
+  display: none;
+}
+.device[data-state='revealed'] .device-result {
+  display: block;
+}
+.device[data-state='revealed'] .device-claim,
+.device[data-state='revealed'] .device-open,
+.device[data-state='revealed'] .device-reset {
+  display: inline-flex;
+}
+.device[data-state='revealed'] .device-upgrade {
+  display: none;
+}
+/* Zonder JavaScript: geen knop die niets doet, wel de weg naar de echte site. */
+html:not(.js) .device-upgrade,
+html:not(.js) .stage-chip {
+  display: none;
+}
+html:not(.js) .device-open {
+  display: inline-flex;
+}
+
+.device-upgrade {
+  overflow: hidden;
+  isolation: isolate;
+  min-width: 9.5rem;
+}
+.device-upgrade-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-bone);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
+  transition: transform 0.35s var(--ease-out-quart);
+}
+.device[data-holding] .device-upgrade-fill {
+  transition: none;
+}
+.device-reset {
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-bone-2);
+  font: inherit;
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-decoration-color: var(--color-line-strong);
+  text-underline-offset: 0.25em;
+}
+.device-reset:hover {
+  color: var(--color-bone);
+}
+.device-reset .icon {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+@container device (width < 480px) {
+  .stage-domain {
+    display: none;
+  }
+  .stage-meta {
+    justify-content: flex-end;
+  }
+}
+@container device (width < 640px) {
+  .device-controls {
+    gap: 1rem;
+  }
+  .device-name {
+    max-width: none;
+  }
+  .device-bar {
+    align-items: stretch;
+  }
+  .device-actions,
+  .device-actions .btn {
+    width: 100%;
+  }
+}

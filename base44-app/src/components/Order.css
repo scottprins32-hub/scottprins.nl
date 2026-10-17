@@ -1,0 +1,343 @@
+/* Uit Order.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.order {
+  border-top: 1px solid var(--color-line);
+}
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 5rem) clamp(1rem, 2vw, 2rem);
+}
+.order-head,
+.slip-wrap {
+  grid-column: 1 / -1;
+}
+.order-label {
+  margin: 0 0 1.25rem;
+  color: var(--color-mute);
+}
+.order-title {
+  margin: 0;
+  font-size: var(--text-display-l);
+}
+.order-accent {
+  color: var(--color-signal-text);
+}
+.order-lead {
+  max-width: 30rem;
+  margin: 1.75rem 0 0;
+  color: var(--color-bone-2);
+}
+.order-points {
+  display: grid;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.order-points li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.order-points .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+  color: var(--color-signal-text);
+}
+.order-direct {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 2rem 0 0;
+}
+.order-direct a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--color-bone-2);
+}
+.order-direct a:hover {
+  color: var(--color-bone);
+}
+.order-direct .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* ------------------------------------------------------------ de bon -- */
+.slip {
+  position: relative;
+  max-width: 36rem;
+  color: var(--color-paper-ink);
+  color-scheme: light;
+  filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.45));
+}
+.slip :focus-visible {
+  outline-color: var(--color-paper-ink);
+}
+.slip-paper {
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  padding-bottom: calc(clamp(1.5rem, 4vw, 2.5rem) + 10px);
+  background: var(--color-paper);
+  /* Kartelrand onderaan, zoals een afgescheurde bon. */
+  --tooth: 10px;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--tooth)) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x;
+}
+.slip-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-paper-ink);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.slip-heading {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.slip-date {
+  font-size: 0.75rem;
+  color: var(--color-paper-mute);
+}
+.slip-lines {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.slip-line {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed rgb(11 14 17 / 0.25);
+}
+.slip-desc strong {
+  font-weight: 500;
+  word-break: break-word;
+}
+.slip-desc strong.is-new {
+  animation: slip-new 1.2s ease-out;
+}
+@keyframes slip-new {
+  from {
+    background-color: color-mix(in oklab, var(--color-signal) 30%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slip-desc strong.is-new {
+    animation: none;
+  }
+}
+.slip-desc small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-paper-mute);
+}
+.slip-amt {
+  text-align: right;
+  white-space: nowrap;
+}
+.slip-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.slip-total-amt {
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+.slip-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-paper-mute);
+}
+.slip-note span {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+.slip-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem 1.25rem;
+  margin-top: 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 2px solid var(--color-paper-ink);
+}
+.field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.field label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-paper-mute);
+}
+.field-opt {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgb(11 14 17 / 0.28);
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: var(--color-paper-ink);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 5.5rem;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--color-paper-ink);
+  outline-offset: 1px;
+  border-color: var(--color-paper-ink);
+}
+.field input[aria-invalid='true'] {
+  border-color: #b42318;
+}
+.field-err {
+  min-height: 0;
+  margin: 0;
+  font-size: 0.875rem;
+  color: #b42318;
+}
+.field-err:empty {
+  display: none;
+}
+.field-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.slip-submit {
+  width: 100%;
+  margin-top: 1.75rem;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  padding-block: 0.75rem;
+}
+.slip-submit[aria-busy='true'] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.slip-privacy {
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-paper-mute);
+}
+.slip-privacy a {
+  color: var(--color-paper-ink);
+}
+.slip-fallback {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed rgb(11 14 17 / 0.3);
+}
+.slip-fallback p {
+  margin: 0 0 1rem;
+}
+.slip-fallback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.slip .btn-ghost-ink {
+  border: 1px solid rgb(11 14 17 / 0.3);
+  color: var(--color-paper-ink);
+}
+.slip .btn-ghost-ink:hover {
+  border-color: var(--color-paper-ink);
+}
+.slip-success .slip-paper {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+}
+.slip-success:focus {
+  outline: none;
+}
+.slip-stamp {
+  display: inline-grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 3px solid var(--color-signal);
+  border-radius: 999px;
+  color: var(--color-signal);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  transform: rotate(-12deg);
+}
+.slip-success-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 760;
+  font-stretch: 114%;
+  letter-spacing: -0.03em;
+}
+.slip-success p {
+  margin: 0;
+}
+@media (min-width: 40rem) {
+  .slip-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 64rem) {
+  .order-head {
+    grid-column: 1 / span 6;
+    align-self: start;
+    position: sticky;
+    top: 7rem;
+  }
+  .slip-wrap {
+    grid-column: 7 / -1;
+    justify-self: end;
+    width: 100%;
+    max-width: 36rem;
+  }
+}

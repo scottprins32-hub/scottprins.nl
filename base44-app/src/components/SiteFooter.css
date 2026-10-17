@@ -1,0 +1,100 @@
+/* Uit SiteFooter.astro (Astro, scoped). In React gelden deze regels globaal; de klassen zijn per onderdeel uniek. */
+.footer {
+  padding-block: clamp(5rem, 10vw, 9rem) clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--color-line);
+}
+.footer-closer {
+  display: grid;
+  justify-items: start;
+  gap: 2.5rem;
+}
+.footer-title {
+  max-width: 14ch;
+  margin: 0;
+  font-size: var(--text-display-xl);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem 2rem;
+  margin-top: clamp(4rem, 8vw, 7rem);
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--color-line);
+}
+.footer-col p {
+  margin: 0;
+  color: var(--color-bone-2);
+}
+.footer-label {
+  margin: 0 0 1rem;
+  color: var(--color-mute);
+}
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  color: var(--color-bone-2);
+  width: fit-content;
+}
+.footer-link:hover {
+  color: var(--color-bone);
+}
+.footer-link .icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: none;
+}
+.footer-note {
+  max-width: 18rem;
+  margin-top: 0.75rem !important;
+  font-size: 0.875rem;
+  color: var(--color-mute) !important;
+}
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem !important;
+}
+.footer-legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+.footer-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.footer-bottom {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 3rem;
+  font-size: 0.875rem;
+  color: var(--color-mute);
+}
+.footer-bottom p {
+  margin: 0;
+}
+.footer-timer:empty {
+  display: none;
+}
+@media (min-width: 48rem) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 64rem) {
+  .footer-closer {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .footer-end {
+    align-items: flex-end;
+  }
+}

@@ -1,0 +1,26 @@
+/* Uit 404.astro. */
+.lost {
+  min-height: 70svh;
+  padding-top: calc(4.5rem + clamp(3rem, 10vh, 7rem));
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+.lost-code {
+  margin: 0 0 1.25rem;
+  color: var(--color-mute);
+}
+.lost-title {
+  max-width: 14ch;
+  margin: 0;
+  font-size: var(--text-display-l);
+}
+.lost-text {
+  max-width: 30rem;
+  margin: 1.75rem 0 0;
+  color: var(--color-bone-2);
+}
+.lost-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+}
