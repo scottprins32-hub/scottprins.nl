@@ -17,5 +17,11 @@
       "description": "Waar de aanvraag staat"
     }
   },
-  "required": ["name", "email"]
+  "required": ["name", "email"],
+  "rls": {
+    "read": { "user_condition": { "role": "admin" } },
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
 }
