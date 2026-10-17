@@ -18,10 +18,11 @@ npm run check      # astro check (types, ook ontbrekende vertalingen)
 npm run build      # productie-build (statisch + Vercel-functie)
 ```
 
-## Twee sporen: preview en release
+## Publiceren
 
-- **Preview (GitHub Pages):** `npm run preview:build` bouwt een puur statische versie onder `/scottprins.nl/` in `dist-preview/`, zonder `/api/lead` (het formulier valt daar terug op WhatsApp of mail). Eenmalig instellen in GitHub: **Settings → Pages → Deploy from a branch → `gh-pages` → `/`**.
-- **Release (Vercel):** elke push naar de productietak bouwt op Vercel. Alleen doen als het live mag.
+- **`main` is de hoofdtak.** Pushen naar GitHub zet niets live: automatisch deployen op Vercel staat uit (`vercel.json`, `git.deploymentEnabled: false`, oktober 2026, op verzoek van Scott). Weer aanzetten: die regel uit `vercel.json` halen. Een losse release kan ook met **Redeploy** in het Vercel-dashboard.
+- **Preview (GitHub Pages):** `bash scripts/preview.sh` bouwt een puur statische versie onder `/scottprins.nl/` (via `npm run preview:build`, zonder `/api/lead`; het formulier valt daar terug op WhatsApp of mail) en zet alleen die bestanden op de tak `gh-pages`. Binnen een minuut te zien op https://scottprins32-hub.github.io/scottprins.nl/.
+- **Het domein:** scottprins.nl en www.scottprins.nl staan al als domein bij het Vercel-project, maar de DNS (bij 2is) wijst nog nergens heen. Pas als daar records staan, is de site op het eigen domein te zien.
 
 Alle interne links en assets lopen via `url()` uit `src/lib/url.ts` of via Vite-imports, zodat dezelfde code onder `/` en onder `/scottprins.nl/` werkt.
 
